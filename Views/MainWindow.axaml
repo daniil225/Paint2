@@ -7,6 +7,7 @@
         x:Class="Paint2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
+		Name="MainWin"
         Title="Paint2">
 
     <Design.DataContext>
@@ -14,7 +15,9 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+	<StackPanel>
 
     <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+	<Image x:Name="Picture"/>
+	</StackPanel>
 </Window>

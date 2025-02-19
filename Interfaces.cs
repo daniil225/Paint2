@@ -25,6 +25,10 @@ namespace Interfaces
 
     public interface IFigure
     {
+        double Width { get; }
+        double Height { get; }
+        string Name { get; }
+
         bool IsInternal(Point p, double eps);
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);

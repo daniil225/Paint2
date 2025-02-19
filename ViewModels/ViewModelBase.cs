@@ -3,8 +3,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Reactive;
 using DynamicData;
-using veceditor.MVVM.Model;
 using System.Reactive.Linq;
+using Interfaces;
 
 namespace Paint2.ViewModels
 {

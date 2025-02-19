@@ -57,6 +57,12 @@ public static class FigureFabric
 [ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { "Radius" })]
 public class Circle : IFigure
 {
+    public double Width => throw new NotImplementedException();
+
+    public double Height => throw new NotImplementedException();
+
+    public string Name => throw new NotImplementedException();
+
     public void Draw(IGraphicInterface toDraw)
     {
         throw new NotImplementedException();
