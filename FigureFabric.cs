@@ -63,7 +63,7 @@ public class Circle : IFigure
 
     public string Name => throw new NotImplementedException();
 
-    public void Draw(IGraphicInterface toDraw)
+    public void Render(IRenderInterface toDraw)
     {
         throw new NotImplementedException();
     }
