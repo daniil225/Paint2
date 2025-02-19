@@ -24,5 +24,7 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="9.0.2" />
+    <PackageReference Include="System.Composition.TypedParts" Version="9.0.2" />
   </ItemGroup>
 </Project>
