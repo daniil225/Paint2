@@ -24,11 +24,19 @@ namespace Paint2.ViewModels
 
          Delete = ReactiveCommand.Create(() =>  Figures.Remove(SelectedFigure),
             this.WhenAnyValue(t=>t.SelectedFigure).Select(f=>f != null));
-      }
+
+            Open = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var file = await FileQuestion.Handle("Select file for open");
+            });
+
+        }
+        public Interaction<string, string> FileQuestion { get; } = new();
 
 
       public ReactiveCommand<Unit,Unit> Delete { get; }
+        public ReactiveCommand<Unit, Unit> Open { get; }
 
 
-   }
+    }
 }
