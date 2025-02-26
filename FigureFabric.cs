@@ -4,16 +4,22 @@ using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
 using System.Text.Json.Serialization;
+using Avalonia;
 using Interfaces;
+using Point = Interfaces.Point;
 
 
 class FigureMetadata
 {
     public string Name { get; }
-    public int NumberOfDoubleParameters { get; }
-    public int NumberOfPointParameters { get; }
-    public IEnumerable<string> PointParametersNames { get; }
-    public IEnumerable<string> DoubleParametersNames { get; }
+}
+public interface IFigureCreator
+{
+    int NumberOfDoubleParameters { get; }
+    int NumberOfPointParameters { get; }
+    IEnumerable<string> PointParametersNames { get; }
+    IEnumerable<string> DoubleParametersNames { get; }
+    IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
 }
 
 public static class FigureFabric
@@ -21,7 +27,7 @@ public static class FigureFabric
     class ImportInfo
     {
         [ImportMany]
-        public IEnumerable<Lazy<IFigure, FigureMetadata>> AvailableFigures { get; set; } = [];
+        public IEnumerable<Lazy<IFigureCreator, FigureMetadata>> AvailableFigures { get; set; } = [];
     }
     static ImportInfo info;
     static FigureFabric()
@@ -43,20 +49,51 @@ public static class FigureFabric
     }
 
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure CreateFigure(string FigureName)
+    public static IFigure CreateFigure(string FigureName, IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
     {
-        return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value;
+        return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value
+            .Create(doubleParams,pointParams);
     }
 }
 
-[Export(typeof(IFigure))]
-[ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
-[ExportMetadata(nameof(FigureMetadata.NumberOfPointParameters), 1)]
-[ExportMetadata(nameof(FigureMetadata.NumberOfDoubleParameters), 1)]
-[ExportMetadata(nameof(FigureMetadata.PointParametersNames), new string[] {"Center"})]
-[ExportMetadata(nameof(FigureMetadata.DoubleParametersNames), new string[] { "Radius" })]
 public class Circle : IFigure
 {
+    [Export(typeof(IFigureCreator))]
+    [ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
+    class CircleCreator : IFigureCreator
+    {
+        public int NumberOfDoubleParameters => 1;
+
+        public int NumberOfPointParameters => 1;
+
+        public IEnumerable<string> PointParametersNames
+        {
+            get
+            {
+                yield return "Center";
+            }
+        }
+
+        public IEnumerable<string> DoubleParametersNames
+        {
+            get
+            {
+                yield return "Radius";
+            }
+        }
+
+        public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+        {
+            return new Circle(pointParams["Center"], doubleParams["Radius"]);
+        }
+    }
+    Point Center { get; set; }
+    double Radius { get; set; }
+    Circle(Point c,double r)
+    {
+        Center = c;
+        Radius = r;
+    }
     public double Width => throw new NotImplementedException();
 
     public double Height => throw new NotImplementedException();
