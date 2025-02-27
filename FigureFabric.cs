@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
-using System.Text.Json.Serialization;
-using Avalonia;
 using Interfaces;
+using Serilog;
 using Point = Interfaces.Point;
 
 
@@ -15,10 +14,10 @@ class FigureMetadata
 }
 public interface IFigureCreator
 {
-    int NumberOfDoubleParameters { get; }
-    int NumberOfPointParameters { get; }
-    IEnumerable<string> PointParametersNames { get; }
-    IEnumerable<string> DoubleParametersNames { get; }
+    int NumberOfDoubleParameters { get; internal set; }
+    int NumberOfPointParameters { get; internal set; }
+    IEnumerable<string> PointParametersNames { get; internal set; }
+    IEnumerable<string> DoubleParametersNames { get; internal set; }
     IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
 }
 
@@ -38,9 +37,9 @@ public static class FigureFabric
         {
             conf = conf.WithAssemblies(assemblies);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            Log.Error(e, "Couldn't get available figures.");
         }
 
         var cont = conf.CreateContainer();
@@ -62,9 +61,9 @@ public class Circle : IFigure
     [ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
     class CircleCreator : IFigureCreator
     {
-        public int NumberOfDoubleParameters => 1;
+        public int NumberOfDoubleParameters { get => 1; set => NumberOfDoubleParameters = value; }
 
-        public int NumberOfPointParameters => 1;
+        public int NumberOfPointParameters { get => 1; set => NumberOfPointParameters = value; }
 
         public IEnumerable<string> PointParametersNames
         {
@@ -72,6 +71,7 @@ public class Circle : IFigure
             {
                 yield return "Center";
             }
+            set => PointParametersNames = value;
         }
 
         public IEnumerable<string> DoubleParametersNames
@@ -80,11 +80,17 @@ public class Circle : IFigure
             {
                 yield return "Radius";
             }
+            set => DoubleParametersNames = value;
         }
 
         public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
             return new Circle(pointParams["Center"], doubleParams["Radius"]);
+        }
+
+        IFigure IFigureCreator.Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+        {
+            throw new NotImplementedException();
         }
     }
     Point Center { get; set; }
