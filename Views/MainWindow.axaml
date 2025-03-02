@@ -15,7 +15,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <Grid RowDefinitions="100,*" ColumnDefinitions="*">
+    <Grid RowDefinitions="120,*" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
             <DockPanel Grid.Row="0">
                 <Menu DockPanel.Dock="Top">
@@ -58,26 +58,31 @@
                 <TextBlock/>
             </DockPanel>
             <StackPanel HorizontalAlignment="Left">
-                <SplitButton Content="Content">
-                    <SplitButton.Flyout>
-                        <Flyout Placement="Bottom">
-                            <ListBox Width="200"
-                                     ItemsSource="{Binding FiguresInMenu}">
+                <Button>
+                    <Button.Content>
+                        <Svg Path="{Binding SelectedFigureMenuItem.IconPath}"
+                             Width="48" Height="48"></Svg>
+                    </Button.Content>
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+                            <ListBox Width="300"
+                                     ItemsSource="{Binding FiguresInMenu}"
+                                     SelectedItem="{Binding SelectedFigureMenuItem}">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel />
+                                        <WrapPanel/>
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                                 <ListBox.ItemTemplate>
                                     <DataTemplate DataType="{x:Type vm:FigureMenuItem}">
                                         <Svg Path="{Binding IconPath}"
-                                             Width="24" Height="24"></Svg>
+                                             Width="48" Height="48"></Svg>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </Flyout>
-                    </SplitButton.Flyout>
-                </SplitButton>
+                    </Button.Flyout>
+                </Button>
             </StackPanel>
         </StackPanel>
         <Grid Grid.Row="1" RowDefinitions="*">

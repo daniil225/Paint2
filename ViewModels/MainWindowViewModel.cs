@@ -2,6 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Paint2.ViewModels
         public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
         
         [Reactive] public ObservableCollection<FigureMenuItem> FiguresInMenu { get; set; }
+        [Reactive] public FigureMenuItem SelectedFigureMenuItem { get; set; }
 
         public MainWindowViewModel()
         {
@@ -61,6 +63,7 @@ namespace Paint2.ViewModels
                 new FigureMenuItem("/Assets/Figures/line.svg"),
                 new FigureMenuItem("/Assets/Figures/bezier-curve.svg")
             ];
+            SelectedFigureMenuItem = FiguresInMenu.First();
         }
     }
 
