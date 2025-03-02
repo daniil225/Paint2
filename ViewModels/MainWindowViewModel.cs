@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace Paint2.ViewModels
         [Reactive] public GridLength GroupsColumnWidth { get; set; }
         public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
         public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
+        
+        [Reactive] public ObservableCollection<FigureMenuItem> FiguresInMenu { get; set; }
 
         public MainWindowViewModel()
         {
@@ -44,6 +47,25 @@ namespace Paint2.ViewModels
                         : new GridLength(0);
                 });
             });
+
+            FiguresInMenu =
+            [
+                new FigureMenuItem("/Assets/Figures/rectangle.svg"),
+                new FigureMenuItem("/Assets/Figures/triangle.svg"),
+                new FigureMenuItem("/Assets/Figures/rhombus.svg"),
+                new FigureMenuItem("/Assets/Figures/trapezoid.svg"),
+                new FigureMenuItem("/Assets/Figures/parallelogram.svg"),
+                new FigureMenuItem("/Assets/Figures/pentagon.svg"),
+                new FigureMenuItem("/Assets/Figures/circle.svg"),
+                new FigureMenuItem("/Assets/Figures/oval.svg"),
+                new FigureMenuItem("/Assets/Figures/line.svg"),
+                new FigureMenuItem("/Assets/Figures/bezier-curve.svg")
+            ];
         }
+    }
+
+    public class FigureMenuItem(string iconPath)
+    {
+        public string IconPath { get; set; } = iconPath;
     }
 }

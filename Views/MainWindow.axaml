@@ -16,46 +16,70 @@
     </Design.DataContext>
     
     <Grid RowDefinitions="100,*" ColumnDefinitions="*">
-        <DockPanel Grid.Row="0">
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_Create">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource NoteAddRegular}"></PathIcon>
-                        </MenuItem.Icon>
+        <StackPanel Grid.Row="0">
+            <DockPanel Grid.Row="0">
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_Create">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource NoteAddRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Open">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource FolderOpenRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Save">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource SaveRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Save as">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource SaveAsRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="_Exit">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource SignOutRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="_Open">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource FolderOpenRegular}"></PathIcon>
-                        </MenuItem.Icon>
+                    <MenuItem Header="_Info">
+                        <MenuItem Header="_Developers">
+                            <MenuItem.Icon>
+                                <PathIcon Data="{StaticResource PeopleTeamRegular}"></PathIcon>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="_Save">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource SaveRegular}"></PathIcon>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="_Save as">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource SaveAsRegular}"></PathIcon>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem Header="_Exit">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource SignOutRegular}"></PathIcon>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-                <MenuItem Header="_Info">
-                    <MenuItem Header="_Developers">
-                        <MenuItem.Icon>
-                            <PathIcon Data="{StaticResource PeopleTeamRegular}"></PathIcon>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-            </Menu>
-            <TextBlock/>
-        </DockPanel>
+                </Menu>
+                <TextBlock/>
+            </DockPanel>
+            <StackPanel HorizontalAlignment="Left">
+                <SplitButton Content="Content">
+                    <SplitButton.Flyout>
+                        <Flyout Placement="Bottom">
+                            <ListBox Width="200"
+                                     ItemsSource="{Binding FiguresInMenu}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:FigureMenuItem}">
+                                        <Svg Path="{Binding IconPath}"
+                                             Width="24" Height="24"></Svg>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Flyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+            </StackPanel>
+        </StackPanel>
         <Grid Grid.Row="1" RowDefinitions="*">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
