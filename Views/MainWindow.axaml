@@ -17,12 +17,52 @@
     
     <Grid RowDefinitions="100,*" ColumnDefinitions="*">
         <Rectangle Grid.Row="0" Fill="Red"/>
-        <Grid Grid.Row="1" RowDefinitions="*" ColumnDefinitions="*,4,3*,4,*">
-            <Rectangle Grid.Column="0" Fill="Blue"/>
-            <GridSplitter Grid.Column="1" Background="Black"></GridSplitter>
-            <Rectangle Grid.Column="2"/>
-            <GridSplitter Grid.Column="3" Background="Black"></GridSplitter>
-            <Rectangle Grid.Column="4" Fill="Yellow"/>
+        <Grid Grid.Row="1" RowDefinitions="*">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Background="Blue">
+                <Button Margin="0 0 -54 0"
+                        Width="48" Height="48"
+                        HorizontalAlignment="Right"
+                        Command="{Binding HideGroupsPanelCommand}">
+                    <PathIcon Data="{StaticResource ListTreeRegular}"></PathIcon>
+                </Button>
+                <StackPanel IsVisible="{Binding IsGroupsPanelVisible}">
+                    <Viewbox Stretch="UniformToFill"
+                             StretchDirection="Both">
+                        <Rectangle Width="400"
+                                   Height="300"
+                                   Fill="Pink"/>
+                    </Viewbox>
+                </StackPanel>
+            </StackPanel>
+            <GridSplitter Grid.Column="1" 
+                          IsVisible="{Binding IsGroupsPanelVisible}"
+                          Background="Black"></GridSplitter>
+            <Grid Grid.Column="2"></Grid>
+            <GridSplitter Grid.Column="3"
+                          IsVisible="{Binding IsPropertiesPanelVisible}" 
+                          Background="Black"></GridSplitter>
+            <StackPanel Background="Aqua" Grid.Column="4">
+                <Button Margin="-54 0 0 0"
+                        Width="48" Height="48"
+                        Command="{Binding HidePropertiesPanelCommand}">
+                    <PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
+                </Button>
+                <StackPanel IsVisible="{Binding IsPropertiesPanelVisible}">
+                    <Viewbox Stretch="UniformToFill"
+                             StretchDirection="Both">
+                        <Rectangle Width="200"
+                                   Height="300"
+                                   Fill="Brown"/>
+                    </Viewbox>
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </Grid>
 

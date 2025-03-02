@@ -11,5 +11,6 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Paint2/Assets/Icons.axaml"></StyleInclude>
     </Application.Styles>
 </Application>

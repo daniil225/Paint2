@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ReactiveUI;
 
 namespace Paint2.ViewModels
 {
-    public class ViewModelBase : ObservableObject
+    public class ViewModelBase : ReactiveObject
     {
     }
 }
