@@ -12,8 +12,8 @@ namespace Paint2.ViewModels
         [Reactive] public bool IsGroupsPanelVisible { get; set; }
         [Reactive] public GridLength PropertiesColumnWidth { get; set; }
         [Reactive] public GridLength GroupsColumnWidth { get; set; }
-        public ReactiveCommand<Unit, Unit>? HidePropertiesPanelCommand { get; }
-        public ReactiveCommand<Unit, Unit>? HideGroupsPanelCommand { get; }
+        public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
+        public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
 
         public MainWindowViewModel()
         {
