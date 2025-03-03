@@ -16,7 +16,7 @@ namespace Paint2.ViewModels
       [Reactive] public string ModelName2 { get; set; }
 
       [Reactive] public IFigure? SelectedFigure { get; set; }
-      public SourceCache<IFigure, string> Figures { get; } = new(figure => figure.Name);
+      public SourceCache<IFigure, string> Figures { get; } = new(figure => figure.GetName());
 
       public ViewModelBase()
       {
