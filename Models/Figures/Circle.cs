@@ -37,18 +37,16 @@ namespace Paint2.Models.Figures
     public class Circle : IFigure
     {
         
-        Point Center { get; set; }
-        double Radius { get; set; }
+        private Point Center { get; set; }
+        private double Radius { get; set; }
+        private string name;
+
         public Circle(Point c, double r)
         {
             Center = c;
             Radius = r;
+            name = "Circle";
         }
-        public double Width => throw new NotImplementedException();
-
-        public double Height => throw new NotImplementedException();
-
-        public string Name => throw new NotImplementedException();
 
         public void Render(IRenderInterface toDraw)
         {
@@ -103,6 +101,22 @@ namespace Paint2.Models.Figures
         public IFigure Union(IFigure other)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public bool SetName(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                return false;
+            else
+            {
+                name = newName;
+                return true;
+            }
         }
     }
 }
