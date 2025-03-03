@@ -10,7 +10,7 @@ using Point = Interfaces.Point;
 
 class FigureMetadata
 {
-    public string Name { get; }
+    public string Name { get; init; }
 }
 public interface IFigureCreator
 {
