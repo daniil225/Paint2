@@ -20,7 +20,7 @@ namespace Paint2.Views
       public MainWindow()
       {
          InitializeComponent();
-         vm.Figures.Connect().Select(f => f.GetName()).SortAndBind(out figures);
+         vm.Figures.Connect().Select(f => f.Name).SortAndBind(out figures);
          vm.Figures.CountChanged.Subscribe(c => { });
 
             vm.FileQuestion.RegisterHandler(async context =>
