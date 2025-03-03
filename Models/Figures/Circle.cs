@@ -36,7 +36,15 @@ namespace Paint2.Models.Figures
     }
     public class Circle : IFigure
     {
-        
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                    name = value;
+            }
+        }
         private Point Center { get; set; }
         private double Radius { get; set; }
         private string name;
@@ -101,22 +109,6 @@ namespace Paint2.Models.Figures
         public IFigure Union(IFigure other)
         {
             throw new NotImplementedException();
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-
-        public bool SetName(string newName)
-        {
-            if (string.IsNullOrWhiteSpace(newName))
-                return false;
-            else
-            {
-                name = newName;
-                return true;
-            }
         }
     }
 }

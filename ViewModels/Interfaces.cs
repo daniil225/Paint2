@@ -20,8 +20,9 @@ namespace Interfaces
 
     public interface IFigure
     {
-        string GetName();
-        bool SetName(string newName);
+        // Наверное лучше в виде поля оставить, для имени нужен будет ReactiveUI, а через функции вроде так не делают
+        string Name { get; set; }
+
         bool IsInternal(Point p, double eps);
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);
