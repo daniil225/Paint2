@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using System.ComponentModel;
 
 namespace Paint2.Views
 {
