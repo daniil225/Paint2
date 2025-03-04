@@ -186,22 +186,23 @@
                 <ColumnDefinition Width="4"></ColumnDefinition>
                 <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Background="Blue">
+            <StackPanel Grid.Column="0" Background="Gainsboro">
+                <!-- Кнопка скрытия панели -->
                 <Button Margin="0 0 -54 0"
                         Width="48" Height="48"
                         HorizontalAlignment="Right"
                         Command="{Binding HideGroupsPanelCommand}">
-                    <PathIcon Data="{StaticResource ListTreeRegular}"></PathIcon>
+                    <PathIcon Data="{StaticResource ListTreeRegular}"/>
                 </Button>
-                <StackPanel IsVisible="{Binding IsGroupsPanelVisible}">
-                    <Viewbox Stretch="UniformToFill"
-                             StretchDirection="Both">
-                        <Rectangle Width="400"
-                                   Height="300"
-                                   Fill="Pink"/>
-                    </Viewbox>
+                
+                <StackPanel Background="DarkSalmon" Width="300" IsVisible="{Binding IsGroupsPanelVisible}">
+                    <Button Content="Добавить элемент"
+                            Command="{Binding AddElementCommand}"/>
+        
+                    <TreeDataGrid Source="{Binding TreeSource}"/>
                 </StackPanel>
             </StackPanel>
+
             <GridSplitter Grid.Column="1" 
                           IsVisible="{Binding IsGroupsPanelVisible}"
                           Background="Black"></GridSplitter>
