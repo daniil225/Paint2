@@ -3,12 +3,13 @@
         xmlns:vm="using:Paint2.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Paint2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Paint2">
-
+	
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -201,6 +202,9 @@
         
                     <TreeDataGrid Source="{Binding TreeSource}"/>
                 </StackPanel>
+				
+				
+				
             </StackPanel>
 
             <GridSplitter Grid.Column="1" 
@@ -210,21 +214,147 @@
             <GridSplitter Grid.Column="3"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 
                           Background="Black"></GridSplitter>
-            <StackPanel Background="Aqua" Grid.Column="4">
-                <Button Margin="-54 0 0 0"
+
+			
+			<StackPanel Background="White" Grid.Column="4">
+				
+				<Button Margin="-54 0 0 0"
                         Width="48" Height="48"
                         Command="{Binding HidePropertiesPanelCommand}">
-                    <PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
-                </Button>
-                <StackPanel IsVisible="{Binding IsPropertiesPanelVisible}">
-                    <Viewbox Stretch="UniformToFill"
-                             StretchDirection="Both">
-                        <Rectangle Width="200"
-                                   Height="300"
-                                   Fill="Brown"/>
-                    </Viewbox>
-                </StackPanel>
-            </StackPanel>
+					<PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
+				</Button>
+				
+				<StackPanel IsVisible="{Binding IsPropertiesPanelVisible}">
+
+					<TextBlock Text="Properties" FontSize="15" FontWeight="Solid"/>
+					
+					<CheckBox Content="{Binding CurrentFigureName}" IsChecked="True"/>
+
+					<StackPanel Orientation="Horizontal">
+						<TextBox Text="{Binding PositionX}"/>
+						<TextBlock Text="Position X"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal">
+						<TextBox Text="{Binding PositionY}"/>
+						<TextBlock Text="Position Y"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="10">
+
+						<StackPanel>
+							<Slider Minimum="0" Maximum="100" Value="{Binding PercentOfWidth}"/>
+							<StackPanel Orientation="Horizontal" Spacing="10">
+								<TextBlock Text="0"/>
+								<TextBlock Text="100%"/>
+							</StackPanel>
+						</StackPanel>
+
+						<StackPanel>
+							<TextBlock Text="Width"/>
+							<TextBox Text="{Binding Width}"/>
+						</StackPanel>
+
+					</StackPanel>
+					
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						
+						<StackPanel>
+							<Slider Minimum="0" Maximum="100" Value="{Binding PercentOfHeight}"/>
+							<StackPanel Orientation="Horizontal" Spacing="10">
+								<TextBlock Text="0"/>
+								<TextBlock Text="100%"/>
+							</StackPanel>
+						</StackPanel>
+
+						<StackPanel>
+							<TextBlock Text="Height"/>
+							<TextBox Text="{Binding Height}"/> 
+						</StackPanel>
+						
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="10">
+
+						<StackPanel>
+							<Slider Minimum="-180" Maximum="180" Value="{Binding Angle}"/>
+							<StackPanel Orientation="Horizontal" Spacing="10">
+								<TextBlock Text="-180"/>
+								<TextBlock Text="180"/>
+							</StackPanel>
+						</StackPanel>
+
+						<StackPanel>
+							<TextBlock Text="Angle"/>
+							<TextBox Text="{Binding Angle}"/>
+						</StackPanel>
+
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="10">
+
+						<StackPanel>
+							<Slider Minimum="0" Maximum="100" Value="{Binding Opacity}"/>
+							<StackPanel Orientation="Horizontal" Spacing="10">
+								<TextBlock Text="0"/>
+								<TextBlock Text="100"/>
+							</StackPanel>
+						</StackPanel>
+
+						<StackPanel>
+							<TextBlock Text="Opacity"/>
+							<TextBox Text="{Binding Opacity}"/>
+						</StackPanel>
+
+					</StackPanel>
+
+					<StackPanel Orientation="Horizontal" Spacing="10">
+
+						<StackPanel>
+							<ColorPicker Color="{Binding SelectedSolidColor}"/>
+							<TextBlock Text="Solid color"/>
+						</StackPanel>
+
+						<StackPanel>
+							<ColorPicker Color="{Binding SelectedBorderColor}"/>
+							<TextBlock Text="Border color"/>
+						</StackPanel>
+						
+					</StackPanel>
+
+					<CheckBox Content="Reflected" IsChecked="{Binding IsReflected}" IsHitTestVisible="False"/>
+					
+					<CheckBox Content="IsClosed" IsChecked="{Binding IsClosed}" IsHitTestVisible="False"/>
+
+					<Border BorderBrush="Red" CornerRadius="10" BorderThickness="2" Padding="10">
+						<StackPanel Orientation="Horizontal">
+
+							<StackPanel>
+								<ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}" ItemsSource="{Binding BorderTypes}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<Image Width="30" Height="30" Source="{Binding ImagePath}" Margin="5"/>
+												<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+											</StackPanel>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+
+								<TextBlock Text="Border type"/>
+							</StackPanel>
+
+							<StackPanel>
+								<TextBox Text="{Binding BorderWidth}"/>
+								<TextBlock Text="Border Width"/>
+							</StackPanel>
+						</StackPanel>
+					</Border>
+
+				</StackPanel>
+				
+			</StackPanel>
+			
         </Grid>
     </Grid>
 
