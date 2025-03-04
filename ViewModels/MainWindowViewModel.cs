@@ -3,6 +3,7 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
