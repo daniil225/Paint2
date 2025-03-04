@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Paint2.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Paint2.Views.PropertiesPanelView"
+             x:DataType="vm:PropertiesPanelViewModel">
+    <StackPanel>
+        <TextBlock Text="Properties" FontSize="15" FontWeight="Solid" />
+        <CheckBox Content="{Binding CurrentFigureName}" IsChecked="True" />
+        <StackPanel Orientation="Horizontal">
+            <TextBox Text="{Binding PositionX}" />
+            <TextBlock Text="Position X" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBox Text="{Binding PositionY}" />
+            <TextBlock Text="Position Y" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+                <Slider Minimum="0" Maximum="100" Value="{Binding PercentOfWidth}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="0" />
+                    <TextBlock Text="100%" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Width" />
+                <TextBox Text="{Binding Width}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+                <Slider Minimum="0" Maximum="100" Value="{Binding PercentOfHeight}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="0" />
+                    <TextBlock Text="100%" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Height" />
+                <TextBox Text="{Binding Height}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+                <Slider Minimum="-180" Maximum="180" Value="{Binding Angle}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="-180" />
+                    <TextBlock Text="180" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Angle" />
+                <TextBox Text="{Binding Angle}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+                <Slider Minimum="0" Maximum="100" Value="{Binding Opacity}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="0" />
+                    <TextBlock Text="100" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Opacity" />
+                <TextBox Text="{Binding Opacity}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel>
+                <ColorPicker Color="{Binding SelectedSolidColor}" />
+                <TextBlock Text="Solid color" />
+            </StackPanel>
+            <StackPanel>
+                <ColorPicker Color="{Binding SelectedBorderColor}" />
+                <TextBlock Text="Border color" />
+            </StackPanel>
+        </StackPanel>
+        <CheckBox Content="Reflected" IsChecked="{Binding IsReflected}" IsHitTestVisible="False" />
+        <CheckBox Content="IsClosed" IsChecked="{Binding IsClosed}" IsHitTestVisible="False" />
+        <StackPanel Orientation="Horizontal">
+            <StackPanel>
+                <ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}"
+                          ItemsSource="{Binding BorderTypes}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Svg Path="{Binding ImagePath}"
+                                     Width="48" Height="48">
+                                </Svg>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="Border type" />
+            </StackPanel>
+            <StackPanel>
+                <TextBox Text="{Binding BorderWidth}" />
+                <TextBlock Text="Border Width" />
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
