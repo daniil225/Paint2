@@ -6,6 +6,7 @@ using System.Linq;
 using Paint2.Models.Figures;
 using Interfaces;
 using Point = Interfaces.Point;
+using Serilog;
 
 
 class FigureMetadata
@@ -14,10 +15,8 @@ class FigureMetadata
 }
 public interface IFigureCreator
 {
-    int NumberOfDoubleParameters { get; }
-    int NumberOfPointParameters { get; }
-    IEnumerable<string> PointParametersNames { get; }
-    IEnumerable<string> DoubleParametersNames { get; }
+    IReadOnlyCollection<string> PointParametersNames { get; }
+    IReadOnlyCollection<string> DoubleParametersNames { get; }
     IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
 }
 
@@ -37,9 +36,9 @@ public static class FigureFabric
         {
             conf = conf.WithAssemblies(assemblies);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            Log.Error($"Couldn't get available figures during initialization: {e}");
         }
 
         var cont = conf.CreateContainer();
