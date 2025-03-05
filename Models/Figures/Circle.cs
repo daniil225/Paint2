@@ -9,25 +9,9 @@ namespace Paint2.Models.Figures
     [ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
     class CircleCreator : IFigureCreator
     {
-        public int NumberOfDoubleParameters => 1;
+        public IReadOnlyCollection<string> PointParametersNames => ["Center"];
 
-        public int NumberOfPointParameters => 1;
-
-        public IEnumerable<string> PointParametersNames
-        {
-            get
-            {
-                yield return "Center";
-            }
-        }
-
-        public IEnumerable<string> DoubleParametersNames
-        {
-            get
-            {
-                yield return "Radius";
-            }
-        }
+        public IReadOnlyCollection<string> DoubleParametersNames => ["Radius"];
 
         public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
