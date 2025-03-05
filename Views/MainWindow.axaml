@@ -8,13 +8,44 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="Paint2">
-
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+    
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+        <StackPanel Grid.Row="0">
+            <ContentControl Content="{Binding HeaderPanel}"></ContentControl>
+        </StackPanel>
+        <Grid Grid.Row="1" RowDefinitions="*">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Background="Gainsboro">
+                <!-- Кнопка скрытия панели -->
+                <Button Margin="0 0 -54 0"
+                        Width="48" Height="48"
+                        HorizontalAlignment="Right"
+                        Command="{Binding HideGroupsPanelCommand}">
+                    <PathIcon Data="{StaticResource ListTreeRegular}"/>
+                </Button>
+                <ContentControl Content="{Binding GroupsPanel}"></ContentControl>
+            </StackPanel>
+            <GridSplitter Grid.Column="1" 
+                          IsVisible="{Binding IsGroupsPanelVisible}"
+                          Background="Black"></GridSplitter>
+            <Grid Grid.Column="2"></Grid>
+            <GridSplitter Grid.Column="3"
+                          IsVisible="{Binding IsPropertiesPanelVisible}" 
+                          Background="Black"></GridSplitter>
+			<StackPanel Background="White" Grid.Column="4">
+				<Button Margin="-54 0 0 0"
+                        Width="48" Height="48"
+                        Command="{Binding HidePropertiesPanelCommand}">
+					<PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
+				</Button>
+				<ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
+			</StackPanel>
+        </Grid>
+    </Grid>
 </Window>
