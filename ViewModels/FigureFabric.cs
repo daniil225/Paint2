@@ -5,7 +5,7 @@ using System.Composition.Hosting;
 using System.Linq;
 using Paint2.Models.Figures;
 using Paint2.ViewModels;
-using Point = Interfaces.Point;
+using Point = Paint2.ViewModels.Utils.Point;
 using Serilog;
 
 

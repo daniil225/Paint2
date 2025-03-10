@@ -1,5 +1,6 @@
-﻿using Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Paint2.ViewModels.Utils;
+using Paint2.ViewModels.Interfaces;
 
 namespace Paint2.ViewModels
 {

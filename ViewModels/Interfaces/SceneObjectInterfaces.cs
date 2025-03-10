@@ -1,9 +1,6 @@
-﻿using Interfaces;
-using System;
+﻿using Paint2.ViewModels.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Paint2.ViewModels.Utils;
 
 namespace Paint2.ViewModels
 {
