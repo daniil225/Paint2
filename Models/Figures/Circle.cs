@@ -1,7 +1,8 @@
-﻿using Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Composition;
+using Paint2.ViewModels.Utils;
+using Paint2.ViewModels.Interfaces;
 
 namespace Paint2.Models.Figures
 {
@@ -29,15 +30,22 @@ namespace Paint2.Models.Figures
                     name = value;
             }
         }
-        private Point Center { get; set; }
-        private double Radius { get; set; }
+        public Point Coordinates { get; private set; }
+
+        public float Angle { get; private set; }
+        public bool IsActive { get; set; }
+        public bool IsMirrored { get; set; }
+
         private string name;
+        private double Radius { get; set; }
 
         public Circle(Point c, double r)
         {
-            Center = c;
+            Coordinates = c;
             Radius = r;
             name = "Circle";
+            IsActive = true;
+            IsMirrored = false;
         }
 
         public void Render(IRenderInterface toDraw)
@@ -100,5 +108,9 @@ namespace Paint2.Models.Figures
             throw new NotImplementedException();
         }
 
+        public void Mirror(Point ax1, Point ax2)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
