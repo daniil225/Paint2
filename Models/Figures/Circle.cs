@@ -94,5 +94,11 @@ namespace Paint2.Models.Figures
         {
             throw new NotImplementedException();
         }
+
+        public void Export(IExportSnapshot snapshot)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
