@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Composition;
+using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
+using Serilog;
 
 namespace Paint2.Models.Figures
 {
@@ -31,6 +33,21 @@ namespace Paint2.Models.Figures
             }
         }
         public Point Coordinates { get; private set; }
+        public Group? Parent
+        {
+            get => _parentGroup;
+            set
+            {
+                if (value is null)
+                    Log.Error($"Попытка удалить родителя у {Name}. Фигуры не могут быть сами по себе.");
+                else
+                {
+                    _parentGroup.childObjects.Remove(this);
+                    _parentGroup = value;
+                    _parentGroup.childObjects.Add(this);
+                }
+            }
+        }
 
         public float Angle { get; private set; }
         public bool IsActive { get; set; }
@@ -38,6 +55,8 @@ namespace Paint2.Models.Figures
 
         private string name;
         private double Radius { get; set; }
+
+        private Group _parentGroup;
 
         public Circle(Point c, double r)
         {

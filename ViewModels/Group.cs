@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
+using Serilog;
 
 namespace Paint2.ViewModels
 {
@@ -16,6 +17,21 @@ namespace Paint2.ViewModels
                     _name = value;
             }
         }
+        public Group? Parent
+        {
+            get => _parentGroup;
+            set
+            {
+                _parentGroup?.childObjects.Remove(this);
+                if (value is null)
+                    _parentGroup = null;
+                else
+                {
+                    _parentGroup = value;
+                    _parentGroup.childObjects.Add(this);
+                }
+            }
+        }
         public IList<ISceneObject> childObjects;
         public Point Coordinates { get; private set; }
         public float Angle { get; private set; }
@@ -23,6 +39,7 @@ namespace Paint2.ViewModels
         public bool IsMirrored { get; set; }
 
         private string _name;
+        private Group? _parentGroup;
 
         public Group(string name)
         {
