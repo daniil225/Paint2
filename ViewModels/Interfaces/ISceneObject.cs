@@ -4,14 +4,6 @@ using Paint2.ViewModels.Utils;
 
 namespace Paint2.ViewModels
 {
-    public interface IFigure : ISceneObject
-    {
-        bool IsInternal(Point p, double eps);
-        IFigure Intersect(IFigure other);
-        IFigure Union(IFigure other);
-        IFigure Subtract(IFigure other);
-        void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
-    }
     public interface ISceneObject
     {
         // Наверное лучше в виде поля оставить, для имени нужен будет ReactiveUI, а через функции вроде так не делают
