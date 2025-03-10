@@ -6,6 +6,6 @@ namespace Paint2.ViewModels.Interfaces
     {
         Color SolidColor { get; }
         Color BorderColor { get; }
-
+        double BorderThickness { get; }
     }
 }
