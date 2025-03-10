@@ -9,7 +9,7 @@ namespace Paint2.ViewModels.Interfaces
 {
     public interface IExportSnapshot
     {
-        Formats.Brush Brush { get; set; }
+        Formats.Brush? Brush { get; set; }
         void PushGroup(DocGroup group);
         void Pop();
         void AppendRect(DocRect rect);

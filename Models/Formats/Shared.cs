@@ -7,7 +7,7 @@ namespace Formats
 {
     public abstract class DocElement
     {
-        public string? Name { get; }
+        public string? Name { get; set; }
         public IEnumerable<ITransform> Transforms { get; set; } = [];
     }
 
@@ -45,7 +45,7 @@ namespace Formats
 
     public class DocPath : DocElement
     {
-        IEnumerable<IPathElement> Elements { get; set; }
+        internal IEnumerable<IPathElement> Elements { get; set; }
 
         internal DocPath(IEnumerable<IPathElement> elements)
         {
@@ -71,7 +71,7 @@ namespace Formats
             
             return this;
         }
-        public IPathBuilder CubicBezierTo(Point dest, Point controlPoint1, Point controlPoint2)
+        public IPathBuilder CubicBezierTo(Point controlPoint1, Point controlPoint2, Point dest)
         {
             _elements.Add(new PathCubicBezierTo() {
                 dest = dest,
@@ -82,10 +82,10 @@ namespace Formats
             return this;
         }
         public IPathBuilder ArcTo(
-            Point dest,
             double radiusX, double radiusY,
             double xAxisRotation, bool largeArcFlag,
-            SweepDirection sweepDirection
+            SweepDirection sweepDirection,
+            Point dest
         ) {
             _elements.Add(new PathArcTo() {
                 dest = dest,
@@ -110,17 +110,21 @@ namespace Formats
         }
     }
     
-    public struct Brush
-    {
-        public Color Stroke;
+    public class Brush(
+        Color stroke,
+        Color fill,
+        double strokeWidth,
+        (double Length, double Gap)? dash = null
+    ) {
+        public Color Stroke = stroke;
         // Если фигура не может иметь цвета заливки, это поле игнорируется
-        public Color Fill;
-        public double StrokeWidth;
+        public Color Fill = fill;
+        public double StrokeWidth = strokeWidth;
         // Length - длина каждого штриха
         // Gap - расстояние между штрихами
         // для сплошных линий рекомендуется использовать null вместо
         // нулевого значения Gap
-        public (double Length, double Gap)? Dash;
+        public (double Length, double Gap)? Dash = dash;
     }
 
     interface IPathElement;
@@ -150,18 +154,18 @@ namespace Formats
     struct PathClose : IPathElement {}
 
     public interface ITransform;
-    public struct Translate : ITransform
+    public class Translate (double x, double y) : ITransform
     {
-        public double X;
-        public double Y;
+        public double X = x;
+        public double Y = y;
     }
-    public struct Rotate : ITransform
+    public class Rotate (double angle, Point? pivot = null) : ITransform
     {
         // Угол вращения системы координат относительно
         //  Pivot по часовой стрелке в градусах.
-        public double Angle;
+        public double Angle = angle;
         // Для вращения вокруг начала координат
         //  использовать null значение.
-        public Point? Pivot;
+        public Point? Pivot = pivot;
     }
 }

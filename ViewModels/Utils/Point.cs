@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace Paint2.ViewModels.Utils
 {
-    public class Point
+    public class Point (double x, double y)
     {
-        public double x, y;
         public static readonly Point Zero = new(0, 0);
-
-        public Point(double x, double y)
-        {
-            this.x = x;
-            this.y = y;
-        }
+        public double X = x;
+        public double Y = y;
     }
     // Сюда добавить переопределение + - и * (cross и dot product если  понадобятся)
 }
