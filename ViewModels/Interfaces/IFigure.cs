@@ -10,6 +10,7 @@ namespace Paint2.ViewModels.Interfaces
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);
         IFigure Subtract(IFigure other);
+        void Export(IExportSnapshot snapshot);
         void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
     }
 }

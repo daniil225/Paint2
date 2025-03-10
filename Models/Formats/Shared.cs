@@ -1,5 +1,6 @@
 using Avalonia.Media;
-using Interfaces;
+using Paint2.ViewModels.Utils;
+using Paint2.ViewModels.Interfaces;
 using System.Collections.Generic;
 
 namespace Formats
