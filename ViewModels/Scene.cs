@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Paint2.ViewModels.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Paint2.ViewModels
@@ -6,8 +7,9 @@ namespace Paint2.ViewModels
     public static class Scene
     {
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public static IList<Group> Groups { get; set; }
-        //public static IFileStrategy FileStrategy { get; set; }
+        public static IList<Group> Groups { get; private set; }
+        public static IImportFormat ImportStrategy { get; set; }
+        public static IExportFormat ExportStrategy { get; set; }
 
         static Scene()
         {
@@ -15,13 +17,13 @@ namespace Paint2.ViewModels
             //FileStrategy = new SVGStrategy();
         }
         // Не помню какие именно тут параметры нужны были
-        public static void SaveScene(string path)
+        public static void SaveScene(IExportSnapshot snapshort, string path)
         {
-            throw new NotImplementedException();
+            ExportStrategy.SaveTo(snapshort, path);
         }
         public static void LoadScene(string path)
         {
-            throw new NotImplementedException();
+            ImportStrategy.LoadFrom(path);
         }
         public static void ResetScene()
         {
