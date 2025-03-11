@@ -36,7 +36,9 @@ public class GroupsPanelViewModel : ViewModelBase
 
     private void AddRootNode()
     {
-        Nodes.Add(new Node("Root Node"));
+        Node newNode = new("Root Node");
+        Nodes.Add(newNode);
+        newNode.NodeDeleted += OnNodeDeleted;
     }
 
     private void OnNodeDeleted(Node deletedNode)
@@ -82,6 +84,9 @@ public class Node : ReactiveObject
     private void Add()
     {
         var newNode = new Node("New Node");
+        
+        newNode.Parent = this;
+
         SubNodes.Add(newNode);
     }
 
