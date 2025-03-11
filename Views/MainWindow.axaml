@@ -51,11 +51,11 @@
                           Width="4"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 
                           Background="DarkGray"></GridSplitter>
-			<Grid Background="White" Grid.Column="4">
+			<Grid Background="Gainsboro" Grid.Column="4">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
                 </ScrollViewer>
-                <Button Margin="-54 0 0 0"
+                <Button Margin="-56 4 0 0"
                         Width="48" Height="48"
                         VerticalAlignment="Top"
                         Command="{Binding HidePropertiesPanelCommand}">
