@@ -10,7 +10,6 @@ namespace Paint2.Views;
 public partial class GroupsPanelView : UserControl
 {
     private Point _dragStartPoint;
-    
     private Node? _draggedNode;
 
     public GroupsPanelView()
