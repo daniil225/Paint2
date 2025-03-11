@@ -16,9 +16,9 @@ namespace Paint2.Models.Figures
 
         public IReadOnlyCollection<string> DoubleParametersNames => ["Radius"];
 
-        public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+        public IFigure Create(Group parentGroup)
         {
-            return new Circle(pointParams["Center"], doubleParams["Radius"]);
+            return new Circle(Point.Zero, 1, parentGroup);
         }
     }
     public class Circle : IFigure
@@ -58,13 +58,15 @@ namespace Paint2.Models.Figures
 
         private Group _parentGroup;
 
-        public Circle(Point c, double r)
+        public Circle(Point c, double r, Group parentGroup)
         {
             Coordinates = c;
             Radius = r;
             name = "Circle";
             IsActive = true;
             IsMirrored = false;
+            _parentGroup = parentGroup;
+            _parentGroup.childObjects.Add(this);
         }
 
         public void Render(IRenderInterface toDraw)
