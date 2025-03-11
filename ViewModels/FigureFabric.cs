@@ -5,6 +5,7 @@ using System.Composition.Hosting;
 using System.Linq;
 using Paint2.Models.Figures;
 using Paint2.ViewModels.Interfaces;
+using Paint2.ViewModels;
 using Point = Paint2.ViewModels.Utils.Point;
 using Serilog;
 
@@ -17,7 +18,7 @@ public interface IFigureCreator
 {
     IReadOnlyCollection<string> PointParametersNames { get; }
     IReadOnlyCollection<string> DoubleParametersNames { get; }
-    IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams);
+    IFigure Create(Group parentGroup);
 }
 
 public static class FigureFabric
@@ -47,9 +48,9 @@ public static class FigureFabric
     }
 
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure CreateFigure(string FigureName, IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+    public static IFigure CreateFigure(string FigureName, Group parentGroup)
     {
         return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value
-            .Create(doubleParams,pointParams);
+            .Create(parentGroup);
     }
 }
