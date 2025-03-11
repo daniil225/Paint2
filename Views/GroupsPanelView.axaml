@@ -6,9 +6,23 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Paint2.Views.GroupsPanelView"
              x:DataType="vm:GroupsPanelViewModel">
-    <StackPanel Background="DarkSalmon" Width="300">
-        <Button Content="Добавить элемент"
-                Command="{Binding AddElementCommand}"/>
-        <TreeDataGrid Source="{Binding TreeSource}"/>
+    <StackPanel HorizontalAlignment="Left" Width="300">
+        <TreeView ItemsSource="{Binding Nodes}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+                    <StackPanel>
+                        <TextBlock Foreground="Black" Text="{Binding Title}" IsVisible="{Binding !IsEditing}" PointerPressed="InputElement_OnPointerPressed">
+                            <TextBlock.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add" Command="{Binding AddCommand}"/>
+                                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                                </ContextMenu>
+                            </TextBlock.ContextMenu>    
+                        </TextBlock>
+                        <TextBox Foreground="Red" Text="{Binding Title}" IsVisible="{Binding IsEditing}" LostFocus="InputElement_OnLostFocus"></TextBox>
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </StackPanel>
 </UserControl>
