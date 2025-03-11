@@ -51,14 +51,17 @@
                           Width="4"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 
                           Background="DarkGray"></GridSplitter>
-			<StackPanel Background="White" Grid.Column="4">
-				<Button Margin="-54 0 0 0"
+			<Grid Background="White" Grid.Column="4">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
+                </ScrollViewer>
+                <Button Margin="-54 0 0 0"
                         Width="48" Height="48"
+                        VerticalAlignment="Top"
                         Command="{Binding HidePropertiesPanelCommand}">
-					<PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
-				</Button>
-				<ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
-			</StackPanel>
+                    <PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
+                </Button>
+			</Grid>
         </Grid>
     </Grid>
 </Window>
