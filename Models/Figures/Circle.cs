@@ -41,7 +41,7 @@ namespace Paint2.Models.Figures
         public bool IsMirrored { get; set; }
 
         private string name;
-        private double Radius { get; set; }
+        public double Radius { get; set; }
 
         public Circle(Point c, double r)
         {
@@ -55,7 +55,7 @@ namespace Paint2.Models.Figures
         public void Render(IRenderInterface toDraw)
         {
             // пока передаю null, может быть потом тут будет расчет угла поворота
-            toDraw.RenderEllipse(Geometry, Coordinates, Radius, Radius, null);
+            Geometry = toDraw.RenderEllipse(Coordinates, Radius, Radius, null);
         }
 
         public IFigure Intersect(IFigure other)

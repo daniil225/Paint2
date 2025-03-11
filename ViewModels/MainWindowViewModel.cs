@@ -1,6 +1,11 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
+using Avalonia.Threading;
+using Paint2.Models.Figures;
+using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -18,9 +23,24 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
+    public ObservableCollection<GeometryViewModel> Figures { get; }
 
+    private Circle circle;
     public MainWindowViewModel()
     {
+        Figures = [];
+        
+        // Пример для работы с массивом фигур
+        circle = new Circle(new Point {x = 100, y = 100}, 50);
+        var properties = new FigureGraphicProperties()
+        {
+            SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10
+        };
+        Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
+        Renderer renderer = new();
+        circle.Render(renderer);
+        ////////////////////////////////////
+        
         IsPropertiesPanelVisible = true;
         PropertiesColumnWidth = new GridLength(0, GridUnitType.Auto);
 
@@ -28,6 +48,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    //circle.Radius *= 1.3;
+                    //circle.Render(renderer);
+                });
                 IsPropertiesPanelVisible = !IsPropertiesPanelVisible;
                 PropertiesColumnWidth = IsPropertiesPanelVisible
                     ? new GridLength(0, GridUnitType.Auto)

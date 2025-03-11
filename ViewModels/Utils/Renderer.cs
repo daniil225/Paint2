@@ -1,32 +1,36 @@
 using Avalonia.Media;
 using Paint2.ViewModels.Interfaces;
-using Point = Paint2.ViewModels.Utils.Point;
 
 namespace Paint2.ViewModels.Utils
 {
     public class Renderer : IRenderInterface
     {
-        public void RenderLine(Geometry geometry, Point startPoint, Point endPoint)
+        public Geometry RenderLine(Point startPoint, Point endPoint)
+        {
+            Avalonia.Point aStartPoint = new(startPoint.x, startPoint.y);
+            Avalonia.Point aEndPoint = new(endPoint.x, endPoint.y);
+            LineGeometry lineGeometry = new() {StartPoint = aStartPoint, EndPoint = aEndPoint};
+            return lineGeometry;
+        }
+
+        public Geometry RenderArc(Point startPoint, Point endPoint, double sizeX, double sizeY, bool isClosed)
         {
             throw new System.NotImplementedException();
         }
 
-        public void RenderArc(Geometry geometry, Point startPoint, Point endPoint, double sizeX, double sizeY, bool isClosed)
+        public Geometry RenderPolygon(Point[] points)
         {
             throw new System.NotImplementedException();
         }
 
-        public void RenderPolygon(Geometry geometry, Point[] points)
+        public Geometry RenderEllipse(Point center, double radiusX, double radiusY, Transform? transformation)
         {
-            throw new System.NotImplementedException();
+            Avalonia.Point aCenter = new(center.x, center.y);
+            EllipseGeometry ellipseGeometry = new() { Center = aCenter, RadiusX = radiusX, RadiusY = radiusY };
+            return ellipseGeometry;
         }
 
-        public void RenderEllipse(Geometry geometry, Point center, double radiusX, double radiusY, Transform? transformation)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RenderCubicBezierCurve(Geometry geometry, Point point1, Point point2, Point point3, Point point4)
+        public Geometry RenderCubicBezierCurve(Point point1, Point point2, Point point3, Point point4)
         {
             throw new System.NotImplementedException();
         }

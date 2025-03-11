@@ -5,13 +5,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Paint2.Views.GeometryView"
-             x:DataType="vm:GeometryViewModel">
-    <Path Stroke="{Binding Properties.BorderColor}"
-          StrokeThickness="{Binding  Properties.BorderThickness}"
+             x:DataType="vm:GeometryViewModel"
+             ClipToBounds="False">
+    <Path StrokeThickness="{Binding  Properties.BorderThickness}"
           Data="{Binding Figure.Geometry}"
           PointerPressed="Path_OnPointerPressed">
         <Path.Fill>
             <SolidColorBrush Color="{Binding Properties.SolidColor}" />
         </Path.Fill>
+        <Path.Stroke>
+            <SolidColorBrush Color="{Binding Properties.BorderColor}" />
+        </Path.Stroke>
     </Path>
 </UserControl>
