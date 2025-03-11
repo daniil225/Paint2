@@ -1,7 +1,10 @@
-﻿using Interfaces;
+﻿using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using Paint2.ViewModels.Utils;
+using Paint2.ViewModels.Interfaces;
+using ReactiveUI.Fody.Helpers;
 
 namespace Paint2.Models.Figures
 {
@@ -29,20 +32,30 @@ namespace Paint2.Models.Figures
                     name = value;
             }
         }
-        private Point Center { get; set; }
-        private double Radius { get; set; }
+        public Point Coordinates { get; private set; }
+
+        public float Angle { get; private set; }
+        
+        [Reactive] public Geometry Geometry { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsMirrored { get; set; }
+
         private string name;
+        public double Radius { get; set; }
 
         public Circle(Point c, double r)
         {
-            Center = c;
+            Coordinates = c;
             Radius = r;
             name = "Circle";
+            IsActive = true;
+            IsMirrored = false;
         }
 
         public void Render(IRenderInterface toDraw)
         {
-            throw new NotImplementedException();
+            // пока передаю null, может быть потом тут будет расчет угла поворота
+            Geometry = toDraw.RenderEllipse(Coordinates, Radius, Radius, null);
         }
 
         public IFigure Intersect(IFigure other)
@@ -91,6 +104,16 @@ namespace Paint2.Models.Figures
         }
 
         public IFigure Union(IFigure other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Export(IExportSnapshot snapshot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Mirror(Point ax1, Point ax2)
         {
             throw new NotImplementedException();
         }
