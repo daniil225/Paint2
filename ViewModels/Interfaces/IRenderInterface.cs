@@ -47,5 +47,14 @@ namespace Paint2.ViewModels.Interfaces
         /// <param name="point3">Третья точка</param>
         /// <param name="point4">Четвертая точка</param>
         Geometry RenderCubicBezierCurve(Point point1, Point point2, Point point3, Point point4);
+
+        /// <summary>
+        /// Подходит для рисования комбинации двух геометрий фигур
+        /// </summary>
+        /// <param name="geometry1">Геометрия первой фигуры</param>
+        /// <param name="geometry2">Геометрия второй фигуры</param>
+        /// <param name="mode">Тип совмещения(объединение, пересечение, разность)</param>
+        /// <returns>Геометрия, которая является результатом комбинирования</returns>
+        Geometry CombineGeometries(Geometry geometry1, Geometry geometry2, GeometryCombineMode mode);
     }
 }

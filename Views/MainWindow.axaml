@@ -46,17 +46,17 @@
                           IsVisible="{Binding IsGroupsPanelVisible}"
                           Background="DarkGray"></GridSplitter>
             
-            <Viewbox Stretch="Uniform" Grid.Column="2">
-                <ItemsControl ItemsSource="{Binding Figures}"
-                              Width="500"
-                              Height="500">
+            <Grid Grid.Column="2">
+                <ItemsControl HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                    ItemsSource="{Binding Figures}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <Canvas Background="White" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-            </Viewbox>
+            </Grid>
             <GridSplitter Grid.Column="3"
                           Width="4"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 

@@ -34,5 +34,10 @@ namespace Paint2.ViewModels.Utils
         {
             throw new System.NotImplementedException();
         }
+
+        public Geometry CombineGeometries(Geometry geometry1, Geometry geometry2, GeometryCombineMode mode)
+        {
+            return new CombinedGeometry(mode, geometry1, geometry2);
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace Paint2.Models.Figures
         public bool IsMirrored { get; set; }
 
         private string name;
-        public double Radius { get; set; }
+        private double Radius { get; set; }
 
         public Circle(Point c, double r)
         {
