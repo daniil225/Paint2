@@ -12,7 +12,7 @@ namespace Paint2.ViewModels
         bool IsMirrored { get; set; }
         // Координаты pivot'а фигуры
         Point Coordinates { get; }
-        Group? Parent { get; }
+        Group? Parent { get; set; }
         float Angle { get; }
         void Move(Point vector);
         void Rotate(Point Center, double angle);

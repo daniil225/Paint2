@@ -22,13 +22,31 @@ namespace Paint2.ViewModels
             get => _parentGroup;
             set
             {
-                _parentGroup?.childObjects.Remove(this);
                 if (value is null)
-                    _parentGroup = null;
+                {
+                    if (_parentGroup is null)
+                        return;
+                    else
+                    {
+                        _parentGroup.childObjects.Remove(this);
+                        Scene.Groups.Add(this);
+                        _parentGroup = null;
+                    }
+                } 
                 else
                 {
-                    _parentGroup = value;
-                    _parentGroup.childObjects.Add(this);
+                    if (_parentGroup is null)
+                    {
+                        Scene.Groups.Remove(this);
+                        _parentGroup = value;
+                        _parentGroup.childObjects.Add(this);
+                    }
+                    else
+                    {
+                        _parentGroup.childObjects.Remove(this);
+                        _parentGroup = value;
+                        _parentGroup.childObjects.Add(this);
+                    }
                 }
             }
         }
@@ -44,7 +62,7 @@ namespace Paint2.ViewModels
         public Group(string name)
         {
             _name = name;
-            Coordinates = new();
+            Coordinates = Point.Zero;
             Angle = 0f;
             childObjects = [];
             IsActive = true;
