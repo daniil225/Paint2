@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 
 namespace Paint2.Models.Figures
 {
@@ -16,9 +18,9 @@ namespace Paint2.Models.Figures
 
         public IReadOnlyCollection<string> DoubleParametersNames => ["Radius"];
 
-        public IFigure Create(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
+        public IFigure Create(Group parentGroup)
         {
-            return new Circle(pointParams["Center"], doubleParams["Radius"]);
+            return new Circle(Point.Zero, 1, parentGroup);
         }
     }
     public class Circle : IFigure
@@ -33,6 +35,21 @@ namespace Paint2.Models.Figures
             }
         }
         public Point Coordinates { get; private set; }
+        public Group? Parent
+        {
+            get => _parentGroup;
+            set
+            {
+                if (value is null)
+                    Log.Error($"Попытка удалить родителя у {Name}. Фигуры не могут быть сами по себе.");
+                else
+                {
+                    _parentGroup.childObjects.Remove(this);
+                    _parentGroup = value;
+                    _parentGroup.childObjects.Add(this);
+                }
+            }
+        }
 
         public float Angle { get; private set; }
         
@@ -43,13 +60,17 @@ namespace Paint2.Models.Figures
         private string name;
         private double Radius { get; set; }
 
-        public Circle(Point c, double r)
+        private Group _parentGroup;
+
+        public Circle(Point c, double r, Group parentGroup)
         {
             Coordinates = c;
             Radius = r;
             name = "Circle";
             IsActive = true;
             IsMirrored = false;
+            _parentGroup = parentGroup;
+            _parentGroup.childObjects.Add(this);
         }
 
         public void Render(IRenderInterface toDraw)

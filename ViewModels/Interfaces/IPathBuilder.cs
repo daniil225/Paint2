@@ -10,7 +10,6 @@ namespace Paint2.ViewModels.Interfaces
         IPathBuilder MoveTo(Point dest);
         IPathBuilder LineTo(Point dest);
         IPathBuilder ArcTo(
-            Point dest,
             double radiusX, double radiusY,
             // угол вращения системы координат кривой
             // по часовой стрелке в градусах
@@ -20,12 +19,13 @@ namespace Paint2.ViewModels.Interfaces
             // из 4 возможных дуг выбирать пару дуг с
             // указанным направлением вращения
             // подробнее о флагах: https://www.w3.org/TR/SVG11/paths.html#PathDataEllipticalArcCommands
-            SweepDirection sweepDirection
+            SweepDirection sweepDirection,
+            Point dest
         );
         IPathBuilder CubicBezierTo(
-            Point dest,
             Point controlPoint1,
-            Point controlPoint2
+            Point controlPoint2,
+            Point dest
         );
         IPathBuilder Close();
         DocPath Build();

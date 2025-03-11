@@ -25,6 +25,26 @@ namespace Paint2.ViewModels
         {
             ImportStrategy.LoadFrom(path);
         }
+        public static Group CreateGroup(string name, Group? parentGroup = null)
+        {
+            Group newGroup = new(name);
+            if (parentGroup is null) // Если в топ иерархии
+            {
+                Groups.Add(newGroup);
+            } 
+            else
+            {
+                newGroup.Parent = parentGroup;
+            }
+            return newGroup;
+        }
+        public static void RemoveObject(ISceneObject sceneObject)
+        {
+            if (sceneObject.Parent is null)
+                Groups.Remove((Group)sceneObject);
+            else
+                sceneObject.Parent.childObjects.Remove(sceneObject);
+        }
         public static void ResetScene()
         {
             Groups.Clear();
