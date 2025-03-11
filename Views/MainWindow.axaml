@@ -13,6 +13,9 @@
         <StackPanel Grid.Row="0">
             <ContentControl Content="{Binding HeaderPanel}"></ContentControl>
         </StackPanel>
+        
+        <Border Grid.Row="0" Height="4" Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+        
         <Grid Grid.Row="1" RowDefinitions="*">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
@@ -22,17 +25,16 @@
                 <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
+            <!-- Панель групп -->
             <Grid Grid.Column="0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Background="Gainsboro">
-                        <ContentControl Content="{Binding GroupsPanel}" />
-                    </StackPanel>
+                    <ContentControl Content="{Binding GroupsPanel}" />
                 </ScrollViewer>
                 
                 <Button Width="48" Height="48"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Margin="0, 0, -56, 0"
+                        Margin="0, 4, -56, 0"
                         Command="{Binding HideGroupsPanelCommand}"
                         Grid.Column="0">
                     <PathIcon Data="{StaticResource ListTreeRegular}" />
@@ -40,12 +42,15 @@
             </Grid>
             
             <GridSplitter Grid.Column="1" 
+                          Width="4"
                           IsVisible="{Binding IsGroupsPanelVisible}"
-                          Background="Black"></GridSplitter>
+                          Background="DarkGray"></GridSplitter>
+            
             <Grid Grid.Column="2"></Grid>
             <GridSplitter Grid.Column="3"
+                          Width="4"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 
-                          Background="Black"></GridSplitter>
+                          Background="DarkGray"></GridSplitter>
 			<StackPanel Background="White" Grid.Column="4">
 				<Button Margin="-54 0 0 0"
                         Width="48" Height="48"

@@ -9,32 +9,36 @@ namespace Paint2.ViewModels;
 public class GroupsPanelViewModel : ViewModelBase
 {
     public ObservableCollection<Node> Nodes { get; }
+    public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
 
     public GroupsPanelViewModel()
     {
-        Nodes = new ObservableCollection<Node>
-        {
+        Nodes =
+        [
             new Node("Figures",
-                new ObservableCollection<Node>
-                {
-                    new Node("Circles",
-                        new ObservableCollection<Node>
-                        {
-                            new Node("Circle 1"),
-                            new Node("Circle 2"),
-                            new Node("Circle 3")
-                        }),
-                    new Node("Triangle")
-                }),
+            [
+                new Node("Circles",
+                    [new Node("Circle 1"), new Node("Circle 2"), new Node("Circle 3")]),
+
+                new Node("Triangle")
+            ]),
+
             new Node("Rectangle")
-        };
-        
+        ];
+
+        AddGroupCommand = ReactiveCommand.Create(AddRootNode);
+
         foreach (Node node in Nodes)
         {
             node.NodeDeleted += OnNodeDeleted;
         }
     }
-    
+
+    private void AddRootNode()
+    {
+        Nodes.Add(new Node("Root Node"));
+    }
+
     private void OnNodeDeleted(Node deletedNode)
     {
         Nodes.Remove(deletedNode);
@@ -44,12 +48,12 @@ public class GroupsPanelViewModel : ViewModelBase
 public class Node : ReactiveObject
 {
     [Reactive] public string Title { get; set; }
-    [Reactive] public bool IsEditing { get; set; } = false;
+    [Reactive] public bool IsEditing { get; set; }
     public ObservableCollection<Node> SubNodes { get; }
     public ReactiveCommand<Unit, Unit> AddCommand { get; }
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
-    private Node? Parent { get; set; }
-    
+    public Node? Parent { get; set; }
+
     public event Action<Node>? NodeDeleted;
 
     public Node(string title)
@@ -68,8 +72,8 @@ public class Node : ReactiveObject
 
         AddCommand = ReactiveCommand.Create(Add);
         DeleteCommand = ReactiveCommand.Create(Delete);
-        
-        foreach (var child in SubNodes)
+
+        foreach (Node child in SubNodes)
         {
             child.Parent = this;
         }
@@ -98,7 +102,7 @@ public class Node : ReactiveObject
     {
         IsEditing = true;
     }
-    
+
     public void OnTextBoxLostFocus()
     {
         IsEditing = false;
