@@ -29,7 +29,7 @@ public class MainWindowViewModel : ViewModelBase
         Figures = [];
 
         // Пример для работы с массивом фигур
-        Circle circle = new(new Point {x = 100, y = 100}, 50);
+        Circle circle = new(new Point(100, 100), 50, new Group(""));
         var properties = new FigureGraphicProperties()
         {
             SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10

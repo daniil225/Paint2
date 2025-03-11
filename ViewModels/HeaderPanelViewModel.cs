@@ -41,7 +41,7 @@ public class HeaderPanelViewModel : ViewModelBase
             await Task.Run(() =>
             {
                 var rand = new Random();
-                var circle = new Circle(new Point {x = rand.Next(0, 500), y = rand.Next(0, 500)}, rand.Next(3, 50));
+                var circle = new Circle(new Point(rand.Next(0, 500), rand.Next(0, 500)), rand.Next(3, 50), new Group(""));
                 var properties = new FigureGraphicProperties
                 {
                     SolidColor = new Color(255, (byte)rand.Next(128, 255) , (byte)rand.Next(128, 255), (byte)rand.Next(128, 255)),

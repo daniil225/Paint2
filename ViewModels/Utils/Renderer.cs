@@ -7,8 +7,8 @@ namespace Paint2.ViewModels.Utils
     {
         public Geometry RenderLine(Point startPoint, Point endPoint)
         {
-            Avalonia.Point aStartPoint = new(startPoint.x, startPoint.y);
-            Avalonia.Point aEndPoint = new(endPoint.x, endPoint.y);
+            Avalonia.Point aStartPoint = new(startPoint.X, startPoint.Y);
+            Avalonia.Point aEndPoint = new(endPoint.X, endPoint.Y);
             LineGeometry lineGeometry = new() {StartPoint = aStartPoint, EndPoint = aEndPoint};
             return lineGeometry;
         }
@@ -25,7 +25,7 @@ namespace Paint2.ViewModels.Utils
 
         public Geometry RenderEllipse(Point center, double radiusX, double radiusY, Transform? transformation)
         {
-            Avalonia.Point aCenter = new(center.x, center.y);
+            Avalonia.Point aCenter = new(center.X, center.Y);
             EllipseGeometry ellipseGeometry = new() { Center = aCenter, RadiusX = radiusX, RadiusY = radiusY };
             return ellipseGeometry;
         }
