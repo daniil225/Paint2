@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Avalonia.Media;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ public class PropertiesPanelViewModel : ViewModelBase
         PositionY = 543;
         Width = 78;
         Height = 52;
-        Angle = 0;
+        Angle = 12.25677;
         Opacity = 100;
         SelectedBorderColor = Colors.Blue;
         SelectedSolidColor = Colors.White;

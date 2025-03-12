@@ -1,6 +1,10 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
+using Paint2.Models.Figures;
+using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -8,9 +12,9 @@ namespace Paint2.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public ViewModelBase GroupsPanel { get; } = new GroupsPanelViewModel();
-    public ViewModelBase PropertiesPanel { get; } = new PropertiesPanelViewModel();
-    public ViewModelBase HeaderPanel { get; } = new HeaderPanelViewModel();
+    public ViewModelBase GroupsPanel { get; }
+    public ViewModelBase PropertiesPanel { get; }
+    public ViewModelBase HeaderPanel { get; }
     
     [Reactive] public bool IsPropertiesPanelVisible { get; set; }
     [Reactive] public bool IsGroupsPanelVisible { get; set; }
@@ -18,9 +22,27 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
+    public ObservableCollection<GeometryViewModel> Figures { get; }
 
     public MainWindowViewModel()
     {
+        Figures = [];
+
+        // Пример для работы с массивом фигур
+        Circle circle = new(new Point(100, 100), 50, new Group(""));
+        var properties = new FigureGraphicProperties()
+        {
+            SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10
+        };
+        Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
+        Renderer renderer = new();
+        circle.Render(renderer);
+        ////////////////////////////////////
+        
+        HeaderPanel = new HeaderPanelViewModel(Figures);
+        PropertiesPanel = new PropertiesPanelViewModel();
+        GroupsPanel = new GroupsPanelViewModel();
+        
         IsPropertiesPanelVisible = true;
         PropertiesColumnWidth = new GridLength(0, GridUnitType.Auto);
 

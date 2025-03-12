@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Paint2.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Paint2.Views.GeometryView"
+             x:DataType="vm:GeometryViewModel"
+             ClipToBounds="False">
+    <Path StrokeThickness="{Binding  Properties.BorderThickness}"
+          Data="{Binding Figure.Geometry}"
+          PointerPressed="Path_OnPointerPressed">
+        <Path.Fill>
+            <SolidColorBrush Color="{Binding Properties.SolidColor}" />
+        </Path.Fill>
+        <Path.Stroke>
+            <SolidColorBrush Color="{Binding Properties.BorderColor}" />
+        </Path.Stroke>
+    </Path>
+</UserControl>

@@ -1,5 +1,5 @@
-﻿using Paint2.ViewModels.Interfaces;
-using System.Collections.Generic;
+﻿using Avalonia.Media;
+using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 
 namespace Paint2.ViewModels
@@ -14,6 +14,7 @@ namespace Paint2.ViewModels
         Point Coordinates { get; }
         Group? Parent { get; set; }
         float Angle { get; }
+        Geometry Geometry { get; set; } // геометрия объекта, хранит то, как объект выглядит на сцене
         void Move(Point vector);
         void Rotate(Point Center, double angle);
         void Scale(double x, double y);

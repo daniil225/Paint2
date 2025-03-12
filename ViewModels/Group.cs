@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Avalonia.Media;
+using System.Collections.Generic;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using Serilog;
@@ -53,6 +54,7 @@ namespace Paint2.ViewModels
         public IList<ISceneObject> childObjects;
         public Point Coordinates { get; private set; }
         public float Angle { get; private set; }
+        public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
 

@@ -6,9 +6,48 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Paint2.Views.GroupsPanelView"
              x:DataType="vm:GroupsPanelViewModel">
-    <StackPanel Background="DarkSalmon" Width="300">
-        <Button Content="Добавить элемент"
-                Command="{Binding AddElementCommand}"/>
-        <TreeDataGrid Source="{Binding TreeSource}"/>
+    <StackPanel Background="Gainsboro" HorizontalAlignment="Stretch" MinWidth="250">
+        <!-- Контекстное меню -->
+        <StackPanel.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Create group" Command="{Binding AddGroupCommand}"/>
+            </ContextMenu>
+        </StackPanel.ContextMenu>
+        
+        <TreeView ItemsSource="{Binding Nodes}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+                    <StackPanel>
+                        <!-- Обычный текстовый блок -->
+                        <TextBlock 
+                            Foreground="Black" 
+                            Text="{Binding Title}" 
+                            IsVisible="{Binding !IsEditing}" 
+                            PointerPressed="InputElement_OnPointerPressed"
+                            PointerMoved="InputElement_OnPointerMoved"
+                            DragDrop.AllowDrop="True"
+                            DragDrop.DragOver="OnDragOver"
+                            DragDrop.Drop="OnDrop">
+                            
+                            <!-- Контекстное меню -->
+                            <TextBlock.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add" Command="{Binding AddCommand}"/>
+                                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                                </ContextMenu>
+                            </TextBlock.ContextMenu>    
+                        </TextBlock>
+                        
+                        <!-- Редактируемый блок -->
+                        <TextBox 
+                            Foreground="Red" 
+                            Text="{Binding Title}" 
+                            IsVisible="{Binding IsEditing}" 
+                            LostFocus="InputElement_OnLostFocus">
+                        </TextBox>
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </StackPanel>
 </UserControl>

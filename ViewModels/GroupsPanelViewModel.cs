@@ -1,53 +1,115 @@
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 
-namespace Paint2.ViewModels
+namespace Paint2.ViewModels;
+
+public class GroupsPanelViewModel : ViewModelBase
 {
-    public class GroupsPanelViewModel : ViewModelBase
+    public ObservableCollection<Node> Nodes { get; }
+    public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
+
+    public GroupsPanelViewModel()
     {
-        private ObservableCollection<GroupItem> _groups =
+        Nodes =
         [
-            new("Группа 1") { Children = { new GroupItem("Элемент 1"), new GroupItem("Элемент 2") } },
-            new("Группа 2") { Children = { new GroupItem("Элемент 1"), new ("Элемент 2"), new GroupItem("Элемент 3") } }
+            new Node("Figures",
+            [
+                new Node("Circles",
+                    [new Node("Circle 1"), new Node("Circle 2"), new Node("Circle 3")]),
+
+                new Node("Triangle")
+            ]),
+
+            new Node("Rectangle")
         ];
-        public HierarchicalTreeDataGridSource<GroupItem> TreeSource { get; }
 
-        public ReactiveCommand<Unit, Unit> AddElementCommand { get; }
+        AddGroupCommand = ReactiveCommand.Create(AddRootNode);
 
-        public GroupsPanelViewModel()
+        foreach (Node node in Nodes)
         {
-            TreeSource = new HierarchicalTreeDataGridSource<GroupItem>(_groups)
-            {
-                Columns =
-                {
-                    new HierarchicalExpanderColumn<GroupItem>(
-                        new TextColumn<GroupItem, string>("Название", x => x.Name), x => x.Children)
-                }
-            };
-
-            AddElementCommand = ReactiveCommand.Create(() =>
-            {
-                if (_groups.Count > 0)
-                {
-                    _groups[0].Children.Add(new GroupItem($"Элемент { _groups[0].Children.Count + 1}"));
-                    TreeSource.Items = _groups;
-                }
-            });
+            node.NodeDeleted += OnNodeDeleted;
         }
     }
-    
-    public class GroupItem
-    {
-        public string Name { get; set; }
-        public ObservableCollection<GroupItem> Children { get; }
 
-        public GroupItem(string name)
+    private void AddRootNode()
+    {
+        Node newNode = new("Root Node");
+        Nodes.Add(newNode);
+        newNode.NodeDeleted += OnNodeDeleted;
+    }
+
+    private void OnNodeDeleted(Node deletedNode)
+    {
+        Nodes.Remove(deletedNode);
+    }
+}
+
+public class Node : ReactiveObject
+{
+    [Reactive] public string Title { get; set; }
+    [Reactive] public bool IsEditing { get; set; }
+    public ObservableCollection<Node> SubNodes { get; }
+    public ReactiveCommand<Unit, Unit> AddCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
+    public Node? Parent { get; set; }
+
+    public event Action<Node>? NodeDeleted;
+
+    public Node(string title)
+    {
+        Title = title;
+        SubNodes = [];
+
+        AddCommand = ReactiveCommand.Create(Add);
+        DeleteCommand = ReactiveCommand.Create(Delete);
+    }
+
+    public Node(string title, ObservableCollection<Node> subNodes)
+    {
+        Title = title;
+        SubNodes = subNodes;
+
+        AddCommand = ReactiveCommand.Create(Add);
+        DeleteCommand = ReactiveCommand.Create(Delete);
+
+        foreach (Node child in SubNodes)
         {
-            Name = name;
-            Children = new ObservableCollection<GroupItem>();
+            child.Parent = this;
         }
+    }
+
+    private void Add()
+    {
+        var newNode = new Node("New Node");
+        
+        newNode.Parent = this;
+
+        SubNodes.Add(newNode);
+    }
+
+    private void Delete()
+    {
+        // Если у узла есть родитель - удаляем его
+        if (Parent != null)
+        {
+            Parent.SubNodes.Remove(this);
+            return;
+        }
+
+        // Иначе - отправляем событие удаления корневого узла
+        NodeDeleted?.Invoke(this);
+    }
+
+    public void OnNodeDoubleClick()
+    {
+        IsEditing = true;
+    }
+
+    public void OnTextBoxLostFocus()
+    {
+        IsEditing = false;
     }
 }

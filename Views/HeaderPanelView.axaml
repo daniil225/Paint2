@@ -6,8 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Paint2.Views.HeaderPanelView"
              x:DataType="vm:HeaderPanelViewModel">
-    <StackPanel>
-        <DockPanel>
+    <StackPanel Background="Gainsboro">
+        <DockPanel Background="White">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Create">
@@ -47,8 +47,8 @@
             </Menu>
         </DockPanel>
         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-            <Border Background="Gainsboro"
-                    BorderBrush="Black"
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
                     BorderThickness="2"
                     CornerRadius="3"
                     Padding="10" Margin="10">
@@ -75,7 +75,7 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type vm:FigureMenuItem}">
-                                            <Svg ToolTip.Tip="{Binding IconName}"
+                                            <Svg PointerPressed="Figure_OnPointerPressed" ToolTip.Tip="{Binding IconName}"
                                                  Path="{Binding IconPath}"
                                                  Width="48" Height="48">
                                             </Svg>
@@ -87,8 +87,8 @@
                     </Button>
                 </StackPanel>
             </Border>
-            <Border Background="Gainsboro"
-                    BorderBrush="Black"
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
                     BorderThickness="2"
                     CornerRadius="3"
                     Padding="10" Margin="10">
@@ -114,8 +114,8 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <Border Background="Gainsboro"
-                    BorderBrush="Black"
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
                     BorderThickness="2"
                     CornerRadius="3"
                     Padding="10" Margin="10">
@@ -147,8 +147,8 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <Border Background="Gainsboro"
-                    BorderBrush="Black"
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
                     BorderThickness="2"
                     CornerRadius="3"
                     Padding="10" Margin="10">

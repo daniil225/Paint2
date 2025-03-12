@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Avalonia.Media;
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
+using ReactiveUI.Fody.Helpers;
 using Serilog;
 
 namespace Paint2.Models.Figures
@@ -50,6 +52,8 @@ namespace Paint2.Models.Figures
         }
 
         public float Angle { get; private set; }
+        
+        [Reactive] public Geometry Geometry { get; set; }
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
 
@@ -71,7 +75,8 @@ namespace Paint2.Models.Figures
 
         public void Render(IRenderInterface toDraw)
         {
-            throw new NotImplementedException();
+            // пока передаю null, может быть потом тут будет расчет угла поворота
+            Geometry = toDraw.RenderEllipse(Coordinates, Radius, Radius, null);
         }
 
         public IFigure Intersect(IFigure other)

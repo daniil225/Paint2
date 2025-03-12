@@ -6,13 +6,16 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Paint2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/app-logo.ico"
         Title="Paint2">
     
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
             <ContentControl Content="{Binding HeaderPanel}"></ContentControl>
         </StackPanel>
+        
+        <Border Grid.Row="0" Height="4" Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+        
         <Grid Grid.Row="1" RowDefinitions="*">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
@@ -21,31 +24,54 @@
                 <ColumnDefinition Width="4"></ColumnDefinition>
                 <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Background="Gainsboro">
-                <!-- Кнопка скрытия панели -->
-                <Button Margin="0 0 -54 0"
-                        Width="48" Height="48"
+            
+            <!-- Панель групп -->
+            <Grid Grid.Column="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ContentControl Content="{Binding GroupsPanel}" />
+                </ScrollViewer>
+                
+                <Button Width="48" Height="48"
                         HorizontalAlignment="Right"
-                        Command="{Binding HideGroupsPanelCommand}">
-                    <PathIcon Data="{StaticResource ListTreeRegular}"/>
+                        VerticalAlignment="Top"
+                        Margin="0, 4, -56, 0"
+                        Command="{Binding HideGroupsPanelCommand}"
+                        Grid.Column="0">
+                    <PathIcon Data="{StaticResource ListTreeRegular}" />
                 </Button>
-                <ContentControl Content="{Binding GroupsPanel}"></ContentControl>
-            </StackPanel>
+            </Grid>
+            
             <GridSplitter Grid.Column="1" 
+                          Width="4"
                           IsVisible="{Binding IsGroupsPanelVisible}"
-                          Background="Black"></GridSplitter>
-            <Grid Grid.Column="2"></Grid>
+                          Background="DarkGray"></GridSplitter>
+            
+            <Grid Grid.Column="2">
+                <ItemsControl HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                    ItemsSource="{Binding Figures}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="White" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
             <GridSplitter Grid.Column="3"
+                          Width="4"
                           IsVisible="{Binding IsPropertiesPanelVisible}" 
-                          Background="Black"></GridSplitter>
-			<StackPanel Background="White" Grid.Column="4">
-				<Button Margin="-54 0 0 0"
+                          Background="DarkGray"></GridSplitter>
+			<Grid Background="Gainsboro" Grid.Column="4">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
+                </ScrollViewer>
+                <Button Margin="-56 4 0 0"
                         Width="48" Height="48"
+                        VerticalAlignment="Top"
                         Command="{Binding HidePropertiesPanelCommand}">
-					<PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
-				</Button>
-				<ContentControl Content="{Binding PropertiesPanel}"></ContentControl>
-			</StackPanel>
+                    <PathIcon Data="{StaticResource AppsListRegular}"></PathIcon>
+                </Button>
+			</Grid>
         </Grid>
     </Grid>
 </Window>
