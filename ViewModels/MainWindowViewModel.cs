@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
 using Paint2.Models.Figures;
+using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -29,14 +31,14 @@ public class MainWindowViewModel : ViewModelBase
         Figures = [];
 
         // Пример для работы с массивом фигур
-        Circle circle = new(new Point(100, 100), 50, new Group(""));
-        var properties = new FigureGraphicProperties()
-        {
-            SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10
-        };
-        Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
-        Renderer renderer = new();
-        circle.Render(renderer);
+        //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
+        //var properties = new FigureGraphicProperties()
+        //{
+        //    SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10
+        //};
+        //Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
+        //Renderer renderer = new();
+        //circle.Render(renderer);
         ////////////////////////////////////
         
         HeaderPanel = new HeaderPanelViewModel(Figures);
