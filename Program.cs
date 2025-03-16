@@ -4,6 +4,7 @@ using System.Threading;
 using System.Globalization;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Formats.PDF;
 using Serilog;
 
 namespace Paint2
