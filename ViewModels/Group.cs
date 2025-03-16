@@ -82,10 +82,10 @@ namespace Paint2.ViewModels
                 obj.Rotate(Center, angle);
         }
 
-        public void Scale(double x, double y)
+        public void Scale(Point Center, double sx, double sy)
         {
             foreach (ISceneObject obj in childObjects)
-                obj.Scale(x, y);
+                obj.Scale(Center, sx, sy);
             // Проблемка, каждый объект будет масштабироваться относительно себя, а не центра группы.
             // Как решение - сделать скейл относттельно точки, но не радиальный, а по x и y
         }

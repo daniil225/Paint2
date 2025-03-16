@@ -17,7 +17,7 @@ namespace Paint2.ViewModels
         Geometry Geometry { get; set; } // геометрия объекта, хранит то, как объект выглядит на сцене
         void Move(Point vector);
         void Rotate(Point Center, double angle);
-        void Scale(double x, double y);
+        void Scale(Point Center, double x, double y);
         void Scale(Point Center, double rad);
         void Mirror(Point ax1, Point ax2);
         void Render(IRenderInterface toDraw);

@@ -26,5 +26,21 @@ namespace Paint2.Models.Figures
 
             return 2 * alpha - angle;
         }
+
+        public static Point RotatePoint(Point point, Point center, double cosAngle, double sinAngle)
+        {
+            double rotatedX = (point.X - center.X) * cosAngle - (point.Y - center.Y) * sinAngle + center.X;
+            double rotatedY = (point.X - center.X) * sinAngle + (point.Y - center.Y) * cosAngle + center.Y;
+
+            return new Point(rotatedX, rotatedY);
+        }
+
+        public static Point ScalePoint(Point point, Point center, double sx, double sy)
+        {
+            double scaledX = center.X + (point.X - center.X) * sx;
+            double scaledY = center.Y + (point.Y - center.Y) * sy;
+
+            return new Point(scaledX, scaledY);
+        }
     }
 }

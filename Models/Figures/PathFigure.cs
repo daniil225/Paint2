@@ -126,13 +126,60 @@ namespace Paint2.Models.Figures
 
         public void Rotate(Point Center, double angle)
         {
-            throw new NotImplementedException();
+            double radians = angle * Math.PI / 180;
+            double cosAngle = Math.Cos(radians);
+            double sinAngle = Math.Sin(radians);
+
+            foreach (var pathElement in pathElements)
+            {
+                if (pathElement is PathMoveTo pathMove)
+                {
+                    pathMove.dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle);
+                }
+                else if (pathElement is PathLineTo pathLine)
+                {
+                    pathLine.dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle);
+                }
+                else if (pathElement is PathArcTo pathArc)
+                {
+                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
+                    pathArc.xAxisRotation += angle;
+                }
+                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                {
+                    pathCubicBezier.dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle);
+                    pathCubicBezier.controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle);
+                    pathCubicBezier.controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle);
+                }
+            }
         }
 
-        public void Scale(double x, double y)
+        public void Scale(Point Center, double sx, double sy)
         {
-            throw new NotImplementedException();
-        }
+            foreach (var pathElement in pathElements)
+            {
+                if (pathElement is PathMoveTo pathMove)
+                {
+                    pathMove.dest = ScalePoint(pathMove.dest, Center, sx, sy);
+                }
+                else if (pathElement is PathLineTo pathLine)
+                {
+                    pathLine.dest = ScalePoint(pathLine.dest, Center, sx, sy);
+                }
+                else if (pathElement is PathArcTo pathArc)
+                {
+                    pathArc.dest = ScalePoint(pathArc.dest, Center, sx, sy);
+                    pathArc.radiusX *= sx;
+                    pathArc.radiusY *= sy;
+                }
+                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                {
+                    pathCubicBezier.dest = ScalePoint(pathCubicBezier.dest, Center, sx, sy);
+                    pathCubicBezier.controlPoint1 = ScalePoint(pathCubicBezier.controlPoint1, Center, sx, sy);
+                    pathCubicBezier.controlPoint2 = ScalePoint(pathCubicBezier.controlPoint2, Center, sx, sy);
+                }
+            }
+        }       
 
         public void Scale(Point Center, double rad)
         {
