@@ -7,6 +7,11 @@ using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
+using Formats.json;
+using System.Linq;
+using Paint2.ViewModels.Interfaces;
+using System.IO;
+using System;
 
 namespace Paint2.ViewModels;
 
@@ -22,7 +27,10 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveJsonCommand { get; }
+    public ReactiveCommand<Unit, Unit> LoadJsonCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
+    public GeometryJsonSerializer? GeometryJsonSerializer { get; set; }
 
     public MainWindowViewModel()
     {
@@ -70,5 +78,42 @@ public class MainWindowViewModel : ViewModelBase
                     : new GridLength(0);
             });
         });
+SaveJsonCommand = ReactiveCommand.CreateFromTask(async () =>
+{
+    await Task.Run(() =>
+    {
+        var figuresToSave = Figures.Select(f => f.Figure).ToList();
+        GeometryJsonSerializer?.SaveFigures("/Assets/SaveFiles/figures.json", figuresToSave);
+
+    });
+});
+
+
+LoadJsonCommand = ReactiveCommand.CreateFromTask(async () =>
+{
+    await Task.Run(() =>
+    {
+        var loadedFigures = GeometryJsonSerializer?.LoadFigures<IFigure>("/Assets/SaveFiles/figures.json");
+
+        if (loadedFigures != null)
+        {
+            Figures.Clear();
+            foreach (var fig in loadedFigures)
+            {
+                var viewModel = new GeometryViewModel
+                {
+                    Figure = fig,
+                    Properties = new FigureGraphicProperties()
+                    {
+                        BorderThickness = 1,
+                        SolidColor = Colors.Black,
+                        BorderColor = Colors.Black,
+                    }
+                };
+                Figures.Add(viewModel);
+            }
+        }
+    });
+});
     }
 }
