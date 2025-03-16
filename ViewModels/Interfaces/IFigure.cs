@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Paint2.ViewModels.Utils;
 
 namespace Paint2.ViewModels.Interfaces

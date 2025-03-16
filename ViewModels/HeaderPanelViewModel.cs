@@ -40,20 +40,20 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
-                var rand = new Random();
-                var circle = new Circle(new Point(rand.Next(0, 500), rand.Next(0, 500)), rand.Next(3, 50), new Group(""));
-                var properties = new FigureGraphicProperties
-                {
-                    SolidColor = new Color(255, (byte)rand.Next(128, 255) , (byte)rand.Next(128, 255), (byte)rand.Next(128, 255)),
-                    BorderColor = new Color(255, (byte)rand.Next(128, 255), (byte)rand.Next(128, 255), (byte)rand.Next(128, 255)), 
-                    BorderThickness = (byte)rand.Next(3, 15)
-                };
-                figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
-                Renderer renderer = new();
-                Dispatcher.UIThread.Invoke(() =>
-                {
-                    circle.Render(renderer);
-                });
+                //var rand = new Random();
+                //var circle = new Circle(new Point(rand.Next(0, 500), rand.Next(0, 500)), rand.Next(3, 50), new Group(""));
+                //var properties = new FigureGraphicProperties
+                //{
+                //    SolidColor = new Color(255, (byte)rand.Next(128, 255) , (byte)rand.Next(128, 255), (byte)rand.Next(128, 255)),
+                //    BorderColor = new Color(255, (byte)rand.Next(128, 255), (byte)rand.Next(128, 255), (byte)rand.Next(128, 255)), 
+                //    BorderThickness = (byte)rand.Next(3, 15)
+                //};
+                //figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
+                //Renderer renderer = new();
+                //Dispatcher.UIThread.Invoke(() =>
+                //{
+                //    circle.Render(renderer);
+                //});
             });
         });
     }
