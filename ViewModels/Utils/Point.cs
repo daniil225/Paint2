@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Paint2.ViewModels.Utils
 {
-    public class Point (double x, double y)
+    public class Point
     {
         public static readonly Point Zero = new(0, 0);
-        public double X = x;
-        public double Y = y;
+        public double X;
+        public double Y;
 
         public Point Normalize()
         {
@@ -18,6 +18,18 @@ namespace Paint2.ViewModels.Utils
             double newX = X / magnitude;
             double newY = Y / magnitude;
             return new Point(newX, newY);
+        }
+
+        public Point(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public Point(Point other)
+        {
+            X = other.X;
+            Y = other.Y;
         }
 
         public double Magnitude() => Math.Sqrt(X * X + Y * Y);
