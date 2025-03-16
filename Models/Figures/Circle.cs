@@ -16,12 +16,12 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
         class CircleCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, IDictionary<string, Point> pointParams)
+            public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Circle(parentGroup, pointParams);
+                return new Circle(parentGroup, coordinates);
             }
         }
-        Circle(Group parentGroup, IDictionary<string, Point> pointParams) : base(parentGroup, pointParams)
+        Circle(Group parentGroup, Point pointParams) : base(parentGroup, pointParams)
         {
             name = "Circle";
             // Тут нужно создать шаблонную версию фигуры (с радиусом 1 например)

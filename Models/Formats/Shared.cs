@@ -127,7 +127,7 @@ namespace Formats
         public (double Length, double Gap)? Dash = dash;
     }
 
-    interface IPathElement;
+    public interface IPathElement;
     struct PathMoveTo : IPathElement
     {
         public Point dest;

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
@@ -43,10 +44,11 @@ namespace Paint2.Models.Figures
 
         protected string name;
         protected Group _parentGroup;
+        protected IList<IPathElement> pathElements;
 
-        protected PathFigure(Group parentGroup, IDictionary<string, Point> pointParams)
+        protected PathFigure(Group parentGroup, Point coordinates)
         {
-            Coordinates = pointParams["Coordinates"];
+            Coordinates = coordinates;
             IsActive = true;
             IsMirrored = false;
             _parentGroup = parentGroup;

@@ -6,18 +6,18 @@ using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Square : Polygon
+    public class Square : PathFigure
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), nameof(Square))]
         class SquareCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, IDictionary<string, Point> pointParams)
+            public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Square(parentGroup, pointParams);
+                return new Square(parentGroup, coordinates);
             }
         }
-        Square(Group parentGroup, IDictionary<string, Point> pointParams) : base(parentGroup, pointParams)
+        Square(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
         {
             name = "Square";
             // Тут нужно создать шаблонную версию фигуры (с со сторонами 1 например)
