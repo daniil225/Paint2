@@ -28,7 +28,7 @@ namespace Formats.Json
 
             if (jsonTree == null || !jsonTree.Any())
             {
-                throw new ArgumentException("РќРµРІРѕР·РјРѕР¶РЅРѕ Р·Р°РіСЂСѓР·РёС‚СЊ РґР°РЅРЅС‹Рµ РёР· JSON, С„Р°Р№Р» РїСѓСЃС‚ РёР»Рё РїРѕРІСЂРµР¶РґРµРЅ.");
+                throw new ArgumentException("Невозможно загрузить данные из JSON, файл пуст или поврежден.");
             }
             var snapshot = new JsonSnapshot();
             RestoreJsonGroup(snapshot, jsonTree);
@@ -47,7 +47,7 @@ namespace Formats.Json
 
                 foreach (var element in group.Children)
                 {
-                    // Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЌР»РµРјРµРЅС‚С‹ РІРЅСѓС‚СЂРё РіСЂСѓРїРїС‹
+                    // Восстанавливаем элементы внутри группы
                     switch (element)
                     {
                         case JsonRect rect:
@@ -107,18 +107,18 @@ namespace Formats.Json
                             break;
 
                         case JsonGroup childGroup:
-                            // Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІР»РѕР¶РµРЅРЅСѓСЋ РіСЂСѓРїРїСѓ
+                            // Восстанавливаем вложенную группу
                             RestoreJsonGroup(snapshot, new List<JsonGroup> { childGroup });
                             break;
 
                         default:
-                            throw new ArgumentException($"РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЌР»РµРјРµРЅС‚Р°: {element.GetType()}");
+                            throw new ArgumentException($"Неизвестный тип элемента: {element.GetType()}");
                     }
                 }
 
                 if (group.Brush != null)
                 {
-                    // Р•СЃР»Рё Сѓ РіСЂСѓРїРїС‹ РµСЃС‚СЊ Brush, РїСЂРёРјРµРЅСЏРµРј РµРіРѕ
+                    // Если у группы есть Brush, применяем его
                     snapshot.Brush = group.Brush;
                 }
 
