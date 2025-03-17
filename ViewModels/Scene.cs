@@ -4,36 +4,39 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Paint2.ViewModels
 {
-    public static class Scene
+    public class Scene
     {
+        public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public static IList<Group> Groups { get; private set; }
-        public static IImportFormat ImportStrategy { get; set; }
-        public static IExportFormat ExportStrategy { get; set; }
-        public static ObservableCollection<GeometryViewModel> RenderedFigures { get; private set; }
+        public IList<Group> Groups { get; private set; }
+        public IImportFormat ImportStrategy { get; set; }
+        public IExportFormat ExportStrategy { get; set; }
+        public ObservableCollection<GeometryViewModel> RenderedFigures { get; private set; }
 
-        static Scene()
+        Scene(ObservableCollection<GeometryViewModel> renderedFigures)
         {
             Groups = [];
-            //FileStrategy = new SVGStrategy();
+            RenderedFigures = renderedFigures;
         }
+
         // Не помню какие именно тут параметры нужны были
-        public static void SaveScene(IExportSnapshot snapshort, string path)
+        public void SaveScene(IExportSnapshot snapshort, string path)
         {
             ExportStrategy.SaveTo(snapshort, path);
         }
-        public static void LoadScene(string path)
+        public void LoadScene(string path)
         {
             ImportStrategy.LoadFrom(path);
         }
-        public static void SetupScene(ObservableCollection<GeometryViewModel> renderedFigures)
+        public static void CreateScene(ObservableCollection<GeometryViewModel> renderedFigures)
         {
-            RenderedFigures = renderedFigures;
+            Current = new Scene(renderedFigures);
         }
-        public static Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
+        public Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
         {
             Group newGroup = new(name, graphicProperties);
             if (parentGroup is null) // Если в топ иерархии
@@ -46,14 +49,19 @@ namespace Paint2.ViewModels
             }
             return newGroup;
         }
-        public static void RemoveObject(ISceneObject sceneObject)
+        public void RemoveObject(ISceneObject sceneObject)
         {
             if (sceneObject.Parent is null)
                 Groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.childObjects.Remove(sceneObject);
+
+            if (sceneObject is IFigure fig)
+            {
+                RenderedFigures.Remove(RenderedFigures.First(fig => fig.Figure == sceneObject));
+            }
         }
-        public static void ResetScene()
+        public void ResetScene()
         {
             Groups.Clear();
         }

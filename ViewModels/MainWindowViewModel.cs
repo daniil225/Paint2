@@ -30,6 +30,7 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         Figures = [];
+        Scene.CreateScene(Figures);
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
         //var properties = new FigureGraphicProperties()

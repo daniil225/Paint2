@@ -30,7 +30,7 @@ namespace Paint2.ViewModels
                     else
                     {
                         _parentGroup.childObjects.Remove(this);
-                        Scene.Groups.Add(this);
+                        Scene.Current.Groups.Add(this);
                         _parentGroup = null;
                     }
                 } 
@@ -38,7 +38,7 @@ namespace Paint2.ViewModels
                 {
                     if (_parentGroup is null)
                     {
-                        Scene.Groups.Remove(this);
+                        Scene.Current.Groups.Remove(this);
                         _parentGroup = value;
                         _parentGroup.childObjects.Add(this);
                     }

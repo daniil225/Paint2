@@ -49,7 +49,7 @@ public static class FigureFabric
     public static IFigure CreateFigure(string FigureName, Group parentGroup, Point coordinates)
     {
         IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
-        Scene.RenderedFigures.Add(new GeometryViewModel() { Figure = newFigure });
+        Scene.Current.RenderedFigures.Add(new GeometryViewModel() { Figure = newFigure });
         return newFigure;
     }
 }
