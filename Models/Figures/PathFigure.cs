@@ -66,11 +66,6 @@ namespace Paint2.Models.Figures
             throw new NotImplementedException();
         }
 
-        public bool IsInternal(Point p, double eps)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Mirror(Point ax1, Point ax2)
         {
             double a = ax2.X - ax1.X;
@@ -98,6 +93,9 @@ namespace Paint2.Models.Figures
                     pathCubicBezier.controlPoint2 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint2);
                 }
             }
+
+            Coordinates = ReflectionPoint(a, b, c, Coordinates);
+            Render();
         }
 
         public void Move(Point vector)
@@ -117,6 +115,9 @@ namespace Paint2.Models.Figures
                     pathCubicBezier.controlPoint2 += vector;
                 }
             }
+
+            Coordinates += vector;
+            Render();
         }
 
         public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
@@ -149,6 +150,9 @@ namespace Paint2.Models.Figures
                     pathCubicBezier.controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle);
                 }
             }
+
+            Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
+            Render();
         }
 
         public void Scale(Point Center, double sx, double sy)
@@ -176,14 +180,12 @@ namespace Paint2.Models.Figures
                     pathCubicBezier.controlPoint2 = ScalePoint(pathCubicBezier.controlPoint2, Center, sx, sy);
                 }
             }
+
+            Coordinates = ScalePoint(Coordinates, Center, sx, sy);
+            Render();
         }       
 
         public void Scale(Point Center, double rad)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetParameters(IDictionary<string, double> doubleParams, IDictionary<string, Point> pointParams)
         {
             throw new NotImplementedException();
         }
