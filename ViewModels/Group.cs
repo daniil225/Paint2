@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using Serilog;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System;
 
 namespace Paint2.ViewModels
 {
@@ -49,6 +52,7 @@ namespace Paint2.ViewModels
                         _parentGroup.childObjects.Add(this);
                     }
                 }
+                Scene.Current.TriggerHeirarchyRebuild();
             }
         }
         public IList<ISceneObject> childObjects;

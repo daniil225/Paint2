@@ -10,17 +10,18 @@ namespace Paint2.ViewModels
 {
     public class Scene
     {
+        public delegate void HierarchyUpdateDeligate(IList<ISceneObject> groups);
+        public HierarchyUpdateDeligate OnHierarcyUpdate;
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
         public IList<Group> Groups { get; private set; }
         public IImportFormat ImportStrategy { get; set; }
         public IExportFormat ExportStrategy { get; set; }
-        public ObservableCollection<GeometryViewModel> RenderedFigures { get; private set; }
 
-        Scene(ObservableCollection<GeometryViewModel> renderedFigures)
+        Scene()
         {
             Groups = [];
-            RenderedFigures = renderedFigures;
+            CreateScene();
         }
 
         // Не помню какие именно тут параметры нужны были
@@ -32,9 +33,9 @@ namespace Paint2.ViewModels
         {
             ImportStrategy.LoadFrom(path);
         }
-        public static void CreateScene(ObservableCollection<GeometryViewModel> renderedFigures)
+        public static void CreateScene()
         {
-            Current = new Scene(renderedFigures);
+            Current = new Scene();
         }
         public Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
         {
@@ -55,15 +56,13 @@ namespace Paint2.ViewModels
                 Groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.childObjects.Remove(sceneObject);
-
-            if (sceneObject is IFigure fig)
-            {
-                RenderedFigures.Remove(RenderedFigures.First(fig => fig.Figure == sceneObject));
-            }
+            TriggerHeirarchyRebuild();
         }
+        public void TriggerHeirarchyRebuild() => OnHierarcyUpdate.Invoke([.. Groups]);
         public void ResetScene()
         {
             Groups.Clear();
+            TriggerHeirarchyRebuild();
         }
     }
 }

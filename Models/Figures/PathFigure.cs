@@ -35,6 +35,7 @@ namespace Paint2.Models.Figures
                     _parentGroup.childObjects.Remove(this);
                     _parentGroup = value;
                     _parentGroup.childObjects.Add(this);
+                    Scene.Current.TriggerHeirarchyRebuild();
                 }
             }
         }
@@ -66,6 +67,8 @@ namespace Paint2.Models.Figures
             IsMirrored = false;
             _parentGroup = parentGroup;
             _parentGroup.childObjects.Add(this);
+
+            Scene.Current.TriggerHeirarchyRebuild();
         }
 
         public void Export(IExportSnapshot snapshot)

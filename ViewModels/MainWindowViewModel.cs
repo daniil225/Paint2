@@ -1,13 +1,17 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
+using DynamicData;
 using Paint2.Models.Figures;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -30,7 +34,10 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         Figures = [];
-        Scene.CreateScene(Figures);
+        Scene.CreateScene();
+        // Подписываю Figures на обновление иерархии сцены
+        Scene.Current.OnHierarcyUpdate += UpdateFigures;
+
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
         //var properties = new FigureGraphicProperties()
@@ -73,5 +80,39 @@ public class MainWindowViewModel : ViewModelBase
                     : new GridLength(0);
             });
         });
+    }
+
+    private void UpdateFigures(IList<ISceneObject> hierarchy)
+    {
+        var figures = new ObservableCollection<GeometryViewModel>();
+        foreach (var obj in hierarchy)
+        {
+            if (obj is Group group) // Assuming IGroup is your group interface/class
+            {
+                figures.AddRange(ScanBranch(group.childObjects));
+            }
+            else // It's a figure
+            {
+                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj });
+            }
+        }
+        Figures.Clear();
+        Figures.AddRange(figures);
+    }
+    private ObservableCollection<GeometryViewModel> ScanBranch(IList<ISceneObject> branch)
+    {
+        var figures = new ObservableCollection<GeometryViewModel>();
+        foreach (var obj in branch)
+        {
+            if (obj is Group group)
+            {
+                figures.AddRange(ScanBranch(group.childObjects));
+            }
+            else
+            {
+                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj });
+            }
+        }
+        return figures;
     }
 }

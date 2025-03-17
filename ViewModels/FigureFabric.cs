@@ -48,8 +48,6 @@ public static class FigureFabric
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
     public static IFigure CreateFigure(string FigureName, Group parentGroup, Point coordinates)
     {
-        IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
-        Scene.Current.RenderedFigures.Add(new GeometryViewModel() { Figure = newFigure });
-        return newFigure;
+        return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
     }
 }
