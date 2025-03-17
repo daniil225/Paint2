@@ -3,6 +3,7 @@ using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
 using System;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Paint2.Models.Figures
 {
-    public abstract class PathFigure : IFigure
+    public abstract class PathFigure : ReactiveObject, IFigure
     {
         public string Name
         {
@@ -41,10 +42,22 @@ namespace Paint2.Models.Figures
         [Reactive] public Geometry Geometry { get; set; }
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
+        public IFigureGraphicProperties? GraphicProperties
+        {
+            get
+            {
+                if (_graphicProperties is null)
+                    return Parent.GraphicProperties;
+                else
+                    return _graphicProperties;
+            }
+            set => this.RaiseAndSetIfChanged(ref _graphicProperties, value);
+        }
 
         protected string name;
         protected Group _parentGroup;
         protected IList<IPathElement> pathElements;
+        protected IFigureGraphicProperties? _graphicProperties;
 
         protected PathFigure(Group parentGroup, Point coordinates)
         {

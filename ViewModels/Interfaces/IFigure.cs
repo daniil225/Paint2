@@ -7,6 +7,7 @@ namespace Paint2.ViewModels.Interfaces
 {
     public interface IFigure : ISceneObject
     {
+        IFigureGraphicProperties? GraphicProperties { get; set; }
         bool IsInternal(Point p, double eps);
         IFigure Intersect(IFigure other);
         IFigure Union(IFigure other);

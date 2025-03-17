@@ -57,11 +57,12 @@ namespace Paint2.ViewModels
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
+        public IFigureGraphicProperties GraphicProperties { get; set; }
 
         private string _name;
         private Group? _parentGroup;
 
-        public Group(string name)
+        public Group(string name, IFigureGraphicProperties graphicProperties)
         {
             _name = name;
             Coordinates = Point.Zero;
@@ -69,6 +70,7 @@ namespace Paint2.ViewModels
             childObjects = [];
             IsActive = true;
             IsMirrored = false;
+            GraphicProperties = graphicProperties;
         }
         public void Move(Point vector)
         {

@@ -7,14 +7,14 @@
              x:Class="Paint2.Views.GeometryView"
              x:DataType="vm:GeometryViewModel"
              ClipToBounds="False">
-    <Path StrokeThickness="{Binding  Properties.BorderThickness}"
+    <Path StrokeThickness="{Binding  Figure.GraphicProperties.BorderThickness}"
           Data="{Binding Figure.Geometry}"
           PointerPressed="Path_OnPointerPressed">
         <Path.Fill>
-            <SolidColorBrush Color="{Binding Properties.SolidColor}" />
+            <SolidColorBrush Color="{Binding Figure.GraphicProperties.SolidColor}" />
         </Path.Fill>
         <Path.Stroke>
-            <SolidColorBrush Color="{Binding Properties.BorderColor}" />
+            <SolidColorBrush Color="{Binding Figure.GraphicProperties.BorderColor}" />
         </Path.Stroke>
     </Path>
 </UserControl>

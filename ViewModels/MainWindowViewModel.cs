@@ -5,6 +5,7 @@ using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -29,7 +30,6 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         Figures = [];
-
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
         //var properties = new FigureGraphicProperties()
@@ -40,7 +40,7 @@ public class MainWindowViewModel : ViewModelBase
         //Renderer renderer = new();
         //circle.Render(renderer);
         ////////////////////////////////////
-        
+
         HeaderPanel = new HeaderPanelViewModel(Figures);
         PropertiesPanel = new PropertiesPanelViewModel();
         GroupsPanel = new GroupsPanelViewModel();

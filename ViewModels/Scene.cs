@@ -1,6 +1,9 @@
 ﻿using Paint2.ViewModels.Interfaces;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Paint2.ViewModels
 {
@@ -10,6 +13,7 @@ namespace Paint2.ViewModels
         public static IList<Group> Groups { get; private set; }
         public static IImportFormat ImportStrategy { get; set; }
         public static IExportFormat ExportStrategy { get; set; }
+        public static ObservableCollection<GeometryViewModel> RenderedFigures { get; private set; }
 
         static Scene()
         {
@@ -25,9 +29,13 @@ namespace Paint2.ViewModels
         {
             ImportStrategy.LoadFrom(path);
         }
-        public static Group CreateGroup(string name, Group? parentGroup = null)
+        public static void SetupScene(ObservableCollection<GeometryViewModel> renderedFigures)
         {
-            Group newGroup = new(name);
+            RenderedFigures = renderedFigures;
+        }
+        public static Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
+        {
+            Group newGroup = new(name, graphicProperties);
             if (parentGroup is null) // Если в топ иерархии
             {
                 Groups.Add(newGroup);
