@@ -2,8 +2,6 @@
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
-using System;
-using System.ComponentModel;
 using System.Composition;
 
 namespace Paint2.Models.Figures
@@ -24,8 +22,8 @@ namespace Paint2.Models.Figures
         {
             Name = "Trapezoid";
 
-            double lowerBase = 10.0;
-            double upperBase = 15.0;
+            double lowerBase = 30.0;
+            double upperBase = 25.0;
             double height = coordinates.Y * 3.0 * (lowerBase + upperBase) / (2.0 * lowerBase + upperBase);
 
             double YLowerBase = coordinates.Y - (2.0 * height / 3.0) * (upperBase / (lowerBase + upperBase));

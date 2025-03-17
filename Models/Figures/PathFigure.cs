@@ -95,6 +95,7 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
+            IsMirrored = !IsMirrored;
             Render();
         }
 

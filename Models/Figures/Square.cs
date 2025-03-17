@@ -1,25 +1,24 @@
 ﻿using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
-using System.Collections.Generic;
 using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Square : PathFigure
+    public class Rectangle : PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Square))]
+        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Rectangle))]
         class SquareCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Square(parentGroup, coordinates);
+                return new Rectangle(parentGroup, coordinates);
             }
         }
-        Square(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
+        Rectangle(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
         {
-            name = "Square";
+            name = "Rectangle";
             // Тут нужно создать шаблонную версию фигуры (с со сторонами 1 например)
         }
     }

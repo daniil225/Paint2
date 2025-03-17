@@ -3,7 +3,6 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using System;
-using System.ComponentModel;
 using System.Composition;
 
 namespace Paint2.Models.Figures
@@ -24,7 +23,7 @@ namespace Paint2.Models.Figures
         {
             Name = "Pentagon";
 
-            double lengthSide = 10.0;
+            double lengthSide = 30.0;
             double R = lengthSide / (2.0 * Math.Sin(Math.PI / 5.0));
             double cos18 = Math.Cos(Math.PI / 10.0);
             double sin18 = Math.Sin(Math.PI / 10.0);

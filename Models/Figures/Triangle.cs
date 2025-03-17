@@ -24,7 +24,7 @@ namespace Paint2.Models.Figures
             Name = "Triangle";
 
             double sqrt3 = Math.Sqrt(3);
-            double lengthSide = 10.0;
+            double lengthSide = 30.0;
 
             pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X, coordinates.Y + lengthSide / sqrt3) });
             pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lengthSide / 2.0, coordinates.Y - lengthSide / (2 * sqrt3)) });
