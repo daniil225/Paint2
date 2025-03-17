@@ -13,6 +13,7 @@ namespace Formats.Json
 
         private readonly List<JsonGroup> _tree = new();
         private JsonGroup? _currentGroup;
+        private int _groupLevel = 0;
 
         public JsonSnapshot()
         {
@@ -40,9 +41,11 @@ namespace Formats.Json
             if (_currentGroup != null)
             {
                 _currentGroup.Children.Add(newGroup);
+                newGroup.Parent = _currentGroup;
             }
 
             _currentGroup = newGroup;
+            _groupLevel++;
         }
 
         public void Pop()
@@ -149,7 +152,7 @@ namespace Formats.Json
         public string? Name { get; set; }
         public IEnumerable<ITransform>? Transforms { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Brush? Brush { get; set; }
+        public Formats.Brush? Brush { get; set; }
     }
 
     public class JsonGroup : JsonElement
@@ -196,5 +199,4 @@ namespace Formats.Json
     {
         public IEnumerable<IPathElement>? Elements { get; set; }
     }
-    
 }
