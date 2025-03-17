@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using Avalonia.Media;
@@ -28,26 +29,29 @@ namespace Formats.Svg
             );
             _currentGroup = Tree;
         }
-
+        static string NumToStr(double val)
+        {
+            return val.ToString(new NumberFormatInfo { NumberDecimalSeparator = "." });
+        }
         static string PointToString(Point p)
         {
-            return $"{p.X},{p.Y}";
+            return $"{NumToStr(p.X)},{NumToStr(p.Y)}";
         }
         static string TransformToString(ITransform a)
         {
             if (a is Translate t)
             {
-                return $"translate({t.X}, {t.Y})";
+                return $"translate({NumToStr(t.X)}, {NumToStr(t.Y)})";
             }
             else if (a is Rotate r)
             {
                 if (r.Pivot != null)
                 {
-                    return $"rotate({r.Angle} {r.Pivot.X},{r.Pivot.Y})";
+                    return $"rotate({NumToStr(r.Angle)} {PointToString(r.Pivot)})";
                 }
                 else
                 {
-                    return $"rotate({r.Angle})";
+                    return $"rotate({NumToStr(r.Angle)})";
                 }
             }
             else
@@ -71,12 +75,12 @@ namespace Formats.Svg
             if (a is PathMoveTo e)
             {
                 var dest = e.dest;
-                return $"M {dest.X},{dest.Y}";
+                return $"M {PointToString(dest)}";
             }
             else if (a is PathLineTo e2)
             {
                 var dest = e2.dest;
-                return $"L {dest.X},{dest.Y}";
+                return $"L {PointToString(dest)}";
             }
             else if (a is PathArcTo e3)
             {
@@ -93,15 +97,15 @@ namespace Formats.Svg
                     _ => throw new ArgumentException("Некорректное направление вращения"),
                 };
 
-                return $"A {e3.radiusX} {e3.radiusY} {e3.xAxisRotation} {largeArcFlag} {sweepFlag} {e3.dest.X},{e3.dest.Y}";
+                return $"A {NumToStr(e3.radiusX)} {NumToStr(e3.radiusY)} {NumToStr(e3.xAxisRotation)} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
             }
-            else if(a is PathCubicBezierTo e4)
+            else if (a is PathCubicBezierTo e4)
             {
-                return $"C {e4.controlPoint1.X},{e4.controlPoint1.Y} "
-                    + $"{e4.controlPoint2.X},{e4.controlPoint2.Y} "
-                    + $"{e4.dest.X},{e4.dest.Y}";
+                return $"C {PointToString(e4.controlPoint1)} "
+                    + $"{PointToString(e4.controlPoint2)} "
+                    + $"{PointToString(e4.dest)}";
             }
-            else if(a is PathClose e5)
+            else if (a is PathClose e5)
             {
                 return "Z";
             }
