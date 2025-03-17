@@ -102,10 +102,10 @@ namespace Paint2.ViewModels
             throw new System.NotImplementedException();
         }
 
-        public void Render(IRenderInterface toDraw)
+        public void Render()
         {
             foreach (ISceneObject obj in childObjects)
-                obj.Render(toDraw);
+                obj.Render();
         }
     }
 }

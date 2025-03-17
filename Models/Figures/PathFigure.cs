@@ -119,10 +119,7 @@ namespace Paint2.Models.Figures
             }
         }
 
-        public void Render(IRenderInterface toDraw)
-        {
-            throw new NotImplementedException();
-        }
+        public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
 
         public void Rotate(Point Center, double angle)
         {

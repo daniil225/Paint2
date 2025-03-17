@@ -20,6 +20,6 @@ namespace Paint2.ViewModels
         void Scale(Point Center, double x, double y);
         void Scale(Point Center, double rad);
         void Mirror(Point ax1, Point ax2);
-        void Render(IRenderInterface toDraw);
+        void Render();
     }
 }

@@ -1,43 +1,70 @@
+using Avalonia;
 using Avalonia.Media;
-using Paint2.ViewModels.Interfaces;
+using Formats;
+using System.Collections.Generic;
 
-namespace Paint2.ViewModels.Utils
+namespace Paint2.ViewModels.Utils;
+
+public static class Renderer
 {
-    public class Renderer : IRenderInterface
+    public static Geometry RenderPathElements(IList<IPathElement> pathElements)
     {
-        public Geometry RenderLine(Point startPoint, Point endPoint)
+        PathFigures pathFigures = [];
+        PathFigure pathFigure = new() { IsFilled = true, IsClosed = true};
+        PathSegments segments = [];
+        
+        foreach(IPathElement pathElement in pathElements)
         {
-            Avalonia.Point aStartPoint = new(startPoint.X, startPoint.Y);
-            Avalonia.Point aEndPoint = new(endPoint.X, endPoint.Y);
-            LineGeometry lineGeometry = new() {StartPoint = aStartPoint, EndPoint = aEndPoint};
-            return lineGeometry;
+            switch (pathElement)
+            {
+                case PathMoveTo pathMove:
+                    {
+                        Point startPoint = pathMove.dest;
+                        var aStartPoint = new Avalonia.Point(startPoint.X, startPoint.Y);
+                        pathFigure.StartPoint = aStartPoint;
+                        break;
+                    }
+                case PathLineTo pathLine:
+                    {
+                        var aDest = new Avalonia.Point(pathLine.dest.X, pathLine.dest.Y);
+                        LineSegment lineSegment = new() { IsStroked = true, Point = aDest };
+                        segments.Add(lineSegment);
+                        break;
+                    }
+                case PathArcTo pathArc:
+                    {
+                        var aDest = new Avalonia.Point(pathArc.dest.X, pathArc.dest.Y);
+                        ArcSegment arcSegment = new()
+                        {
+                            IsLargeArc = pathArc.largeArcFlag,
+                            IsStroked = true,
+                            Size = new Size(pathArc.radiusX, pathArc.radiusY),
+                            Point = aDest,
+                            RotationAngle = pathArc.xAxisRotation,
+                            SweepDirection = pathArc.sweepDirection
+                        };
+                        segments.Add(arcSegment);
+                        break;
+                    }
+                case PathCubicBezierTo cubicBezier:
+                    {
+                        var aDest = new Avalonia.Point(cubicBezier.dest.X, cubicBezier.dest.Y);
+                        var aControlPoint1 = new Avalonia.Point(
+                            cubicBezier.controlPoint1.X, cubicBezier.controlPoint1.Y);
+                        var aControlPoint2 = new Avalonia.Point(
+                            cubicBezier.controlPoint2.X, cubicBezier.controlPoint2.Y);
+                        BezierSegment bezierSegment = new()
+                        {
+                            IsStroked = true, Point1 = aControlPoint1, Point2 = aControlPoint2, Point3 = aDest
+                        };
+                        segments.Add(bezierSegment);
+                        break;
+                    }
+            }
         }
 
-        public Geometry RenderArc(Point startPoint, Point endPoint, double sizeX, double sizeY, bool isClosed)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Geometry RenderPolygon(Point[] points)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Geometry RenderEllipse(Point center, double radiusX, double radiusY, Transform? transformation)
-        {
-            Avalonia.Point aCenter = new(center.X, center.Y);
-            EllipseGeometry ellipseGeometry = new() { Center = aCenter, RadiusX = radiusX, RadiusY = radiusY };
-            return ellipseGeometry;
-        }
-
-        public Geometry RenderCubicBezierCurve(Point point1, Point point2, Point point3, Point point4)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Geometry CombineGeometries(Geometry geometry1, Geometry geometry2, GeometryCombineMode mode)
-        {
-            return new CombinedGeometry(mode, geometry1, geometry2);
-        }
+        pathFigure.Segments = segments;
+        pathFigures.Add(pathFigure);
+        return new PathGeometry { Figures = pathFigures };
     }
 }
