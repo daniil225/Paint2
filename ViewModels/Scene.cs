@@ -5,13 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using static Paint2.ViewModels.Scene;
 
 namespace Paint2.ViewModels
 {
     public class Scene
     {
         public delegate void HierarchyUpdateDeligate(IList<ISceneObject> groups);
-        public HierarchyUpdateDeligate OnHierarcyUpdate;
+        public event HierarchyUpdateDeligate OnHierarchyUpdate
+        {
+            add => _onHierarcyUpdate += value;
+            remove => _onHierarcyUpdate -= value;
+        }
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
         public IImportFormat ImportStrategy { get; set; }
@@ -19,11 +24,11 @@ namespace Paint2.ViewModels
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
 
         private IList<Group> _groups { get; set; }
+        private HierarchyUpdateDeligate _onHierarcyUpdate;
 
         Scene()
         {
             _groups = [];
-            CreateScene();
         }
 
         // Не помню какие именно тут параметры нужны были
@@ -66,13 +71,13 @@ namespace Paint2.ViewModels
                 _groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.childObjects.Remove(sceneObject);
-            TriggerHeirarchyRebuild();
+            TriggerOnHeirarchyUpdate();
         }
-        public void TriggerHeirarchyRebuild() => OnHierarcyUpdate.Invoke([.. _groups]);
+        public void TriggerOnHeirarchyUpdate() => _onHierarcyUpdate.Invoke([.. _groups]);
         public void ResetScene()
         {
             _groups.Clear();
-            TriggerHeirarchyRebuild();
+            TriggerOnHeirarchyUpdate();
         }
     }
 }

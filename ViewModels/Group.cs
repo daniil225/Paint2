@@ -52,7 +52,7 @@ namespace Paint2.ViewModels
                         _parentGroup.childObjects.Add(this);
                     }
                 }
-                Scene.Current.TriggerHeirarchyRebuild();
+                Scene.Current.TriggerOnHeirarchyUpdate();
             }
         }
         public IList<ISceneObject> childObjects;

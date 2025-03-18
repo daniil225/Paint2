@@ -36,7 +36,7 @@ public class MainWindowViewModel : ViewModelBase
         Figures = [];
         Scene.CreateScene();
         // Подписываю Figures на обновление иерархии сцены
-        Scene.Current.OnHierarcyUpdate += UpdateFigures;
+        Scene.Current.OnHierarchyUpdate += UpdateFigures;
 
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
