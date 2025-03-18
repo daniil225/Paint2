@@ -6,6 +6,7 @@ using Serilog;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System;
+using System.Linq;
 
 namespace Paint2.ViewModels
 {
@@ -32,7 +33,7 @@ namespace Paint2.ViewModels
                         return;
                     else
                     {
-                        _parentGroup.childObjects.Remove(this);
+                        _parentGroup._childObjects.Remove(this);
                         Scene.Current.AddGroupToRoot(this);
                         _parentGroup = null;
                     }
@@ -43,19 +44,19 @@ namespace Paint2.ViewModels
                     {
                         Scene.Current.RemoveGroupFromRoot(this);
                         _parentGroup = value;
-                        _parentGroup.childObjects.Add(this);
+                        _parentGroup._childObjects.Add(this);
                     }
                     else
                     {
-                        _parentGroup.childObjects.Remove(this);
+                        _parentGroup._childObjects.Remove(this);
                         _parentGroup = value;
-                        _parentGroup.childObjects.Add(this);
+                        _parentGroup._childObjects.Add(this);
                     }
                 }
                 Scene.Current.TriggerOnHeirarchyUpdate();
             }
         }
-        public IList<ISceneObject> childObjects;
+        public IReadOnlyList<ISceneObject> ChildObjects { get => _childObjects.AsReadOnly(); }
         public Point Coordinates { get; private set; }
         public float Angle { get; private set; }
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
@@ -65,32 +66,60 @@ namespace Paint2.ViewModels
 
         private string _name;
         private Group? _parentGroup;
+        private List<ISceneObject> _childObjects;
 
         public Group(string name, IFigureGraphicProperties graphicProperties)
         {
             _name = name;
             Coordinates = Point.Zero;
             Angle = 0f;
-            childObjects = [];
+            _childObjects = [];
             IsActive = true;
             IsMirrored = false;
             GraphicProperties = graphicProperties;
         }
+        public void SetIfParent(ISceneObject child, bool isParent)
+        {
+            if (isParent)
+            {
+                _childObjects.Add(child);
+            }
+            else if (_childObjects.Contains(child))
+            {
+                _childObjects.Remove(child);
+            }
+        }
+        public void MoveObjectInsideGroup(int newId, ISceneObject movedObject)
+        {
+            if (!_childObjects.Contains(movedObject))
+                Log.Error($"Попытка переместить объект {movedObject.Name} внутри группы {Name}, но объект не является дочерним");
+            else
+            {
+                int oldId = _childObjects.IndexOf(movedObject);
+                _childObjects[oldId] = null;
+                if (newId != _childObjects.Count - 1)
+                    _childObjects.Insert(newId, movedObject);
+                else
+                    _childObjects.Add(movedObject);
+                _childObjects.RemoveAll((item) => item is null);
+            }
+            Scene.Current.TriggerOnHeirarchyUpdate();
+        }
         public void Move(Point vector)
         {
-            foreach (ISceneObject obj in childObjects)
+            foreach (ISceneObject obj in ChildObjects)
                 obj.Move(vector);
         }
 
         public void Rotate(Point Center, double angle)
         {
-            foreach (ISceneObject obj in childObjects)
+            foreach (ISceneObject obj in ChildObjects)
                 obj.Rotate(Center, angle);
         }
 
         public void Scale(Point Center, double sx, double sy)
         {
-            foreach (ISceneObject obj in childObjects)
+            foreach (ISceneObject obj in ChildObjects)
                 obj.Scale(Center, sx, sy);
             // Проблемка, каждый объект будет масштабироваться относительно себя, а не центра группы.
             // Как решение - сделать скейл относттельно точки, но не радиальный, а по x и y
@@ -98,7 +127,7 @@ namespace Paint2.ViewModels
 
         public void Scale(Point Center, double rad)
         {
-            foreach (ISceneObject obj in childObjects)
+            foreach (ISceneObject obj in ChildObjects)
                 obj.Scale(Center, rad);
         }
 
@@ -110,7 +139,7 @@ namespace Paint2.ViewModels
 
         public void Render()
         {
-            foreach (ISceneObject obj in childObjects)
+            foreach (ISceneObject obj in ChildObjects)
                 obj.Render();
         }
     }

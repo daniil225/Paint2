@@ -82,14 +82,14 @@ public class MainWindowViewModel : ViewModelBase
         });
     }
 
-    private void UpdateFigures(IList<ISceneObject> hierarchy)
+    private void UpdateFigures(IReadOnlyList<ISceneObject> hierarchy)
     {
         var figures = new ObservableCollection<GeometryViewModel>();
         foreach (var obj in hierarchy)
         {
             if (obj is Group group) // Assuming IGroup is your group interface/class
             {
-                figures.AddRange(ScanBranch(group.childObjects));
+                figures.AddRange(ScanBranch(group.ChildObjects));
             }
             else // It's a figure
             {
@@ -99,14 +99,14 @@ public class MainWindowViewModel : ViewModelBase
         Figures.Clear();
         Figures.AddRange(figures);
     }
-    private ObservableCollection<GeometryViewModel> ScanBranch(IList<ISceneObject> branch)
+    private ObservableCollection<GeometryViewModel> ScanBranch(IReadOnlyList<ISceneObject> branch)
     {
         var figures = new ObservableCollection<GeometryViewModel>();
         foreach (var obj in branch)
         {
             if (obj is Group group)
             {
-                figures.AddRange(ScanBranch(group.childObjects));
+                figures.AddRange(ScanBranch(group.ChildObjects));
             }
             else
             {
