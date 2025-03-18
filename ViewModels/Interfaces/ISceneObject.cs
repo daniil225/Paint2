@@ -16,10 +16,12 @@ namespace Paint2.ViewModels
         float Angle { get; }
         Geometry Geometry { get; set; } // геометрия объекта, хранит то, как объект выглядит на сцене
         void Move(Point vector);
-        void Rotate(Point Center, double angle);
-        void Scale(Point Center, double x, double y);
-        void Scale(Point Center, double rad);
+        void Rotate(double angle, Point Center);
+        void Scale(double x, double y, Point Center);
+        void Scale(double rad, Point Center);
         void Mirror(Point ax1, Point ax2);
+        void MirrorHorizontal();
+        void MirrorVertical();
         void Render();
     }
 }

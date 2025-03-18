@@ -115,6 +115,14 @@ namespace Paint2.Models.Figures
             IsMirrored = !IsMirrored;
             Render();
         }
+        public void MirrorHorizontal()
+        {
+            Mirror(Coordinates, Coordinates + new Point(1, 0));
+        }
+        public void MirrorVertical()
+        {
+            Mirror(Coordinates, Coordinates + new Point(0, 1));
+        }
 
         public void Move(Point vector)
         {
@@ -140,7 +148,7 @@ namespace Paint2.Models.Figures
 
         public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
 
-        public void Rotate(Point Center, double angle)
+        public void Rotate(double angle, Point Center)
         {
             double radians = angle * Math.PI / 180;
             double cosAngle = Math.Cos(radians);
@@ -173,7 +181,7 @@ namespace Paint2.Models.Figures
             Render();
         }
 
-        public void Scale(Point Center, double sx, double sy)
+        public void Scale(double sx, double sy, Point Center)
         {
             foreach (var pathElement in pathElements)
             {
@@ -203,7 +211,7 @@ namespace Paint2.Models.Figures
             Render();
         }       
 
-        public void Scale(Point Center, double rad)
+        public void Scale(double rad, Point Center)
         {
             throw new NotImplementedException();
         }

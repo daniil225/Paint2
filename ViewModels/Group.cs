@@ -57,7 +57,19 @@ namespace Paint2.ViewModels
             }
         }
         public IReadOnlyList<ISceneObject> ChildObjects { get => _childObjects.AsReadOnly(); }
-        public Point Coordinates { get; private set; }
+        public Point Coordinates
+        {
+            get
+            {
+                int count = ChildObjects.Count;
+                if (count == 0)
+                    return new Point(0, 0);
+
+                Point sum = ChildObjects.Aggregate(new Point(0, 0), (acc, obj) => acc + obj.Coordinates);
+                return sum / count;
+            }
+            private set { }
+        }
         public float Angle { get; private set; }
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
@@ -111,30 +123,41 @@ namespace Paint2.ViewModels
                 obj.Move(vector);
         }
 
-        public void Rotate(Point Center, double angle)
+        public void Rotate(double angle, Point? Center = null)
         {
+
+            Point actualCenter = Center ?? Coordinates;
             foreach (ISceneObject obj in ChildObjects)
-                obj.Rotate(Center, angle);
+                obj.Rotate(angle, actualCenter);
         }
 
-        public void Scale(Point Center, double sx, double sy)
+        public void Scale(double sx, double sy, Point? Center = null)
         {
+            Point actualCenter = Center ?? Coordinates;
             foreach (ISceneObject obj in ChildObjects)
-                obj.Scale(Center, sx, sy);
-            // Проблемка, каждый объект будет масштабироваться относительно себя, а не центра группы.
-            // Как решение - сделать скейл относттельно точки, но не радиальный, а по x и y
+                obj.Scale(sx, sy, actualCenter);
         }
 
-        public void Scale(Point Center, double rad)
+        public void Scale(double rad, Point? Center = null)
         {
+            Point actualCenter = Center ?? Coordinates;
             foreach (ISceneObject obj in ChildObjects)
-                obj.Scale(Center, rad);
+                obj.Scale(rad, actualCenter);
         }
 
         public void Mirror(Point ax1, Point ax2)
         {
-            // Чет не понял зачем здесь две точки и как это должно работать
-            throw new System.NotImplementedException();
+            foreach (ISceneObject obj in ChildObjects)
+                obj.Mirror(ax1, ax2);
+            IsMirrored = !IsMirrored;
+        }
+        public void MirrorHorizontal()
+        {
+            Mirror(Coordinates, Coordinates + new Point(1, 0));
+        }
+        public void MirrorVertical()
+        {
+            Mirror(Coordinates, Coordinates + new Point(0, 1));
         }
 
         public void Render()
