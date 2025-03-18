@@ -9,13 +9,11 @@
         Icon="/Assets/app-logo.ico"
         Title="Paint2">
     
-    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+    <Grid RowDefinitions="Auto,*,Auto, Auto" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
             <ContentControl Content="{Binding HeaderPanel}"></ContentControl>
         </StackPanel>
-        
         <Border Grid.Row="0" Height="4" Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
-        
         <Grid Grid.Row="1" RowDefinitions="*">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding GroupsColumnWidth}"></ColumnDefinition>
@@ -24,13 +22,10 @@
                 <ColumnDefinition Width="4"></ColumnDefinition>
                 <ColumnDefinition Width="{Binding PropertiesColumnWidth}"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            
-            <!-- Панель групп -->
             <Grid Grid.Column="0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ContentControl Content="{Binding GroupsPanel}" />
                 </ScrollViewer>
-                
                 <Button Width="48" Height="48"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
@@ -40,19 +35,21 @@
                     <PathIcon Data="{StaticResource ListTreeRegular}" />
                 </Button>
             </Grid>
-            
             <GridSplitter Grid.Column="1" 
                           Width="4"
                           IsVisible="{Binding IsGroupsPanelVisible}"
                           Background="DarkGray"></GridSplitter>
-            
             <Grid Grid.Column="2">
                 <ItemsControl HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                     ItemsSource="{Binding Figures}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas Background="White" />
+                            <Canvas PointerMoved="Canvas_OnPointerMoved"
+                                    PointerExited="Canvas_OnPointerExited"
+                                    PointerPressed="Canvas_OnPointerPressed"
+                                    PointerEntered="Canvas_OnPointerEntered"
+                                    Background="White" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -73,5 +70,9 @@
                 </Button>
 			</Grid>
         </Grid>
+        <Border Grid.Row="2" Height="4" Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+        <StackPanel Background="Gainsboro" Grid.Row="3">
+            <ContentControl Content="{Binding FooterPanel}"></ContentControl>
+        </StackPanel>
     </Grid>
 </Window>

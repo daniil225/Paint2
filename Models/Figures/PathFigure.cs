@@ -89,25 +89,33 @@ namespace Paint2.Models.Figures
             double b = ax2.Y - ax1.Y;
             double c = -(a * ax1.X + b * ax1.Y);
 
-            foreach (var pathElement in pathElements)
+            for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElement is PathMoveTo pathMove)
-                    pathMove.dest = ReflectionPoint(a, b, c, pathMove.dest);
-                else if (pathElement is PathLineTo pathLine)
-                    pathLine.dest = ReflectionPoint(a, b, c, pathLine.dest);
-                else if (pathElement is PathArcTo pathArc)
+                if (pathElements[i] is PathMoveTo pathMove)
+                {
+                    pathElements[i] = new PathMoveTo() { dest = ReflectionPoint(a, b, c, pathMove.dest) };
+                }
+                else if (pathElements[i] is PathLineTo pathLine)
+                {
+                    pathElements[i] = new PathLineTo() { dest = ReflectionPoint(a, b, c, pathLine.dest) };
+                }
+                else if (pathElements[i] is PathArcTo pathArc)
                 {
                     pathArc.dest = ReflectionPoint(a, b, c, pathArc.dest);
                     pathArc.xAxisRotation = ReflectionAngle(ax1, ax2, pathArc.xAxisRotation);
                     pathArc.sweepDirection = pathArc.sweepDirection == SweepDirection.Clockwise ?
                                              SweepDirection.CounterClockwise :
                                              SweepDirection.Clockwise;
+                    pathElements[i] = pathArc;
                 }
-                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
                 {
-                    pathCubicBezier.dest = ReflectionPoint(a, b, c, pathCubicBezier.dest);
-                    pathCubicBezier.controlPoint1 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint1);
-                    pathCubicBezier.controlPoint2 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint2);
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        dest = ReflectionPoint(a, b, c, pathCubicBezier.dest),
+                        controlPoint1 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint1),
+                        controlPoint2 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint2)
+                    };
                 }
             }
 
@@ -126,19 +134,29 @@ namespace Paint2.Models.Figures
 
         public void Move(Point vector)
         {
-            foreach (var pathElement in pathElements)
+            for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElement is PathMoveTo pathMove)
-                    pathMove.dest += vector;
-                else if (pathElement is PathLineTo pathLine)
-                    pathLine.dest += vector;
-                else if (pathElement is PathArcTo pathArc)
-                    pathArc.dest += vector;
-                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                if (pathElements[i] is PathMoveTo pathMove)
                 {
-                    pathCubicBezier.dest += vector;
-                    pathCubicBezier.controlPoint1 += vector;
-                    pathCubicBezier.controlPoint2 += vector;
+                    pathElements[i] = new PathMoveTo() { dest = pathMove.dest + vector };
+                }
+                else if (pathElements[i] is PathLineTo pathLine)
+                {
+                    pathElements[i] = new PathLineTo() { dest = pathLine.dest + vector };
+                }
+                else if (pathElements[i] is PathArcTo pathArc)
+                {
+                    pathArc.dest += vector;
+                    pathElements[i] = pathArc;
+                }
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
+                {
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        controlPoint1 = pathCubicBezier.controlPoint1 + vector,
+                        controlPoint2 = pathCubicBezier.controlPoint2 + vector,
+                        dest = pathCubicBezier.dest + vector
+                    };
                 }
             }
 
@@ -154,26 +172,30 @@ namespace Paint2.Models.Figures
             double cosAngle = Math.Cos(radians);
             double sinAngle = Math.Sin(radians);
 
-            foreach (var pathElement in pathElements)
+            for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElement is PathMoveTo pathMove)
+                if (pathElements[i] is PathMoveTo pathMove)
                 {
-                    pathMove.dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle);
+                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
                 }
-                else if (pathElement is PathLineTo pathLine)
+                else if (pathElements[i] is PathLineTo pathLine)
                 {
-                    pathLine.dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle);
+                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
                 }
-                else if (pathElement is PathArcTo pathArc)
+                else if (pathElements[i] is PathArcTo pathArc)
                 {
                     pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
                     pathArc.xAxisRotation += angle;
+                    pathElements[i] = pathArc;
                 }
-                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
                 {
-                    pathCubicBezier.dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle);
-                    pathCubicBezier.controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle);
-                    pathCubicBezier.controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle);
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
+                        controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
+                        controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
+                    };
                 }
             }
 
@@ -183,33 +205,37 @@ namespace Paint2.Models.Figures
 
         public void Scale(double sx, double sy, Point Center)
         {
-            foreach (var pathElement in pathElements)
+            for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElement is PathMoveTo pathMove)
+                if (pathElements[i] is PathMoveTo pathMove)
                 {
-                    pathMove.dest = ScalePoint(pathMove.dest, Center, sx, sy);
+                    pathElements[i] = new PathMoveTo() { dest = ScalePoint(pathMove.dest, Center, sx, sy) };
                 }
-                else if (pathElement is PathLineTo pathLine)
+                else if (pathElements[i] is PathLineTo pathLine)
                 {
-                    pathLine.dest = ScalePoint(pathLine.dest, Center, sx, sy);
+                    pathElements[i] = new PathLineTo() { dest = ScalePoint(pathLine.dest, Center, sx, sy) };
                 }
-                else if (pathElement is PathArcTo pathArc)
+                else if (pathElements[i] is PathArcTo pathArc)
                 {
                     pathArc.dest = ScalePoint(pathArc.dest, Center, sx, sy);
                     pathArc.radiusX *= sx;
                     pathArc.radiusY *= sy;
+                    pathElements[i] = pathArc;
                 }
-                else if (pathElement is PathCubicBezierTo pathCubicBezier)
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
                 {
-                    pathCubicBezier.dest = ScalePoint(pathCubicBezier.dest, Center, sx, sy);
-                    pathCubicBezier.controlPoint1 = ScalePoint(pathCubicBezier.controlPoint1, Center, sx, sy);
-                    pathCubicBezier.controlPoint2 = ScalePoint(pathCubicBezier.controlPoint2, Center, sx, sy);
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        dest = ScalePoint(pathCubicBezier.dest, Center, sx, sy),
+                        controlPoint1 = ScalePoint(pathCubicBezier.controlPoint1, Center, sx, sy),
+                        controlPoint2 = ScalePoint(pathCubicBezier.controlPoint2, Center, sx, sy)
+                    };
                 }
             }
 
             Coordinates = ScalePoint(Coordinates, Center, sx, sy);
             Render();
-        }       
+        }
 
         public void Scale(double rad, Point Center)
         {

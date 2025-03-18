@@ -9,7 +9,9 @@
              ClipToBounds="False">
     <Path StrokeThickness="{Binding  Figure.GraphicProperties.BorderThickness}"
           Data="{Binding Figure.Geometry}"
-          PointerPressed="Path_OnPointerPressed">
+          PointerPressed="Path_OnPointerPressed"
+          PointerMoved="Path_OnPointerMoved"
+          PointerReleased="Path_OnPointerReleased">
         <Path.Fill>
             <SolidColorBrush Color="{Binding Figure.GraphicProperties.SolidColor}" />
         </Path.Fill>

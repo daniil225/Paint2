@@ -1,4 +1,5 @@
-﻿using System.Composition;
+﻿using Avalonia.Threading;
+using System.Composition;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
@@ -25,6 +26,8 @@ namespace Paint2.Models.Figures
 
             pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lengthLine / 2.0, coordinates.Y) });
             pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lengthLine / 2.0, coordinates.Y) });
+            
+            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

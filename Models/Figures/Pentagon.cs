@@ -1,4 +1,5 @@
-﻿using Formats;
+﻿using Avalonia.Threading;
+using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
@@ -36,6 +37,8 @@ namespace Paint2.Models.Figures
             pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - R * cos54, coordinates.Y - R * sin54) });
             pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - R * cos18, coordinates.Y + R * sin18) });
             pathElements.Add(new PathClose());
+            
+            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

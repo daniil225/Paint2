@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using Avalonia.Threading;
 using System.Composition;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
@@ -33,9 +34,20 @@ namespace Paint2.Models.Figures
                 xAxisRotation = 0,
                 largeArcFlag = true,
                 sweepDirection = SweepDirection.Clockwise,
+                dest = new Point(coordinates.X - Rx, coordinates.Y)
+            });
+            pathElements.Add(new PathArcTo()
+            {
+                radiusX = Rx,
+                radiusY = Ry,
+                xAxisRotation = 0,
+                largeArcFlag = true,
+                sweepDirection = SweepDirection.Clockwise,
                 dest = new Point(coordinates.X + Rx, coordinates.Y)
             });
             pathElements.Add(new PathClose());
+            
+            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }
