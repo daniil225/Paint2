@@ -99,13 +99,13 @@ namespace Formats.Svg
 
                 return $"A {NumToStr(e3.radiusX)} {NumToStr(e3.radiusY)} {NumToStr(e3.xAxisRotation)} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
             }
-            else if(a is PathCubicBezierTo e4)
+            else if (a is PathCubicBezierTo e4)
             {
                 return $"C {PointToString(e4.controlPoint1)} "
                     + $"{PointToString(e4.controlPoint2)} "
                     + $"{PointToString(e4.dest)}";
             }
-            else if(a is PathClose e5)
+            else if (a is PathClose e5)
             {
                 return "Z";
             }
