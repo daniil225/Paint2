@@ -11,6 +11,7 @@ using iText.Kernel.Geom;
 using ExCSS;
 using Avalonia.Controls.Shapes;
 using Paint2.ViewModels.Utils;
+using System.Numerics;
 
 namespace Formats.PDF;
 
@@ -143,14 +144,168 @@ public class PDFExporter : IExportFormat
         canvas.RestoreState();
     }
 
-    private void SavePath()
+    private void SavePath(PDFPath pDFPath, PdfCanvas canvas)
     {
+        canvas.SaveState();
+        ApplyTransformations(pDFPath, canvas);
+        ApplyBrush(pDFPath, canvas);
 
+        var elements = pDFPath.Elements;
+
+        Paint2.ViewModels.Utils.Point CurrentPoint = null;
+
+        foreach (var element in elements)
+        {
+            if(element is PathArcTo pathArc)
+            {
+                CurrentPoint = SavePathElement(pathArc, canvas, CurrentPoint);
+            }
+            else
+            {
+                CurrentPoint = SavePathElement((dynamic)element, canvas);
+            }
+        }
+
+        canvas.Stroke();
+
+        canvas.RestoreState();
+    }
+
+    private Paint2.ViewModels.Utils.Point SavePathElement(PathMoveTo move, PdfCanvas canvas)
+    {
+        Paint2.ViewModels.Utils.Point dest = move.dest;
+        canvas.MoveTo(dest.X, dest.Y);
+        return dest;
+    }
+
+    private Paint2.ViewModels.Utils.Point SavePathElement(PathLineTo line, PdfCanvas canvas)
+    {
+        Paint2.ViewModels.Utils.Point dest = line.dest;
+        canvas.LineTo(dest.X, dest.Y);
+        return dest;
+    }
+
+    private Paint2.ViewModels.Utils.Point SavePathElement(PathArcTo arc, PdfCanvas canvas, Paint2.ViewModels.Utils.Point curPoint)
+    {
+        double angle_rad = arc.xAxisRotation / 180 * Math.PI;
+        var sinA = Math.Sin(angle_rad);
+        var cosA = Math.Cos(angle_rad);
+
+        //// Large arc flag
+        bool fLarge = arc.largeArcFlag;
+
+        //// Sweep flag
+        var fS = arc.sweepDirection == Avalonia.Media.SweepDirection.Clockwise ? true : false;
+
+        var dest = arc.dest;
+
+        var radiusX = arc.radiusX;
+        var radiusY = arc.radiusY;
+        var x1 = curPoint.X;
+        var y1 = curPoint.Y;
+        var x2 = dest.X;
+        var y2 = dest.Y;
+
+        //Compute (x1′, y1′)/
+
+        //// Median between Start and End
+        var midPointX = (x1 + x2) / 2;
+        var midPointY = (y1 + y2) / 2;
+
+        var x1p = (cosA * midPointX) + (sinA * midPointY);
+        var y1p = (cosA * midPointY) - (sinA * midPointX);
+
+         // Step 2: Compute (cx′, cy′)
+
+        var rxry_2 = Math.Pow(radiusX, 2) * Math.Pow(radiusY, 2);
+        var rxy1p_2 = Math.Pow(radiusX, 2) * Math.Pow(y1p, 2);
+        var ryx1p_2 = Math.Pow(radiusY, 2) * Math.Pow(x1p, 2);
+
+        var sqrt = Math.Sqrt(Math.Abs(rxry_2 - rxy1p_2 - ryx1p_2) / (rxy1p_2 + ryx1p_2));
+        if (fLarge == fS)
+            sqrt = -sqrt;
+
+        var cXP = sqrt * (radiusX * y1p / radiusY);
+        var cYP = sqrt * -(radiusY * x1p / radiusX);
+
+         // Step 3: Compute (cx, cy) from (cx′, cy′)
+
+        var cX = (cosA * cXP) - (sinA * cYP) + ((x1 + x2) / 2);
+        var cY = (sinA * cXP) + (cosA * cYP) + ((y1 + y2) / 2);
+
+         // Step 4: Compute θ1 and dθ
+
+        var x1pcxp_rx = (x1p - cXP) / radiusX;
+        var y1pcyp_ry = (y1p - cYP) / radiusY;
+        var vector1 = new Paint2.ViewModels.Utils.Point(1d, 0d);
+        var vector2 = new Paint2.ViewModels.Utils.Point(x1pcxp_rx, y1pcyp_ry);
+
+        var angle = Math.Acos(((vector1.X * vector2.X) + (vector1.Y * vector2.Y)) / (Math.Sqrt((vector1.X * vector1.X) + (vector1.Y * vector1.Y)) * Math.Sqrt((vector2.X * vector2.X) + (vector2.Y * vector2.Y)))) * (180 / Math.PI);
+
+        if (((vector1.X * vector2.Y) - (vector1.Y * vector2.X)) < 0)
+        {
+            angle = angle * -1;
+        }
+
+        var vector3 = new Paint2.ViewModels.Utils.Point(x1pcxp_rx, y1pcyp_ry);
+        var vector4 = new Paint2.ViewModels.Utils.Point((-x1p - cXP) / radiusX, (-y1p - cYP) / radiusY);
+
+        var extent = (Math.Acos(((vector3.X * vector4.X) + (vector3.Y * vector4.Y)) / Math.Sqrt((vector3.X * vector3.X) + (vector3.Y * vector3.Y)) * Math.Sqrt((vector4.X * vector4.X) + (vector4.Y * vector4.Y))) * (180 / Math.PI)) % 360;
+
+        if (((vector3.X * vector4.Y) - (vector3.Y * vector4.X)) < 0)
+        {
+            extent = extent * -1;
+        }
+
+        if (fS == true && extent < 0)
+        {
+            extent = extent + 360;
+        }
+
+        if (fS == false && extent > 0)
+        {
+            extent = extent - 360;
+        }
+
+        var rectLL_X = cX - radiusX;
+        var rectLL_Y = cY - radiusY;
+
+        var rectUR_X = cX + radiusX;
+        var rectUR_Y = cY + radiusY;
+
+        canvas.Arc(rectLL_X, rectLL_Y, rectUR_X, rectUR_Y, angle, extent);
+
+        return dest;
+    }
+
+    private Paint2.ViewModels.Utils.Point SavePathElement(PathCubicBezierTo curve, PdfCanvas canvas)
+    {
+        canvas.CurveTo(curve.controlPoint1.X,
+                       curve.controlPoint1.Y,
+                       curve.controlPoint2.X,
+                       curve.controlPoint2.Y,
+                       curve.dest.X,
+                       curve.dest.Y);
+        return curve.dest;
+    }
+
+    private void SavePathElement(PathClose close, PdfCanvas canvas)
+    {
+        canvas.ClosePath();
+        canvas.Fill();
     }
 
     private void SaveElement(PDFGroup group, PdfCanvas canvas)
     {
+        List<PDFElement> elements = group.Children;
+        canvas.SaveState();
+        ApplyTransformations(group, canvas);
+        ApplyBrush(group, canvas);
 
+        foreach (PDFElement element in elements)
+            SaveElement((dynamic)element,canvas);
+
+        canvas.RestoreState();
     }
 }
 
