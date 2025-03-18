@@ -1,36 +1,55 @@
 ﻿using Paint2.ViewModels.Interfaces;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using static Paint2.ViewModels.Scene;
 
 namespace Paint2.ViewModels
 {
-    public static class Scene
+    public class Scene
     {
-        // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public static IList<Group> Groups { get; private set; }
-        public static IImportFormat ImportStrategy { get; set; }
-        public static IExportFormat ExportStrategy { get; set; }
-
-        static Scene()
+        public delegate void HierarchyUpdateDeligate(IList<ISceneObject> groups);
+        public event HierarchyUpdateDeligate OnHierarchyUpdate
         {
-            Groups = [];
-            //FileStrategy = new SVGStrategy();
+            add => _onHierarcyUpdate += value;
+            remove => _onHierarcyUpdate -= value;
         }
+        public static Scene Current { get; private set; }
+        // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
+        public IImportFormat ImportStrategy { get; set; }
+        public IExportFormat ExportStrategy { get; set; }
+        public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
+
+        private IList<Group> _groups { get; set; }
+        private HierarchyUpdateDeligate _onHierarcyUpdate;
+
+        Scene()
+        {
+            _groups = [];
+        }
+
         // Не помню какие именно тут параметры нужны были
-        public static void SaveScene(IExportSnapshot snapshort, string path)
+        public void SaveScene(IExportSnapshot snapshort, string path)
         {
             ExportStrategy.SaveTo(snapshort, path);
         }
-        public static void LoadScene(string path)
+        public void LoadScene(string path)
         {
             ImportStrategy.LoadFrom(path);
         }
-        public static Group CreateGroup(string name, Group? parentGroup = null)
+        public static void CreateScene()
         {
-            Group newGroup = new(name);
+            Current = new Scene();
+        }
+        public Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
+        {
+            Group newGroup = new(name, graphicProperties);
             if (parentGroup is null) // Если в топ иерархии
             {
-                Groups.Add(newGroup);
+                _groups.Add(newGroup);
             } 
             else
             {
@@ -38,16 +57,27 @@ namespace Paint2.ViewModels
             }
             return newGroup;
         }
-        public static void RemoveObject(ISceneObject sceneObject)
+        public void AddGroupToRoot(Group group)
+        {
+            Current._groups.Add(group);
+        }
+        public void RemoveGroupFromRoot(Group group)
+        {
+            Current._groups.Remove(group);
+        }
+        public void RemoveObject(ISceneObject sceneObject)
         {
             if (sceneObject.Parent is null)
-                Groups.Remove((Group)sceneObject);
+                _groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.childObjects.Remove(sceneObject);
+            TriggerOnHeirarchyUpdate();
         }
-        public static void ResetScene()
+        public void TriggerOnHeirarchyUpdate() => _onHierarcyUpdate.Invoke([.. _groups]);
+        public void ResetScene()
         {
-            Groups.Clear();
+            _groups.Clear();
+            TriggerOnHeirarchyUpdate();
         }
     }
 }
