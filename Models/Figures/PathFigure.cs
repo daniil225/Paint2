@@ -33,9 +33,9 @@ namespace Paint2.Models.Figures
                     Log.Error($"Попытка удалить родителя у {Name}. Фигуры не могут быть сами по себе.");
                 else
                 {
-                    _parentGroup.childObjects.Remove(this);
+                    _parentGroup.SetIfParent(this, false);
                     _parentGroup = value;
-                    _parentGroup.childObjects.Add(this);
+                    _parentGroup.SetIfParent(this, true);
                     Scene.Current.TriggerOnHeirarchyUpdate();
                 }
             }
@@ -68,7 +68,7 @@ namespace Paint2.Models.Figures
             IsActive = true;
             IsMirrored = false;
             _parentGroup = parentGroup;
-            _parentGroup.childObjects.Add(this);
+            _parentGroup.SetIfParent(this, true);
 
             Scene.Current.TriggerOnHeirarchyUpdate();
         }
