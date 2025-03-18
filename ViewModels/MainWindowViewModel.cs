@@ -19,9 +19,10 @@ namespace Paint2.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public ViewModelBase GroupsPanel { get; }
-    public ViewModelBase PropertiesPanel { get; }
-    public ViewModelBase HeaderPanel { get; }
+    public GroupsPanelViewModel GroupsPanel { get; }
+    public PropertiesPanelViewModel PropertiesPanel { get; }
+    public HeaderPanelViewModel HeaderPanel { get; }
+    public FooterPanelViewModel FooterPanel { get; }
     
     [Reactive] public bool IsPropertiesPanelVisible { get; set; }
     [Reactive] public bool IsGroupsPanelVisible { get; set; }
@@ -29,6 +30,7 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
+    public ReactiveCommand<Point, Unit> CreateFigureCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
 
     public MainWindowViewModel()
@@ -40,10 +42,6 @@ public class MainWindowViewModel : ViewModelBase
 
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
-        //var properties = new FigureGraphicProperties()
-        //{
-        //    SolidColor = new Color(255, 255 , 0, 0), BorderColor = new Color(255, 255, 128, 0), BorderThickness = 10
-        //};
         //Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
         //Renderer renderer = new();
         //circle.Render(renderer);
@@ -52,6 +50,7 @@ public class MainWindowViewModel : ViewModelBase
         HeaderPanel = new HeaderPanelViewModel(Figures);
         PropertiesPanel = new PropertiesPanelViewModel();
         GroupsPanel = new GroupsPanelViewModel();
+        FooterPanel = new FooterPanelViewModel();
         
         IsPropertiesPanelVisible = true;
         PropertiesColumnWidth = new GridLength(0, GridUnitType.Auto);
@@ -78,6 +77,23 @@ public class MainWindowViewModel : ViewModelBase
                 GroupsColumnWidth = IsGroupsPanelVisible
                     ? new GridLength(0, GridUnitType.Auto)
                     : new GridLength(0);
+            });
+        });
+        
+        CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point pointerCoordinates) =>
+        {
+            await Task.Run(() =>
+            {
+                var properties = new FigureGraphicProperties()
+                {
+                    SolidColor = new Color(255, 255 , 0, 0),
+                    BorderColor = new Color(255, 255, 128, 0),
+                    BorderThickness = 3
+                };
+                var group = Scene.Current.CreateGroup("Name", properties);
+                // надо удалять пробелы
+                string figureClassName = HeaderPanel.SelectedFigureMenuItem.IconName;
+                FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates);
             });
         });
     }

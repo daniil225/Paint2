@@ -62,7 +62,7 @@ public static class Renderer
                     }
             }
         }
-
+        
         pathFigure.Segments = segments;
         pathFigures.Add(pathFigure);
         return new PathGeometry { Figures = pathFigures };

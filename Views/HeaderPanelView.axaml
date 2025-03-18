@@ -55,9 +55,11 @@
                 <StackPanel>
                     <TextBlock HorizontalAlignment="Center">Figures</TextBlock>
                     <Separator></Separator>
-                    <Button ToolTip.Tip="Available figures"
-                            Padding="5"
-                            Background="Transparent">
+                    <ToggleButton Command="{Binding AddFigureCommand}"
+                                  IsChecked="{Binding IsCreateButtonChecked}"
+                                  ToolTip.Tip="Available figures"
+                                  Padding="5"
+                                  Background="Transparent">
                         <Button.Content>
                             <Svg Path="{Binding SelectedFigureMenuItem.IconPath}"
                                  Width="48" Height="48">
@@ -75,7 +77,7 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate DataType="{x:Type vm:FigureMenuItem}">
-                                            <Svg PointerPressed="Figure_OnPointerPressed" ToolTip.Tip="{Binding IconName}"
+                                            <Svg ToolTip.Tip="{Binding IconName}"
                                                  Path="{Binding IconPath}"
                                                  Width="48" Height="48">
                                             </Svg>
@@ -84,7 +86,7 @@
                                 </ListBox>
                             </Flyout>
                         </Button.Flyout>
-                    </Button>
+                    </ToggleButton>
                 </StackPanel>
             </Border>
             <Border Background="#f0f0f0"
@@ -96,21 +98,27 @@
                     <TextBlock HorizontalAlignment="Center">Tools</TextBlock>
                     <Separator></Separator>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button ToolTip.Tip="Intersect figures"
-                                Background="Transparent"
-                                Padding="5">
+                        <ToggleButton Command="{Binding IntersectFiguresCommand}"
+                                      IsChecked="{Binding IsIntersectButtonChecked}"
+                                      ToolTip.Tip="Intersect figures"
+                                      Background="Transparent"
+                                      Padding="5">
                             <Svg Width="48" Height="48" Path="/Assets/Tools/Intersect.svg"></Svg>
-                        </Button>
-                        <Button ToolTip.Tip="Union figures"
-                                Background="Transparent"
-                                Padding="5">
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding UnionFiguresCommand}"
+                                      IsChecked="{Binding IsUnionButtonChecked}"
+                                      ToolTip.Tip="Union figures"
+                                      Background="Transparent"
+                                      Padding="5">
                             <Svg Width="48" Height="48" Path="/Assets/Tools/Union.svg"></Svg>
-                        </Button>
-                        <Button ToolTip.Tip="Subtract figures"
-                                Background="Transparent"
-                                Padding="5">
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding SubtractFiguresCommand}"
+                                      IsChecked="{Binding IsSubtractButtonChecked}"
+                                      ToolTip.Tip="Subtract figures"
+                                      Background="Transparent"
+                                      Padding="5">
                             <Svg Width="48" Height="48" Path="/Assets/Tools/Subtract.svg"></Svg>
-                        </Button>
+                        </ToggleButton>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -123,27 +131,42 @@
                     <TextBlock HorizontalAlignment="Center">Options</TextBlock>
                     <Separator></Separator>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button ToolTip.Tip="Move figure"
-                                Background="Transparent"
-                                Padding="5">
+                        <ToggleButton Command="{Binding SelectFigureCommand}"
+                                      IsChecked="{Binding IsSelectButtonChecked}"
+                                      ToolTip.Tip="Select figure"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <PathIcon Width="48" Height="48"
+                                      Data="{StaticResource CursorHoverRegular}">
+                            </PathIcon>
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding MoveFigureCommand}"
+                                      IsChecked="{Binding IsMoveButtonChecked}"
+                                      ToolTip.Tip="Move figure"
+                                      Background="Transparent"
+                                      Padding="5">
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ArrowMoveRegular}">
                             </PathIcon>
-                        </Button>
-                        <Button ToolTip.Tip="Rotate figure"
-                                Background="Transparent"
-                                Padding="5">
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding RotateFigureCommand}"
+                                      IsChecked="{Binding IsRotateButtonChecked}"
+                                      ToolTip.Tip="Rotate figure"
+                                      Background="Transparent"
+                                      Padding="5">
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ArrowRotateCounterclockwiseRegular}">
                             </PathIcon>
-                        </Button>
-                        <Button ToolTip.Tip="Scale figure"
-                                Background="Transparent"
-                                Padding="5">
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding ScaleFigureCommand}"
+                                      IsChecked="{Binding IsScaleButtonChecked}"
+                                      ToolTip.Tip="Scale figure"
+                                      Background="Transparent"
+                                      Padding="5">
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ScaleRegular}">
                             </PathIcon>
-                        </Button>
+                        </ToggleButton>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -156,20 +179,24 @@
                     <TextBlock HorizontalAlignment="Center">Zoom</TextBlock>
                     <Separator></Separator>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button ToolTip.Tip="Zoom in"
-                                Background="Transparent"
-                                Padding="5">
+                        <ToggleButton Command="{Binding ZoomInCommand}"
+                                      IsChecked="{Binding IsZoomInButtonChecked}"
+                                      ToolTip.Tip="Zoom in"
+                                      Background="Transparent"
+                                      Padding="5">
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ZoomInRegular}">
                             </PathIcon>
-                        </Button>
-                        <Button ToolTip.Tip="Zoom out"
-                                Background="Transparent"
-                                Padding="5">
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding ZoomOutCommand}"
+                                      IsChecked="{Binding IsZoomOutButtonChecked}"
+                                      ToolTip.Tip="Zoom out"
+                                      Background="Transparent"
+                                      Padding="5">
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ZoomOutRegular}">
                             </PathIcon>
-                        </Button>
+                        </ToggleButton>
                     </StackPanel>
                 </StackPanel>
             </Border>
