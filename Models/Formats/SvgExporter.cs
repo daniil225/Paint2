@@ -16,7 +16,7 @@ namespace Formats.Svg
 
     public static partial class Tests
     {
-        public static void WriteTestSvg(string savePath)
+        public static void WriteTestGeneral(string savePath)
         {
             var snap = new SvgSnapshot(100, 100);
 
@@ -83,6 +83,199 @@ namespace Formats.Svg
 
             var exporter = new SvgExporter();
             exporter.SaveTo(snap, savePath);
+        }
+        public static void WriteTestOnlyPaths(string savePath)
+        {
+            var snap = new SvgSnapshot(200, 200);
+            var clockwise = Avalonia.Media.SweepDirection.Clockwise;
+            var counterClockwise = Avalonia.Media.SweepDirection.CounterClockwise;
+
+            // фон
+            snap.Brush = new(new(255, 255, 0, 255), new(255, 255, 255, 255), 4, null);
+            snap.AppendPath(
+                new PathBuilder()
+                    .MoveTo(new(0, 0))
+                    .LineTo(new(200, 0))
+                    .LineTo(new(200, 200))
+                    .LineTo(new(0, 200))
+                    .Close()
+                    .Build()
+            );
+
+            // примеры бинарных операций
+            snap.Brush = new(new(255, 255, 0, 0), new(255, 180, 0, 220), 1, null);
+            snap.PushGroup(new DocGroup() { Name = "group1" });
+                Point interP1 = new(50, 20);
+                Point interP2 = interP1 + new Point(0, 30);
+                var ySpace = 35;
+                snap.Brush.Fill = new(255/2, 180, 0, 220);
+                // эллипс A
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, false, clockwise, interP2)
+                        .ArcTo(20, 15, 30, true, clockwise, interP1)
+                        .Close()
+                        .Build()
+                );
+                // эллипс B
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, true, clockwise, interP2)
+                        .ArcTo(20, 15, 30, false, clockwise, interP1)
+                        .Close()
+                        .Build()
+                );
+                // ленивая стрелка
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(new(90, 35))
+                        .LineTo(new(110, 35))
+                        .MoveTo(new(105, 30))
+                        .LineTo(new(105, 40))
+                        .Build()
+                );
+                snap.Brush.Fill = new(255, 180, 0, 220);
+                // результат пересечения
+                interP1.X += 90;
+                interP2.X += 90;
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, false, clockwise, interP2)
+                        .ArcTo(20, 15, 30, false, clockwise, interP1)
+                        .Close()
+                        .Build()
+                );
+                // результат объединения
+                interP1.Y += ySpace;
+                interP2.Y += ySpace;
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, true, clockwise, interP2)
+                        .ArcTo(20, 15, 30, true, clockwise, interP1)
+                        .Close()
+                        .Build()
+                );
+                // результат A - B
+                interP1.Y += ySpace;
+                interP2.Y += ySpace;
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, false, counterClockwise, interP2)
+                        .ArcTo(20, 15, 30, true, clockwise, interP1)
+                        .Close()
+                        .Build()
+                );
+                // A|B - A&B
+                interP1.Y += ySpace;
+                interP2.Y += ySpace;
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, false, counterClockwise, interP2)
+                        .ArcTo(20, 15, 30, true, clockwise, interP1)
+                        .Close()
+                        .MoveTo(interP1)
+                        .ArcTo(20, 15, 30, true, clockwise, interP2)
+                        .ArcTo(20, 15, 30, false, counterClockwise, interP1)
+                        .Build()
+                );
+            snap.Pop();
+
+            var exporter = new SvgExporter();
+            exporter.SaveTo(snap, savePath);
+        }
+        public static void WriteTestMirror(string savePath)
+        {
+            var snap = new SvgSnapshot(200, 200);
+            var clockwise = Avalonia.Media.SweepDirection.Clockwise;
+            var counterClockwise = Avalonia.Media.SweepDirection.CounterClockwise;
+
+            // фон
+            snap.Brush = new(new(255, 255, 0, 255), new(255, 255, 255, 255), 4, null);
+            snap.AppendPath(
+                new PathBuilder()
+                    .MoveTo(new(0, 0))
+                    .LineTo(new(200, 0))
+                    .LineTo(new(200, 200))
+                    .LineTo(new(0, 200))
+                    .Close()
+                    .Build()
+            );
+
+            // зеркало
+            snap.Brush = new(new(255, 150, 150, 255), new(0, 255, 255, 255), 2, (10, 5));
+            snap.AppendPath(
+                new PathBuilder()
+                    .MoveTo(new(100, 10))
+                    .LineTo(new(100, 190))
+                    .MoveTo(new(10, 100))
+                    .LineTo(new(190, 100))
+                    .Build()
+            );
+
+            snap.Brush = new(new(255, 255, 0, 0), new(255, 180, 0, 220), 1, null);
+            snap.PushGroup(new DocGroup() { Name = "group1" });
+                var p1 = new Point(50, 50);
+                var p2 = p1 + new Point(40, 20);
+                var angle = 45;
+
+                // четверть IV
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(p1)
+                        .ArcTo(20, 15, angle, true, clockwise, p2)
+                        .Close()
+                        .Build()
+                );
+
+                // I
+                p1.X += 2*(100 - p1.X);
+                p2.X += 2*(100 - p2.X);
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(p1)
+                        .ArcTo(20, 15, -angle, true, counterClockwise, p2)
+                        .Close()
+                        .Build()
+                );
+
+                // II
+                p1.Y += 2*(100 - p1.Y);
+                p2.Y += 2*(100 - p2.Y);
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(p1)
+                        .ArcTo(20, 15, angle, true, clockwise, p2)
+                        .Close()
+                        .Build()
+                );
+
+                // III
+                p1.X += 2*(100 - p1.X);
+                p2.X += 2*(100 - p2.X);
+                snap.AppendPath(
+                    new PathBuilder()
+                        .MoveTo(p1)
+                        .ArcTo(20, 15, -angle, true, counterClockwise, p2)
+                        .Close()
+                        .Build()
+                );
+            snap.Pop();
+
+            var exporter = new SvgExporter();
+            exporter.SaveTo(snap, savePath);
+        }
+
+        public static void RunAll()
+        {
+            WriteTestGeneral("all.svg");
+            WriteTestOnlyPaths("paths.svg");
+            WriteTestMirror("mirror.svg");
         }
     }
 }
