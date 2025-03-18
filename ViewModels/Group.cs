@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using Serilog;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System;
 
 namespace Paint2.ViewModels
 {
@@ -30,7 +33,7 @@ namespace Paint2.ViewModels
                     else
                     {
                         _parentGroup.childObjects.Remove(this);
-                        Scene.Groups.Add(this);
+                        Scene.Current.AddGroupToRoot(this);
                         _parentGroup = null;
                     }
                 } 
@@ -38,7 +41,7 @@ namespace Paint2.ViewModels
                 {
                     if (_parentGroup is null)
                     {
-                        Scene.Groups.Remove(this);
+                        Scene.Current.RemoveGroupFromRoot(this);
                         _parentGroup = value;
                         _parentGroup.childObjects.Add(this);
                     }
@@ -49,6 +52,7 @@ namespace Paint2.ViewModels
                         _parentGroup.childObjects.Add(this);
                     }
                 }
+                Scene.Current.TriggerOnHeirarchyUpdate();
             }
         }
         public IList<ISceneObject> childObjects;
@@ -57,11 +61,12 @@ namespace Paint2.ViewModels
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
+        public IFigureGraphicProperties GraphicProperties { get; set; }
 
         private string _name;
         private Group? _parentGroup;
 
-        public Group(string name)
+        public Group(string name, IFigureGraphicProperties graphicProperties)
         {
             _name = name;
             Coordinates = Point.Zero;
@@ -69,6 +74,7 @@ namespace Paint2.ViewModels
             childObjects = [];
             IsActive = true;
             IsMirrored = false;
+            GraphicProperties = graphicProperties;
         }
         public void Move(Point vector)
         {

@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using Avalonia.Threading;
 using Paint2.Models.Figures;
+using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
