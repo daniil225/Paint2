@@ -14,13 +14,15 @@ namespace Paint2.ViewModels
         public HierarchyUpdateDeligate OnHierarcyUpdate;
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public IList<Group> Groups { get; private set; }
         public IImportFormat ImportStrategy { get; set; }
         public IExportFormat ExportStrategy { get; set; }
+        public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
+
+        private IList<Group> _groups { get; set; }
 
         Scene()
         {
-            Groups = [];
+            _groups = [];
             CreateScene();
         }
 
@@ -42,7 +44,7 @@ namespace Paint2.ViewModels
             Group newGroup = new(name, graphicProperties);
             if (parentGroup is null) // Если в топ иерархии
             {
-                Groups.Add(newGroup);
+                _groups.Add(newGroup);
             } 
             else
             {
@@ -50,18 +52,26 @@ namespace Paint2.ViewModels
             }
             return newGroup;
         }
+        public void AddGroupToRoot(Group group)
+        {
+            Current._groups.Add(group);
+        }
+        public void RemoveGroupFromRoot(Group group)
+        {
+            Current._groups.Remove(group);
+        }
         public void RemoveObject(ISceneObject sceneObject)
         {
             if (sceneObject.Parent is null)
-                Groups.Remove((Group)sceneObject);
+                _groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.childObjects.Remove(sceneObject);
             TriggerHeirarchyRebuild();
         }
-        public void TriggerHeirarchyRebuild() => OnHierarcyUpdate.Invoke([.. Groups]);
+        public void TriggerHeirarchyRebuild() => OnHierarcyUpdate.Invoke([.. _groups]);
         public void ResetScene()
         {
-            Groups.Clear();
+            _groups.Clear();
             TriggerHeirarchyRebuild();
         }
     }
