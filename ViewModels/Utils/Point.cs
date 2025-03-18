@@ -14,11 +14,14 @@ namespace Paint2.ViewModels.Utils
 
         public Point Normalize()
         {
-            double magnitude = Math.Sqrt(X * X + Y * Y);
+            double magnitude = Magnitude();
             double newX = X / magnitude;
             double newY = Y / magnitude;
             return new Point(newX, newY);
         }
+
+        public double Magnitude() => Math.Sqrt(X * X + Y * Y);
+        
         public static Point operator +(Point a, Point b) => new(a.X + b.X, a.Y + b.Y);
         public static Point operator -(Point a) => new(-a.X, -a.Y);
         public static Point operator -(Point a, Point b) => new(a.X - b.X, a.Y - b.Y);
