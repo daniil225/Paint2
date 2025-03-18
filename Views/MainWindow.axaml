@@ -48,6 +48,7 @@
                             <Canvas PointerMoved="Canvas_OnPointerMoved"
                                     PointerExited="Canvas_OnPointerExited"
                                     PointerPressed="Canvas_OnPointerPressed"
+                                    PointerEntered="Canvas_OnPointerEntered"
                                     Background="White" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>

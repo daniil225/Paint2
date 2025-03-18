@@ -24,6 +24,7 @@ public class MainWindowViewModel : ViewModelBase
     public HeaderPanelViewModel HeaderPanel { get; }
     public FooterPanelViewModel FooterPanel { get; }
     
+    [Reactive] public IFigure SelectedFigure { get; set; }
     [Reactive] public bool IsPropertiesPanelVisible { get; set; }
     [Reactive] public bool IsGroupsPanelVisible { get; set; }
     [Reactive] public GridLength PropertiesColumnWidth { get; set; }
@@ -32,6 +33,8 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
     public ReactiveCommand<Point, Unit> CreateFigureCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
+    public Point MovementVector { get; set; }
+    public Point PrevPointerCoordinates { get; set; }
 
     public MainWindowViewModel()
     {
@@ -109,7 +112,7 @@ public class MainWindowViewModel : ViewModelBase
             }
             else // It's a figure
             {
-                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj });
+                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj, MainWindowViewModel = this});
             }
         }
         Figures.Clear();
@@ -126,7 +129,7 @@ public class MainWindowViewModel : ViewModelBase
             }
             else
             {
-                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj });
+                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj, MainWindowViewModel = this});
             }
         }
         return figures;

@@ -20,7 +20,14 @@ namespace Paint2.Views
         private void Canvas_OnPointerMoved(object? sender, PointerEventArgs e)
         {
             var point = e.GetCurrentPoint(sender as Control);
-            _vm?.FooterPanel.UpdatePointerCoordinates(point.Position.X, point.Position.Y);
+            if (_vm is null)
+            {
+                return;
+            }
+            _vm.FooterPanel.UpdatePointerCoordinates(point.Position.X, point.Position.Y);
+            Point currentPoint = new(point.Position.X, point.Position.Y);
+            _vm.MovementVector = currentPoint - _vm.PrevPointerCoordinates;
+            _vm.PrevPointerCoordinates = currentPoint;
         }
 
         private void Canvas_OnPointerExited(object? sender, PointerEventArgs e)
@@ -36,6 +43,16 @@ namespace Paint2.Views
                 Point pointerCoordinates = new(point.Position.X, point.Position.Y);
                 _vm?.CreateFigureCommand.Execute(pointerCoordinates);
             }
+        }
+
+        private void Canvas_OnPointerEntered(object? sender, PointerEventArgs e)
+        {
+            if (_vm is null)
+            {
+                return;
+            }
+            var point = e.GetCurrentPoint(sender as Control);
+            _vm.PrevPointerCoordinates = new Point(point.Position.X, point.Position.Y);
         }
     }
 }
