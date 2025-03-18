@@ -12,7 +12,7 @@ namespace Paint2.Models.Figures
     public class Rhombus : PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Rectangle))]
+        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Rhombus))]
         class RhombusCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
