@@ -63,6 +63,7 @@ namespace Paint2.Models.Figures
 
         protected PathFigure(Group parentGroup, Point coordinates)
         {
+            pathElements = [];
             Coordinates = coordinates;
             IsActive = true;
             IsMirrored = false;
