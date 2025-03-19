@@ -8,6 +8,8 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Subjects;
 using static Paint2.Models.Figures.TransformingAlgorithms;
 
 namespace Paint2.Models.Figures
@@ -41,18 +43,14 @@ namespace Paint2.Models.Figures
             }
         }
         public float Angle { get; private set; }
-        [Reactive] public Geometry Geometry { get; set; }
+        [Reactive] public Geometry? Geometry { get; set; }
+        public Subject<Unit> NeedUpdateGraphics { get; } = new Subject<Unit>();
+
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
-            get
-            {
-                if (_graphicProperties is null)
-                    return Parent.GraphicProperties;
-                else
-                    return _graphicProperties;
-            }
+            get => _graphicProperties ?? Parent?.GraphicProperties;
             set => this.RaiseAndSetIfChanged(ref _graphicProperties, value);
         }
 
@@ -164,7 +162,7 @@ namespace Paint2.Models.Figures
             Render();
         }
 
-        public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
+        public void Render() => NeedUpdateGraphics.OnNext(default);
 
         public void Rotate(double angle, Point Center)
         {
