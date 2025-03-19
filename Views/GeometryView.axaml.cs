@@ -69,7 +69,7 @@ namespace Paint2.Views
                         {
                             angleInRad = -angleInRad;
                         }
-                        _vm.Figure.Rotate(center, angleInRad);
+                        _vm.Figure.Rotate(angleInRad, center);
                     }
                     break;
                 case MenuModesEnum.ScaleFigureMode when _isPointerPressed:
@@ -82,7 +82,7 @@ namespace Paint2.Views
                         double lengthPrev = centerToPrevPointVector.Magnitude();
                         double lengthCurrent = centerToPointVector.Magnitude();
                         double scale = lengthCurrent / lengthPrev;
-                        _vm.Figure.Scale(center, scale, scale);
+                        _vm.Figure.Scale(scale, scale, center);
                     }
                     break;
             }
