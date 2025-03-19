@@ -28,10 +28,10 @@ namespace Paint2.Models.Figures
             double offsetX = lengthSide * Math.Cos(angle);
             double offsetY = lengthSide * Math.Sin(angle);
 
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - offsetY - lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY + lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY + lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY - lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
+            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
+            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
+            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
+            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
             pathElements.Add(new PathClose());
             
             Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
