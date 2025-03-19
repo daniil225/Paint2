@@ -124,16 +124,19 @@ public static class PDFDataChange
             switch (transform)
             {
                 case (Translate translate):
-                {
-                    translate.Y = height - translate.Y;
+ //               {
+                    if(translate.Y > 0)
+                        translate.Y = height -translate.Y;
+                    else 
+                        translate.Y = -translate.Y - height;
                     break;
-                }
+//                }
                 case (Rotate rotate):
-                {
+//                {
                     if(rotate.Pivot != null)
                         TransformPoint(rotate.Pivot,height);
                     break;
-                }
+ //               }
             }
         }
     }
@@ -145,7 +148,11 @@ public abstract class PDFElement
     public IEnumerable<ITransform>? Transforms { get; set; }
     public Formats.Brush? Brush { get; set; }
 
-    public PDFElement(double height) { PDFDataChange.TransformTransformations(Transforms, height); }
+    public PDFElement(IEnumerable<ITransform> Transforms_, double height)
+    {
+        Transforms = Transforms_;
+        PDFDataChange.TransformTransformations(Transforms, height); 
+    }
     
 }
 
@@ -154,16 +161,16 @@ public class PDFGroup : PDFElement
     public List<PDFElement> Children { get; set; } = new();
     public PDFGroup? Parent { get; set; }
 
-    public PDFGroup(PDFGroup? parent, DocGroup group, double height) : base(height)
+    public PDFGroup(PDFGroup? parent, DocGroup group, double height) : base(group.Transforms, height)
     {
         Parent = parent;
         Name = group.Name;
         Children = new();
-        Transforms = group.Transforms;
+        //Transforms = group.Transforms;
         this.Brush = Brush;
     }
 
-    public PDFGroup() : base(0) { }
+    public PDFGroup() : base(null,0) { }
 }
 
 public class PDFRect : PDFElement
@@ -173,7 +180,7 @@ public class PDFRect : PDFElement
     public double Width { get; set; }
     public double Height { get; set; }
 
-    public PDFRect(DocRect rect, double height) : base(height)
+    public PDFRect(DocRect rect, double height) : base(rect.Transforms, height)
     {
         Position = rect.Position;
         PDFDataChange.TransformPoint(Position,height);
@@ -181,7 +188,7 @@ public class PDFRect : PDFElement
         Width = rect.Width;
         Height = rect.Height;
         Name = rect.Name;
-        Transforms = rect.Transforms;
+        //Transforms = rect.Transforms;
         this.Brush = Brush;
     }
 }
@@ -192,14 +199,14 @@ public class PDFCircle : PDFElement
     //public double CenterY { get; set; }
     public double Radius { get; set; }
 
-    public PDFCircle(DocCircle circle, double height) :base(height)
+    public PDFCircle(DocCircle circle, double height) :base(circle.Transforms, height)
     {
         //Center = circle.Center;
         Center = circle.Center;
         PDFDataChange.TransformPoint(Center, height);
         Radius = circle.Radius;
         Name = circle.Name;
-        Transforms = circle.Transforms;
+        //Transforms = circle.Transforms;
         this.Brush = Brush;
     }
 }
@@ -209,14 +216,14 @@ public class PDFLine : PDFElement
     public Point Start { get; set; }
     public Point End { get; set; }
 
-    public PDFLine(DocLine line, double height) : base(height)
+    public PDFLine(DocLine line, double height) : base(line.Transforms,height)
     {
         Start = line.Start;
         PDFDataChange.TransformPoint(Start, height);
         End = line.End;
         PDFDataChange.TransformPoint(End, height);
         Name = line.Name;
-        Transforms = line.Transforms;
+        //Transforms = line.Transforms;
         this.Brush = Brush;
     }
 
@@ -225,14 +232,14 @@ public class PDFLine : PDFElement
 public class PDFPolyline : PDFElement
 {
     public IEnumerable<Point> Points { get; set; }
-    public PDFPolyline(DocPolyline polyline, double height) : base (height)
+    public PDFPolyline(DocPolyline polyline, double height) : base (polyline.Transforms, height)
     {
         Points = polyline.Points;
 
         foreach (Point point in Points)
             PDFDataChange.TransformPoint(point, height);
         Name = polyline.Name;
-        Transforms = polyline.Transforms;
+        //Transforms = polyline.Transforms;
         this.Brush = Brush;
     }
 }
@@ -241,7 +248,7 @@ public class PDFPolygon : PDFElement
 {
     public IEnumerable<Point> Points { get; set; }
 
-    public PDFPolygon(DocPolygon polygon,double height) : base(height)
+    public PDFPolygon(DocPolygon polygon,double height) : base(polygon.Transforms, height)
     {
         Points = polygon.Points;
 
@@ -249,7 +256,7 @@ public class PDFPolygon : PDFElement
             PDFDataChange.TransformPoint(point, height);
 
         Name = polygon.Name;
-        Transforms = polygon.Transforms;
+        //Transforms = polygon.Transforms;
         this.Brush = Brush;
     }
 }
@@ -258,12 +265,12 @@ public class PDFPath : PDFElement
 {
     public IEnumerable<IPathElement> Elements { get; set; }
 
-    public PDFPath(DocPath path, double height) : base(height) 
+    public PDFPath(DocPath path, double height) : base(path.Transforms, height) 
     {
         Elements = path.Elements;
         PDFDataChange.TransformPath(Elements, height);
         Name = path.Name;
-        Transforms = path.Transforms;
+        //Transforms = path.Transforms;
         this.Brush = Brush;
     }
 }
