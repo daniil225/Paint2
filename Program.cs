@@ -2,6 +2,7 @@
 using System.IO;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Formats.PDF;
 using Serilog;
 
 namespace Paint2
@@ -20,6 +21,9 @@ namespace Paint2
                 .CreateLogger();
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+
+            PDFTests.RunAll();
+            Formats.Svg.Tests.RunAll();
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
