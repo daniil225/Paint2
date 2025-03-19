@@ -21,16 +21,17 @@ public class PDFExporter : IExportFormat
     {
         var pDFSnapshot = snapshot as PDFSnapshot;
 
-        PdfWriter writer = new PdfWriter(destinationPath);
-        PdfDocument pdf = new PdfDocument(writer);
+        using (PdfWriter writer = new PdfWriter(destinationPath))
+        using (PdfDocument pdf = new PdfDocument(writer))
+        {
+            PdfPage page = pdf.AddNewPage(new PageSize(pDFSnapshot._width, pDFSnapshot._height));
+
+            // Создаём PdfCanvas для рисования
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            SaveElement(pDFSnapshot._tree, canvas);
+        }
         
-        // Добавляем страницу
-        PdfPage page = pdf.AddNewPage(new PageSize(pDFSnapshot._width, pDFSnapshot._height));
-
-        // Создаём PdfCanvas для рисования
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        SaveElement(pDFSnapshot._tree,canvas);
     }
 
     private void ApplyTransformations(PDFElement pdfElement, PdfCanvas canvas)
@@ -144,7 +145,7 @@ public class PDFExporter : IExportFormat
         canvas.RestoreState();
     }
 
-    private void SavePath(PDFPath pDFPath, PdfCanvas canvas)
+    private void SaveElement(PDFPath pDFPath, PdfCanvas canvas)
     {
         canvas.SaveState();
         ApplyTransformations(pDFPath, canvas);
@@ -160,10 +161,12 @@ public class PDFExporter : IExportFormat
             {
                 CurrentPoint = SavePathElement(pathArc, canvas, CurrentPoint);
             }
-            else
+            else if(element is PathClose close)
             {
-                CurrentPoint = SavePathElement((dynamic)element, canvas);
+                SavePathElement(close, canvas);
             }
+            else
+                CurrentPoint = SavePathElement((dynamic)element, canvas);
         }
 
         canvas.Stroke();
