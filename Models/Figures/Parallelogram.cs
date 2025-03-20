@@ -8,34 +8,31 @@ using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Parallelogram : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Parallelogram))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Parallelogram")]
         class ParallelogramCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Parallelogram(parentGroup, coordinates);
+                PathFigure newParallelogram = new(parentGroup, coordinates);
+                newParallelogram.Name = "Parallelogram";
+                double lengthSide = 30.0;
+                double angle = 45 * Math.PI / 180.0;
+
+                double offsetX = lengthSide * Math.Cos(angle);
+                double offsetY = lengthSide * Math.Sin(angle);
+
+                newParallelogram.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
+                newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
+                newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
+                newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
+                newParallelogram.pathElements.Add(new PathClose());
+
+                newParallelogram.InitGeometry();
+                return newParallelogram;
             }
         }
-        Parallelogram(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Parallelogram";
-            double lengthSide = 30.0;
-            double angle = 45 * Math.PI / 180.0;
-
-            double offsetX = lengthSide * Math.Cos(angle);
-            double offsetY = lengthSide * Math.Sin(angle);
-
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0, coordinates.Y - offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
-            pathElements.Add(new PathClose());
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
-        }
     }
-
 }

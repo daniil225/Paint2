@@ -7,33 +7,30 @@ using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Trapezoid : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Trapezoid))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Trapezoid")]
         private class TrapezoidCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Trapezoid(parentGroup, coordinates);
+                PathFigure newTrap = new(parentGroup, coordinates);
+                newTrap.Name = "Trapezoid";
+
+                double lowerBase = 40.0;
+                double upperBase = 25.0;
+                double height = 20.0;
+
+                newTrap.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lowerBase / 2.0, coordinates.Y + height / 2.0) });
+                newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lowerBase / 2.0, coordinates.Y + height / 2.0) });
+                newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + upperBase / 2.0, coordinates.Y - height / 2.0) });
+                newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - upperBase / 2.0, coordinates.Y - height / 2.0) });
+                newTrap.pathElements.Add(new PathClose());
+
+                newTrap.InitGeometry();
+                return newTrap;
             }
-        }
-
-        private Trapezoid(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Trapezoid";
-
-            double lowerBase = 40.0;
-            double upperBase = 25.0;
-            double height = 20.0;
-
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lowerBase / 2.0, coordinates.Y + height / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lowerBase / 2.0, coordinates.Y + height / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + upperBase / 2.0, coordinates.Y - height / 2.0) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - upperBase / 2.0, coordinates.Y - height / 2.0) });
-            pathElements.Add(new PathClose());
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

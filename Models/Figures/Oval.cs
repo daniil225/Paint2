@@ -8,46 +8,44 @@ using Formats;
 
 namespace Paint2.Models.Figures
 {
-    public class Oval : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Oval))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Oval")]
         class OvalCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Oval(parentGroup, coordinates);
+                PathFigure newOval = new(parentGroup, coordinates);
+                newOval.Name = "Oval";
+
+                double Rx = 30.0;
+                double Ry = 20.0;
+
+                newOval.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + Rx, coordinates.Y) });
+                newOval.pathElements.Add(new PathArcTo()
+                {
+                    radiusX = Rx,
+                    radiusY = Ry,
+                    xAxisRotation = 0,
+                    largeArcFlag = true,
+                    sweepDirection = SweepDirection.Clockwise,
+                    dest = new Point(coordinates.X - Rx, coordinates.Y)
+                });
+                newOval.pathElements.Add(new PathArcTo()
+                {
+                    radiusX = Rx,
+                    radiusY = Ry,
+                    xAxisRotation = 0,
+                    largeArcFlag = true,
+                    sweepDirection = SweepDirection.Clockwise,
+                    dest = new Point(coordinates.X + Rx, coordinates.Y)
+                });
+                newOval.pathElements.Add(new PathClose());
+
+                newOval.InitGeometry();
+                return newOval;
             }
-        }
-        Oval(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Oval";
-
-            double Rx = 30.0;
-            double Ry = 20.0;
-
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + Rx, coordinates.Y) });
-            pathElements.Add(new PathArcTo()
-            {
-                radiusX = Rx,
-                radiusY = Ry,
-                xAxisRotation = 0,
-                largeArcFlag = true,
-                sweepDirection = SweepDirection.Clockwise,
-                dest = new Point(coordinates.X - Rx, coordinates.Y)
-            });
-            pathElements.Add(new PathArcTo()
-            {
-                radiusX = Rx,
-                radiusY = Ry,
-                xAxisRotation = 0,
-                largeArcFlag = true,
-                sweepDirection = SweepDirection.Clockwise,
-                dest = new Point(coordinates.X + Rx, coordinates.Y)
-            });
-            pathElements.Add(new PathClose());
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

@@ -3,38 +3,37 @@ using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Rectangle : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Rectangle))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Rectangle")]
         class RectangleCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Rectangle(parentGroup, coordinates);
+                PathFigure newRect = new(parentGroup, coordinates);
+                newRect.Name = "Rectangle";
+
+                double lengthSide = 30.0;
+                double halfSide = lengthSide / 2.0;
+
+                Point point = new Point(coordinates.X - lengthSide / 2.0, coordinates.Y - lengthSide / 2.0);
+
+                newRect.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - halfSide, coordinates.Y - halfSide) });
+                newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfSide, coordinates.Y - halfSide) });
+                newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfSide, coordinates.Y + halfSide) });
+                newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfSide, coordinates.Y + halfSide) });
+                newRect.pathElements.Add(new PathClose());
+
+                newRect.InitGeometry();
+                return newRect;
             }
-        }
-        Rectangle(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Rectangle";
-
-            double lengthSide = 30.0;
-            double halfSide = lengthSide / 2.0;
-
-            Point point = new Point(coordinates.X - lengthSide / 2.0, coordinates.Y - lengthSide / 2.0);
-
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - halfSide, coordinates.Y - halfSide) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfSide, coordinates.Y - halfSide) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfSide, coordinates.Y + halfSide) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfSide, coordinates.Y + halfSide) });
-            pathElements.Add(new PathClose());
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

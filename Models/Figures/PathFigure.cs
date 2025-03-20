@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using Avalonia.Threading;
 using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
@@ -12,7 +13,7 @@ using static Paint2.Models.Figures.TransformingAlgorithms;
 
 namespace Paint2.Models.Figures
 {
-    public abstract class PathFigure : ReactiveObject, IFigure
+    public partial class PathFigure : ReactiveObject, IFigure
     {
         public string Name
         {
@@ -46,20 +47,14 @@ namespace Paint2.Models.Figures
         public bool IsMirrored { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
-            get
-            {
-                if (_graphicProperties is null)
-                    return Parent.GraphicProperties;
-                else
-                    return _graphicProperties;
-            }
+            get => _graphicProperties ?? Parent.GraphicProperties;
             set => this.RaiseAndSetIfChanged(ref _graphicProperties, value);
         }
 
-        protected string name;
-        protected Group _parentGroup;
-        protected IList<IPathElement> pathElements;
-        protected IFigureGraphicProperties? _graphicProperties;
+        private string name;
+        private Group _parentGroup;
+        private IList<IPathElement> pathElements;
+        private IFigureGraphicProperties? _graphicProperties;
 
         protected PathFigure(Group parentGroup, Point coordinates)
         {
@@ -251,5 +246,6 @@ namespace Paint2.Models.Figures
         {
             throw new NotImplementedException();
         }
+        private void InitGeometry() => Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
     }
 }

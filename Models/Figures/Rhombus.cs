@@ -9,30 +9,28 @@ using System.Composition;
 
 namespace Paint2.Models.Figures
 {
-    public class Rhombus : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Rhombus))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Rhombus")]
         class RhombusCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Rhombus(parentGroup, coordinates);
-            }
-        }
-        Rhombus(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Rhombus";
-            double lengthSide = 30.0;
-            double halfDiagonal = lengthSide * Math.Sqrt(2) / 2; //острый угол 45 градусов
+                PathFigure newPhombus = new(parentGroup, coordinates);
+                newPhombus.Name = "Rhombus";
+                double lengthSide = 30.0;
+                double halfDiagonal = lengthSide * Math.Sqrt(2) / 2; //острый угол 45 градусов
 
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X, coordinates.Y - halfDiagonal) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfDiagonal, coordinates.Y) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X, coordinates.Y + halfDiagonal) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfDiagonal, coordinates.Y) });
-            pathElements.Add(new PathClose());
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
+                newPhombus.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X, coordinates.Y - halfDiagonal) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfDiagonal, coordinates.Y) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X, coordinates.Y + halfDiagonal) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfDiagonal, coordinates.Y) });
+                newPhombus.pathElements.Add(new PathClose());
+
+                newPhombus.InitGeometry();
+                return newPhombus;
+            }
         }
     }
 }
