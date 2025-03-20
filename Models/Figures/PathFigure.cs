@@ -15,7 +15,7 @@ using static Paint2.Models.Figures.TransformingAlgorithms;
 
 namespace Paint2.Models.Figures
 {
-    public partial class PathFigure : ReactiveObject, IFigure, INotifyPropertyChanged
+    public partial class PathFigure : ReactiveObject, IFigure
     {
         public string Name
         {
@@ -39,7 +39,7 @@ namespace Paint2.Models.Figures
                     _parentGroup.SetIfParent(this, false);
                     _parentGroup = value;
                     _parentGroup.SetIfParent(this, true);
-                    Scene.Current.TriggerOnHeirarchyUpdate();
+                    Scene.Current.OnHierarchyChanged();
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace Paint2.Models.Figures
             _parentGroup = parentGroup;
             _parentGroup.SetIfParent(this, true);
 
-            Scene.Current.TriggerOnHeirarchyUpdate();
+            Scene.Current.OnHierarchyChanged();
         }
 
         private void OnGeometryChanged([CallerMemberName] string prop = "")

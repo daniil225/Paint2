@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ public class MainWindowViewModel : ViewModelBase
         Figures = [];
         Scene.CreateScene();
         // Подписываю Figures на обновление иерархии сцены
-        Scene.Current.OnHierarchyUpdate += UpdateFigures;
+        Scene.Current.HierarchyChanged += UpdateFigures;
 
         // Пример для работы с массивом фигур
         //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
@@ -101,8 +102,9 @@ public class MainWindowViewModel : ViewModelBase
         });
     }
 
-    private void UpdateFigures(IReadOnlyList<ISceneObject> hierarchy)
+    private void UpdateFigures(object? sender, PropertyChangedEventArgs e)
     {
+        var hierarchy = Scene.Current.Groups;
         var figures = new ObservableCollection<GeometryViewModel>();
         foreach (var obj in hierarchy)
         {

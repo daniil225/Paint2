@@ -53,7 +53,7 @@ namespace Paint2.ViewModels
                         _parentGroup._childObjects.Add(this);
                     }
                 }
-                Scene.Current.TriggerOnHeirarchyUpdate();
+                Scene.Current.OnHierarchyChanged();
             }
         }
         public IReadOnlyList<ISceneObject> ChildObjects { get => _childObjects.AsReadOnly(); }
@@ -115,7 +115,7 @@ namespace Paint2.ViewModels
                     _childObjects.Add(movedObject);
                 _childObjects.RemoveAll((item) => item is null);
             }
-            Scene.Current.TriggerOnHeirarchyUpdate();
+            Scene.Current.OnHierarchyChanged();
         }
         public void Move(Point vector)
         {
