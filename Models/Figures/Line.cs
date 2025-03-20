@@ -22,8 +22,7 @@ namespace Paint2.Models.Figures
 
                 newLine.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lengthLine / 2.0, coordinates.Y) });
                 newLine.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lengthLine / 2.0, coordinates.Y) });
-
-                newLine.InitGeometry();
+                newLine.OnGeometryChanged();
                 return newLine;
             }
         }

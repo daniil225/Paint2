@@ -30,8 +30,8 @@ namespace Paint2.Models.Figures
                 newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfSide, coordinates.Y + halfSide) });
                 newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfSide, coordinates.Y + halfSide) });
                 newRect.pathElements.Add(new PathClose());
+                newRect.OnGeometryChanged();
 
-                newRect.InitGeometry();
                 return newRect;
             }
         }

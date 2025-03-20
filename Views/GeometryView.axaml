@@ -8,7 +8,7 @@
              x:DataType="vm:GeometryViewModel"
              ClipToBounds="False">
     <Path StrokeThickness="{Binding  Figure.GraphicProperties.BorderThickness}"
-          Data="{Binding Figure.Geometry}"
+          Data="{Binding Geometry}"
           PointerPressed="Path_OnPointerPressed"
           PointerMoved="Path_OnPointerMoved"
           PointerReleased="Path_OnPointerReleased">

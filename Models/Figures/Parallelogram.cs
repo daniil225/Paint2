@@ -29,8 +29,8 @@ namespace Paint2.Models.Figures
                 newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 + lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
                 newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - offsetY / 2.0 - lengthSide / 2.0 + offsetX, coordinates.Y + offsetY / 2.0) });
                 newParallelogram.pathElements.Add(new PathClose());
+                newParallelogram.OnGeometryChanged();
 
-                newParallelogram.InitGeometry();
                 return newParallelogram;
             }
         }

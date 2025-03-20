@@ -32,8 +32,8 @@ namespace Paint2.Models.Figures
                 newPentagon.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - R * cos54, coordinates.Y - R * sin54) });
                 newPentagon.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - R * cos18, coordinates.Y + R * sin18) });
                 newPentagon.pathElements.Add(new PathClose());
+                newPentagon.OnGeometryChanged();
 
-                newPentagon.InitGeometry();
                 return newPentagon;
             }
         }

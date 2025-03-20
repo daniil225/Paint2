@@ -159,11 +159,5 @@ namespace Paint2.ViewModels
         {
             Mirror(Coordinates, Coordinates + new Point(0, 1));
         }
-
-        public void Render()
-        {
-            foreach (ISceneObject obj in ChildObjects)
-                obj.Render();
-        }
     }
 }

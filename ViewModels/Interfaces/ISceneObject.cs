@@ -14,7 +14,6 @@ namespace Paint2.ViewModels
         Point Coordinates { get; }
         Group? Parent { get; set; }
         float Angle { get; }
-        Geometry Geometry { get; set; } // геометрия объекта, хранит то, как объект выглядит на сцене
         void Move(Point vector);
         void Rotate(double angle, Point Center);
         void Scale(double x, double y, Point Center);
@@ -22,6 +21,5 @@ namespace Paint2.ViewModels
         void Mirror(Point ax1, Point ax2);
         void MirrorHorizontal();
         void MirrorVertical();
-        void Render();
     }
 }

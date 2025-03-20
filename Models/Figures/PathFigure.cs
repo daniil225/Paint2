@@ -9,11 +9,13 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using static Paint2.Models.Figures.TransformingAlgorithms;
 
 namespace Paint2.Models.Figures
 {
-    public partial class PathFigure : ReactiveObject, IFigure
+    public partial class PathFigure : ReactiveObject, IFigure, INotifyPropertyChanged
     {
         public string Name
         {
@@ -42,7 +44,7 @@ namespace Paint2.Models.Figures
             }
         }
         public float Angle { get; private set; }
-        [Reactive] public Geometry Geometry { get; set; }
+        public event PropertyChangedEventHandler GeometryChanged;
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
         public IFigureGraphicProperties? GraphicProperties
@@ -50,6 +52,7 @@ namespace Paint2.Models.Figures
             get => _graphicProperties ?? Parent.GraphicProperties;
             set => this.RaiseAndSetIfChanged(ref _graphicProperties, value);
         }
+        public IReadOnlyCollection<IPathElement> PathElements => pathElements.AsReadOnly();
 
         private string name;
         private Group _parentGroup;
@@ -66,6 +69,11 @@ namespace Paint2.Models.Figures
             _parentGroup.SetIfParent(this, true);
 
             Scene.Current.TriggerOnHeirarchyUpdate();
+        }
+
+        private void OnGeometryChanged([CallerMemberName] string prop = "")
+        {
+            GeometryChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public void Export(IExportSnapshot snapshot)
@@ -116,15 +124,20 @@ namespace Paint2.Models.Figures
 
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
             IsMirrored = !IsMirrored;
-            Render();
+
+            OnGeometryChanged();
         }
         public void MirrorHorizontal()
         {
             Mirror(Coordinates, Coordinates + new Point(1, 0));
+
+            OnGeometryChanged();
         }
         public void MirrorVertical()
         {
             Mirror(Coordinates, Coordinates + new Point(0, 1));
+
+            OnGeometryChanged();
         }
 
         public void Move(Point vector)
@@ -156,10 +169,9 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates += vector;
-            Render();
-        }
 
-        public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
+            OnGeometryChanged();
+        }
 
         public void Rotate(double angle, Point Center)
         {
@@ -195,7 +207,8 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
-            Render();
+
+            OnGeometryChanged();
         }
 
         public void Scale(double sx, double sy, Point Center)
@@ -229,7 +242,8 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates = ScalePoint(Coordinates, Center, sx, sy);
-            Render();
+
+            OnGeometryChanged();
         }
 
         public void Scale(double rad, Point Center)
@@ -246,6 +260,5 @@ namespace Paint2.Models.Figures
         {
             throw new NotImplementedException();
         }
-        private void InitGeometry() => Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
     }
 }

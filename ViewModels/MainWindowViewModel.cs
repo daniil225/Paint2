@@ -112,7 +112,7 @@ public class MainWindowViewModel : ViewModelBase
             }
             else // It's a figure
             {
-                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj, MainWindowViewModel = this});
+                figures.Add(new GeometryViewModel((IFigure)obj) { MainWindowViewModel = this});
             }
         }
         Figures.Clear();
@@ -129,7 +129,7 @@ public class MainWindowViewModel : ViewModelBase
             }
             else
             {
-                figures.Add(new GeometryViewModel() { Figure = (IFigure)obj, MainWindowViewModel = this});
+                figures.Add(new GeometryViewModel((IFigure)obj) { Figure = (IFigure)obj, MainWindowViewModel = this});
             }
         }
         return figures;
