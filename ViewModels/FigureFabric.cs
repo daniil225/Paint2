@@ -29,7 +29,7 @@ public static class FigureFabric
     static ImportInfo info;
     static FigureFabric()
     {
-        var assemblies = new[] { typeof(Circle).Assembly };
+        var assemblies = new[] { typeof(PathFigure).Assembly };
         var conf = new ContainerConfiguration();
         try
         {
@@ -37,7 +37,7 @@ public static class FigureFabric
         }
         catch (Exception e)
         {
-            Log.Error($"Couldn't get available figures during initialization: {e}");
+            Log.Error($"Не удалось получить доступные фигуры: {e}");
         }
 
         var cont = conf.CreateContainer();
@@ -46,8 +46,17 @@ public static class FigureFabric
     }
 
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure CreateFigure(string FigureName, Group parentGroup, Point coordinates)
+    public static IFigure? CreateFigure(string FigureName, Group parentGroup, Point coordinates)
     {
-        return info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
+        try
+        {
+            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
+            return newFigure;
+        }
+        catch
+        {
+            Log.Error($"Фигуры {FigureName} не существует");
+            return null;
+        }
     }
 }

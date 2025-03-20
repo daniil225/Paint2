@@ -7,27 +7,24 @@ using Formats;
 
 namespace Paint2.Models.Figures
 {
-    public class Line : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Line))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Line")]
         class LineCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Line(parentGroup, coordinates);
+                PathFigure newLine = new(parentGroup, coordinates);
+                newLine.Name = "Line";
+
+                double lengthLine = 50.0;
+
+                newLine.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lengthLine / 2.0, coordinates.Y) });
+                newLine.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lengthLine / 2.0, coordinates.Y) });
+                newLine.OnGeometryChanged();
+                return newLine;
             }
-        }
-        Line(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Line";
-
-            double lengthLine = 50.0;
-
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X - lengthLine / 2.0, coordinates.Y) });
-            pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + lengthLine / 2.0, coordinates.Y) });
-            
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
         }
     }
 }

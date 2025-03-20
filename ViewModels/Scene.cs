@@ -1,24 +1,16 @@
 ﻿using Paint2.ViewModels.Interfaces;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using Serilog;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Xml.Linq;
-using static Paint2.ViewModels.Scene;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Paint2.ViewModels
 {
-    public class Scene
+    public class Scene : ReactiveObject
     {
-        public delegate void HierarchyUpdateDeligate(IReadOnlyList<ISceneObject> groups);
-        public event HierarchyUpdateDeligate OnHierarchyUpdate
-        {
-            add => _onHierarcyUpdate += value;
-            remove => _onHierarcyUpdate -= value;
-        }
+        public event PropertyChangedEventHandler HierarchyChanged;
+        
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
         public IImportFormat ImportStrategy { get; set; }
@@ -26,7 +18,6 @@ namespace Paint2.ViewModels
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
 
         private List<Group> _groups { get; set; }
-        private HierarchyUpdateDeligate _onHierarcyUpdate;
 
         Scene()
         {
@@ -89,13 +80,16 @@ namespace Paint2.ViewModels
                 _groups.Remove((Group)sceneObject);
             else
                 sceneObject.Parent.SetIfParent(sceneObject, false);
-            TriggerOnHeirarchyUpdate();
+            OnHierarchyChanged();
         }
-        public void TriggerOnHeirarchyUpdate() => _onHierarcyUpdate.Invoke([.. _groups]);
         public void ResetScene()
         {
             _groups.Clear();
-            TriggerOnHeirarchyUpdate();
+            OnHierarchyChanged();
+        }
+        public void OnHierarchyChanged([CallerMemberName] string prop = "")
+        {
+            HierarchyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

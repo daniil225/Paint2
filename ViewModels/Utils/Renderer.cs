@@ -2,12 +2,13 @@ using Avalonia;
 using Avalonia.Media;
 using Formats;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Paint2.ViewModels.Utils;
 
 public static class Renderer
 {
-    public static Geometry RenderPathElements(IList<IPathElement> pathElements)
+    public static Geometry RenderPathElements(IReadOnlyCollection<IPathElement> pathElements)
     {
         PathFigures pathFigures = [];
         PathFigure pathFigure = new() { IsFilled = true, IsClosed = true};

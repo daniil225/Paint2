@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using Avalonia.Threading;
 using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
@@ -8,11 +9,13 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using static Paint2.Models.Figures.TransformingAlgorithms;
 
 namespace Paint2.Models.Figures
 {
-    public abstract class PathFigure : ReactiveObject, IFigure
+    public partial class PathFigure : ReactiveObject, IFigure
     {
         public string Name
         {
@@ -36,30 +39,25 @@ namespace Paint2.Models.Figures
                     _parentGroup.SetIfParent(this, false);
                     _parentGroup = value;
                     _parentGroup.SetIfParent(this, true);
-                    Scene.Current.TriggerOnHeirarchyUpdate();
+                    Scene.Current.OnHierarchyChanged();
                 }
             }
         }
         public float Angle { get; private set; }
-        [Reactive] public Geometry Geometry { get; set; }
+        public event PropertyChangedEventHandler GeometryChanged;
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
-            get
-            {
-                if (_graphicProperties is null)
-                    return Parent.GraphicProperties;
-                else
-                    return _graphicProperties;
-            }
+            get => _graphicProperties ?? Parent.GraphicProperties;
             set => this.RaiseAndSetIfChanged(ref _graphicProperties, value);
         }
+        public IReadOnlyCollection<IPathElement> PathElements => pathElements.AsReadOnly();
 
-        protected string name;
-        protected Group _parentGroup;
-        protected IList<IPathElement> pathElements;
-        protected IFigureGraphicProperties? _graphicProperties;
+        private string name;
+        private Group _parentGroup;
+        private IList<IPathElement> pathElements;
+        private IFigureGraphicProperties? _graphicProperties;
 
         protected PathFigure(Group parentGroup, Point coordinates)
         {
@@ -70,7 +68,12 @@ namespace Paint2.Models.Figures
             _parentGroup = parentGroup;
             _parentGroup.SetIfParent(this, true);
 
-            Scene.Current.TriggerOnHeirarchyUpdate();
+            Scene.Current.OnHierarchyChanged();
+        }
+
+        private void OnGeometryChanged([CallerMemberName] string prop = "")
+        {
+            GeometryChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public void Export(IExportSnapshot snapshot)
@@ -121,15 +124,20 @@ namespace Paint2.Models.Figures
 
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
             IsMirrored = !IsMirrored;
-            Render();
+
+            OnGeometryChanged();
         }
         public void MirrorHorizontal()
         {
             Mirror(Coordinates, Coordinates + new Point(1, 0));
+
+            OnGeometryChanged();
         }
         public void MirrorVertical()
         {
             Mirror(Coordinates, Coordinates + new Point(0, 1));
+
+            OnGeometryChanged();
         }
 
         public void Move(Point vector)
@@ -161,10 +169,9 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates += vector;
-            Render();
-        }
 
-        public void Render() => Geometry = Renderer.RenderPathElements(pathElements);
+            OnGeometryChanged();
+        }
 
         public void Rotate(double angle, Point Center)
         {
@@ -200,7 +207,8 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
-            Render();
+
+            OnGeometryChanged();
         }
 
         public void Scale(double sx, double sy, Point Center)
@@ -234,7 +242,8 @@ namespace Paint2.Models.Figures
             }
 
             Coordinates = ScalePoint(Coordinates, Center, sx, sy);
-            Render();
+
+            OnGeometryChanged();
         }
 
         public void Scale(double rad, Point Center)

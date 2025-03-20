@@ -8,44 +8,42 @@ using Formats;
 
 namespace Paint2.Models.Figures
 {
-    public class Circle : PathFigure
+    public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), nameof(Circle))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
         class CircleCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
             {
-                return new Circle(parentGroup, coordinates);
-            }
-        }
-        Circle(Group parentGroup, Point coordinates) : base(parentGroup, coordinates)
-        {
-            Name = "Circle";
+                PathFigure newCircle = new(parentGroup, coordinates);
+                newCircle.Name = "Circle";
 
-            double R = 25.0;
-            
-            pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + R, coordinates.Y) });
-            pathElements.Add(new PathArcTo()
-            {
-                radiusX = R,
-                radiusY = R,
-                xAxisRotation = 0,
-                largeArcFlag = true,
-                sweepDirection = SweepDirection.Clockwise,
-                dest = new Point(coordinates.X - R, coordinates.Y)
-            });
-            pathElements.Add(new PathArcTo()
-            {
-                radiusX = R,
-                radiusY = R,
-                xAxisRotation = 0,
-                largeArcFlag = true,
-                sweepDirection = SweepDirection.Clockwise,
-                dest = new Point(coordinates.X + R, coordinates.Y)
-            });
-            pathElements.Add(new PathClose());
-            Dispatcher.UIThread.Invoke(() => Geometry = Renderer.RenderPathElements(pathElements));
+                double R = 25.0;
+
+                newCircle.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + R, coordinates.Y) });
+                newCircle.pathElements.Add(new PathArcTo()
+                {
+                    radiusX = R,
+                    radiusY = R,
+                    xAxisRotation = 0,
+                    largeArcFlag = true,
+                    sweepDirection = SweepDirection.Clockwise,
+                    dest = new Point(coordinates.X - R, coordinates.Y)
+                });
+                newCircle.pathElements.Add(new PathArcTo()
+                {
+                    radiusX = R,
+                    radiusY = R,
+                    xAxisRotation = 0,
+                    largeArcFlag = true,
+                    sweepDirection = SweepDirection.Clockwise,
+                    dest = new Point(coordinates.X + R, coordinates.Y)
+                });
+                newCircle.pathElements.Add(new PathClose());
+                newCircle.OnGeometryChanged();
+                return newCircle;
+            }
         }
     }
 }
