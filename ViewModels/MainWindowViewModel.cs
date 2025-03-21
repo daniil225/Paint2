@@ -97,7 +97,7 @@ public class MainWindowViewModel : ViewModelBase
                 var group = Scene.Current.CreateGroup("Name", properties);
                 // надо удалять пробелы
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.IconName;
-                FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates);
+                FigureFabric.CreateFigure(figureClassName, group, [pointerCoordinates]);
             });
         });
     }

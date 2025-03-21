@@ -16,7 +16,7 @@ class FigureMetadata
 }
 public interface IFigureCreator
 {
-    IFigure Create(Group parentGroup, Point coordinates);
+    IFigure Create(Group parentGroup, Point[] coordinates);
 }
 
 public static class FigureFabric
@@ -46,7 +46,7 @@ public static class FigureFabric
     }
 
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure? CreateFigure(string FigureName, Group parentGroup, Point coordinates)
+    public static IFigure? CreateFigure(string FigureName, Group parentGroup, Point[] coordinates)
     {
         try
         {

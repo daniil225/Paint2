@@ -14,15 +14,15 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Oval")]
         class OvalCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, Point[] coordinates)
             {
-                PathFigure newOval = new(parentGroup, coordinates);
+                PathFigure newOval = new(parentGroup, coordinates[0]);
                 newOval.Name = "Oval";
 
                 double Rx = 30.0;
                 double Ry = 20.0;
 
-                newOval.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + Rx, coordinates.Y) });
+                newOval.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates[0].X + Rx, coordinates[0].Y) });
                 newOval.pathElements.Add(new PathArcTo()
                 {
                     radiusX = Rx,
@@ -30,7 +30,7 @@ namespace Paint2.Models.Figures
                     xAxisRotation = 0,
                     largeArcFlag = true,
                     sweepDirection = SweepDirection.Clockwise,
-                    dest = new Point(coordinates.X - Rx, coordinates.Y)
+                    dest = new Point(coordinates[0].X - Rx, coordinates[0].Y)
                 });
                 newOval.pathElements.Add(new PathArcTo()
                 {
@@ -39,7 +39,7 @@ namespace Paint2.Models.Figures
                     xAxisRotation = 0,
                     largeArcFlag = true,
                     sweepDirection = SweepDirection.Clockwise,
-                    dest = new Point(coordinates.X + Rx, coordinates.Y)
+                    dest = new Point(coordinates[0].X + Rx, coordinates[0].Y)
                 });
                 newOval.pathElements.Add(new PathClose());
                 newOval.OnGeometryChanged();
