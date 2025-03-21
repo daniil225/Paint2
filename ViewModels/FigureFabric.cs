@@ -16,7 +16,7 @@ class FigureMetadata
 }
 public interface IFigureCreator
 {
-    IFigure Create(Group parentGroup, Point coordinates);
+    IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints);
 }
 
 public static class FigureFabric
@@ -48,9 +48,10 @@ public static class FigureFabric
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Type);
     public static IFigure? CreateFigure(string FigureType, Group parentGroup, Point coordinates)
     {
+        ICollection<Point> coordinatePoints = [ coordinates ];
         try
         {
-            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Type == FigureType).Value.Create(parentGroup, coordinates);
+            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Type == FigureType).Value.Create(parentGroup, coordinatePoints);
             return newFigure;
         }
         catch
@@ -58,5 +59,10 @@ public static class FigureFabric
             Log.Error($"Фигуры {FigureType} не существует");
             return null;
         }
+    }
+    public static IFigure? CreateBezier(Group parentGroup, ICollection<Point> points)
+    {
+        IFigure newBezier = info.AvailableFigures.First(f => f.Metadata.Type == "Bezier").Value.Create(parentGroup, points);
+        return newBezier;
     }
 }

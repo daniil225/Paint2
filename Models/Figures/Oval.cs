@@ -5,6 +5,8 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using Formats;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Paint2.Models.Figures
 {
@@ -14,8 +16,9 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Type), "Oval")]
         class OvalCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints)
             {
+                Point coordinates = coordinatePoints.ElementAt(0);
                 PathFigure newOval = new(parentGroup, coordinates);
                 newOval.Name = "Oval";
 

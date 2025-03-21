@@ -6,6 +6,7 @@ using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Composition;
+using System.Linq;
 
 namespace Paint2.Models.Figures
 {
@@ -15,8 +16,9 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Type), "Rectangle")]
         class RectangleCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints)
             {
+                Point coordinates = coordinatePoints.ElementAt(0);
                 PathFigure newRect = new(parentGroup, coordinates);
                 newRect.Name = "Rectangle";
 

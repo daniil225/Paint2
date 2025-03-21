@@ -5,6 +5,8 @@ using System;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using System.Composition;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Paint2.Models.Figures
 {
@@ -14,8 +16,9 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Type), "Parallelogram")]
         class ParallelogramCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints)
             {
+                Point coordinates = coordinatePoints.ElementAt(0);
                 PathFigure newParallelogram = new(parentGroup, coordinates);
                 newParallelogram.Name = "Parallelogram";
                 double lengthSide = 30.0;

@@ -3,7 +3,9 @@ using Formats;
 using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
+using System.Collections.Generic;
 using System.Composition;
+using System.Linq;
 
 namespace Paint2.Models.Figures
 {
@@ -13,8 +15,9 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Type), "Trapezoid")]
         private class TrapezoidCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints)
             {
+                Point coordinates = coordinatePoints.ElementAt(0);
                 PathFigure newTrap = new(parentGroup, coordinates);
                 newTrap.Name = "Trapezoid";
 

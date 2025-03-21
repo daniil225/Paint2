@@ -4,6 +4,9 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using Formats;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Paint2.Models.Figures
 {
@@ -13,8 +16,9 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Type), "Line")]
         class LineCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, ICollection<Point> coordinatePoints)
             {
+                Point coordinates = coordinatePoints.ElementAt(0);
                 PathFigure newLine = new(parentGroup, coordinates);
                 newLine.Name = "Line";
 
