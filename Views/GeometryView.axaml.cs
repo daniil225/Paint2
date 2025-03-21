@@ -84,6 +84,10 @@ namespace Paint2.Views
                         Point centerToPrevPointVector = inverseMovementVector - centerToPointVector;
                         double lengthPrev = centerToPrevPointVector.Magnitude();
                         double lengthCurrent = centerToPointVector.Magnitude();
+                        if (lengthPrev < 1e-2 || lengthCurrent < 1e-2)
+                        {
+                            return;
+                        }
                         double scale = lengthCurrent / lengthPrev;
                         _vm.Figure.Scale(scale, scale, center);
                     }
