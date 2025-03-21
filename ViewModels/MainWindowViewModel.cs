@@ -25,7 +25,7 @@ public class MainWindowViewModel : ViewModelBase
     public HeaderPanelViewModel HeaderPanel { get; }
     public FooterPanelViewModel FooterPanel { get; }
     
-    [Reactive] public IFigure SelectedFigure { get; set; }
+    [Reactive] public IFigure? SelectedFigure { get; set; }
     [Reactive] public bool IsPropertiesPanelVisible { get; set; }
     [Reactive] public bool IsGroupsPanelVisible { get; set; }
     [Reactive] public GridLength PropertiesColumnWidth { get; set; }

@@ -37,11 +37,23 @@ namespace Paint2.Views
 
         private void Canvas_OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            if (_vm?.HeaderPanel.MenuMode is MenuModesEnum.CreationMode)
+            if (_vm is null)
             {
-                var point = e.GetCurrentPoint(sender as Control);
-                Point pointerCoordinates = new(point.Position.X, point.Position.Y);
-                _vm?.CreateFigureCommand.Execute(pointerCoordinates);
+                return;
+            }
+
+            switch (_vm.HeaderPanel.MenuMode)
+            {
+                case MenuModesEnum.CreationMode:
+                    {
+                        var point = e.GetCurrentPoint(sender as Control);
+                        Point pointerCoordinates = new(point.Position.X, point.Position.Y);
+                        _vm.CreateFigureCommand.Execute(pointerCoordinates);
+                        break;
+                    }
+                case MenuModesEnum.SelectionMode:
+                    _vm.SelectedFigure = null;
+                    break;
             }
         }
 

@@ -29,7 +29,10 @@ namespace Paint2.Views
             switch (_vm.MainWindowViewModel.HeaderPanel.MenuMode)
             {
                 case MenuModesEnum.SelectionMode:
-                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                    {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                        e.Handled = true;
+                    }
                     break;
                 case MenuModesEnum.MoveFigureMode:
                     _vm.Figure.Move(_vm.MainWindowViewModel.MovementVector);
