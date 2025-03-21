@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia.Controls.Templates;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Formats;
 using Paint2.ViewModels;
@@ -43,7 +44,17 @@ namespace Paint2.Models.Figures
                 }
             }
         }
-        public float Angle { get; private set; }
+        public float Angle
+        {
+            get => _angle;
+            set
+            {
+                Rotate(_angle - value);
+                this.RaiseAndSetIfChanged(ref _angle, value);
+            }
+        }
+        private float _angle;
+
         public event PropertyChangedEventHandler GeometryChanged;
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
@@ -179,40 +190,39 @@ namespace Paint2.Models.Figures
             double cosAngle = Math.Cos(radians);
             double sinAngle = Math.Sin(radians);
 
-            for (int i = 0; i < pathElements.Count; i++)
-            {
-                if (pathElements[i] is PathMoveTo pathMove)
-                {
-                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
-                    pathArc.xAxisRotation += angle;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
-                    {
-                        dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
-                        controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
-                        controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
-                    };
-                }
-            }
+            RotateElements(pathElements, angle, Center);
 
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
+            
+            float newAngle = _angle + (float)angle;
+            this.RaiseAndSetIfChanged(ref _angle, newAngle);
+
+            OnGeometryChanged();
+        }
+
+        private void Rotate(double angle)
+        {
+            double radians = angle * Math.PI / 180;
+            double cosAngle = Math.Cos(radians);
+            double sinAngle = Math.Sin(radians);
+
+            RotateElements(pathElements, angle, Coordinates);
+
+            Coordinates = RotatePoint(Coordinates, Coordinates, cosAngle, sinAngle);
 
             OnGeometryChanged();
         }
 
         public void Scale(double sx, double sy, Point Center)
         {
+            double[] bounds = GetBoundBox(pathElements);
+
+            double newWidth = (bounds[1] - bounds[0]) * sx;
+            double newHeight = (bounds[3] - bounds[2]) * sy;
+
+            if (newWidth * newHeight < 600)
+                return;
+
             for (int i = 0; i < pathElements.Count; i++)
             {
                 if (pathElements[i] is PathMoveTo pathMove)

@@ -1,8 +1,10 @@
 ﻿using Formats;
+using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,12 +37,76 @@ namespace Paint2.Models.Figures
             return new Point(rotatedX, rotatedY);
         }
 
+        public static void RotateElements(IList<IPathElement> pathElements, double angle, Point Center)
+        {
+            double radians = angle * Math.PI / 180;
+            double cosAngle = Math.Cos(radians);
+            double sinAngle = Math.Sin(radians);
+
+            for (int i = 0; i < pathElements.Count; i++)
+            {
+                if (pathElements[i] is PathMoveTo pathMove)
+                {
+                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
+                }
+                else if (pathElements[i] is PathLineTo pathLine)
+                {
+                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
+                }
+                else if (pathElements[i] is PathArcTo pathArc)
+                {
+                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
+                    pathArc.xAxisRotation += angle;
+                    pathElements[i] = pathArc;
+                }
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
+                {
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
+                        controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
+                        controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
+                    };
+                }
+            }
+        }
+
         public static Point ScalePoint(Point point, Point center, double sx, double sy)
         {
             double scaledX = center.X + (point.X - center.X) * sx;
             double scaledY = center.Y + (point.Y - center.Y) * sy;
 
             return new Point(scaledX, scaledY);
+        }
+
+        public static double[] GetBoundBox(IList<IPathElement> pathElements)
+        {
+            double minX = double.MaxValue;
+            double maxX = double.MinValue;
+            double minY = double.MaxValue;
+            double maxY = double.MinValue;
+
+            foreach (var element in pathElements)
+            {
+                Point? p = element switch
+                {
+                    PathMoveTo move => move.dest,
+                    PathLineTo line => line.dest,
+                    PathArcTo arc => arc.dest,
+                    PathCubicBezierTo bezier => bezier.dest,
+                    _ => null
+                };
+
+                if (p != null)
+                {
+                    minX = Math.Min(minX, p.X);
+                    maxX = Math.Max(maxX, p.X);
+                    minY = Math.Min(minY, p.Y);
+                    maxY = Math.Max(maxY, p.Y);
+                }
+            }
+
+            return [minX, maxX, minY, maxY];
         }
     }
 }
