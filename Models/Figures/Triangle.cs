@@ -11,7 +11,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Triangle")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Triangle")]
         private class TriangleCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

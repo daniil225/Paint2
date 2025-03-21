@@ -11,7 +11,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Pentagon")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Pentagon")]
         private class PentagonCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

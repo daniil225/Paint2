@@ -10,7 +10,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Trapezoid")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Trapezoid")]
         private class TrapezoidCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

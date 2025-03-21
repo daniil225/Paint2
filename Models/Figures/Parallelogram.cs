@@ -11,7 +11,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Parallelogram")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Parallelogram")]
         class ParallelogramCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

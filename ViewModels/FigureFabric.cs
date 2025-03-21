@@ -12,7 +12,7 @@ using Serilog;
 
 class FigureMetadata
 {
-    public string Name { get; init; }
+    public string Type { get; init; }
 }
 public interface IFigureCreator
 {
@@ -45,17 +45,17 @@ public static class FigureFabric
         cont.SatisfyImports(info);
     }
 
-    public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure? CreateFigure(string FigureName, Group parentGroup, Point coordinates)
+    public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Type);
+    public static IFigure? CreateFigure(string FigureType, Group parentGroup, Point coordinates)
     {
         try
         {
-            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
+            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Type == FigureType).Value.Create(parentGroup, coordinates);
             return newFigure;
         }
         catch
         {
-            Log.Error($"Фигуры {FigureName} не существует");
+            Log.Error($"Фигуры {FigureType} не существует");
             return null;
         }
     }

@@ -11,7 +11,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Circle")]
         class CircleCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

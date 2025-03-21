@@ -11,7 +11,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Oval")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Oval")]
         class OvalCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

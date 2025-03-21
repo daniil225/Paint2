@@ -12,7 +12,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Rectangle")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Rectangle")]
         class RectangleCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)

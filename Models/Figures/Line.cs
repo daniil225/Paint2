@@ -10,7 +10,7 @@ namespace Paint2.Models.Figures
     public partial class PathFigure
     {
         [Export(typeof(IFigureCreator))]
-        [ExportMetadata(nameof(FigureMetadata.Name), "Line")]
+        [ExportMetadata(nameof(FigureMetadata.Type), "Line")]
         class LineCreator : IFigureCreator
         {
             public IFigure Create(Group parentGroup, Point coordinates)
