@@ -76,5 +76,35 @@ namespace Paint2.Models.Figures
 
             return new Point(scaledX, scaledY);
         }
+
+        public static double[] GetBoundBox(IList<IPathElement> pathElements)
+        {
+            double minX = double.MaxValue;
+            double maxX = double.MinValue;
+            double minY = double.MaxValue;
+            double maxY = double.MinValue;
+
+            foreach (var element in pathElements)
+            {
+                Point? p = element switch
+                {
+                    PathMoveTo move => move.dest,
+                    PathLineTo line => line.dest,
+                    PathArcTo arc => arc.dest,
+                    PathCubicBezierTo bezier => bezier.dest,
+                    _ => null
+                };
+
+                if (p != null)
+                {
+                    minX = Math.Min(minX, p.X);
+                    maxX = Math.Max(maxX, p.X);
+                    minY = Math.Min(minY, p.Y);
+                    maxY = Math.Max(maxY, p.Y);
+                }
+            }
+
+            return [minX, maxX, minY, maxY];
+        }
     }
 }

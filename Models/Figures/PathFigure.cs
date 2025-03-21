@@ -267,6 +267,14 @@ namespace Paint2.Models.Figures
 
         public void Scale(double sx, double sy, Point Center)
         {
+            double[] bounds = GetBoundBox(pathElements);
+
+            double newWidth = (bounds[1] - bounds[0]) * sx;
+            double newHeight = (bounds[3] - bounds[2]) * sy;
+
+            if (newWidth * newHeight < 600)
+                return;
+
             for (int i = 0; i < pathElements.Count; i++)
             {
                 if (pathElements[i] is PathMoveTo pathMove)
