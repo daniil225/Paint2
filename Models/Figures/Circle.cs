@@ -14,14 +14,14 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
         class CircleCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, Point[] coordinates)
             {
-                PathFigure newCircle = new(parentGroup, coordinates);
+                PathFigure newCircle = new(parentGroup, coordinates[0]);
                 newCircle.Name = "Circle";
 
                 double R = 25.0;
 
-                newCircle.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X + R, coordinates.Y) });
+                newCircle.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates[0].X + R, coordinates[0].Y) });
                 newCircle.pathElements.Add(new PathArcTo()
                 {
                     radiusX = R,
@@ -29,7 +29,7 @@ namespace Paint2.Models.Figures
                     xAxisRotation = 0,
                     largeArcFlag = true,
                     sweepDirection = SweepDirection.Clockwise,
-                    dest = new Point(coordinates.X - R, coordinates.Y)
+                    dest = new Point(coordinates[0].X - R, coordinates[0].Y)
                 });
                 newCircle.pathElements.Add(new PathArcTo()
                 {
@@ -38,7 +38,7 @@ namespace Paint2.Models.Figures
                     xAxisRotation = 0,
                     largeArcFlag = true,
                     sweepDirection = SweepDirection.Clockwise,
-                    dest = new Point(coordinates.X + R, coordinates.Y)
+                    dest = new Point(coordinates[0].X + R, coordinates[0].Y)
                 });
                 newCircle.pathElements.Add(new PathClose());
                 newCircle.OnGeometryChanged();

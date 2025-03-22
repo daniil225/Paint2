@@ -15,17 +15,17 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Rhombus")]
         class RhombusCreator : IFigureCreator
         {
-            public IFigure Create(Group parentGroup, Point coordinates)
+            public IFigure Create(Group parentGroup, Point[] coordinates)
             {
-                PathFigure newPhombus = new(parentGroup, coordinates);
+                PathFigure newPhombus = new(parentGroup, coordinates[0]);
                 newPhombus.Name = "Rhombus";
                 double lengthSide = 30.0;
                 double halfDiagonal = lengthSide * Math.Sqrt(2) / 2; //острый угол 45 градусов
 
-                newPhombus.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates.X, coordinates.Y - halfDiagonal) });
-                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X + halfDiagonal, coordinates.Y) });
-                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X, coordinates.Y + halfDiagonal) });
-                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates.X - halfDiagonal, coordinates.Y) });
+                newPhombus.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates[0].X, coordinates[0].Y - halfDiagonal) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X + halfDiagonal, coordinates[0].Y) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X, coordinates[0].Y + halfDiagonal) });
+                newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - halfDiagonal, coordinates[0].Y) });
                 newPhombus.pathElements.Add(new PathClose());
                 newPhombus.OnGeometryChanged();
 
