@@ -225,6 +225,7 @@ namespace Paint2.Models.Figures
             {
                 coordinates += vector;
             }
+            _supressMove = false;
 
             OnGeometryChanged();
         }
