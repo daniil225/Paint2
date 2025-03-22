@@ -27,7 +27,7 @@ namespace Paint2.Models.Figures
                     name = value;
             }
         }
-        public Point Coordinates { get; private set; }
+        [Reactive] public Point Coordinates { get; set; }
         public Group? Parent
         {
             get => _parentGroup;
@@ -44,19 +44,28 @@ namespace Paint2.Models.Figures
                 }
             }
         }
+
+        bool isTransform;
         public float Angle
         {
             get => _angle;
             set
             {
-                Rotate(_angle - value);
-                this.RaiseAndSetIfChanged(ref _angle, value);
+                if (isTransform)
+                {
+                    this.RaiseAndSetIfChanged(ref _angle, value);
+                }
+                else 
+                {
+                    Rotate(value - _angle);
+                    this.RaiseAndSetIfChanged(ref _angle, value);
+                }
             }
         }
         private float _angle;
 
         public event PropertyChangedEventHandler GeometryChanged;
-        public bool IsActive { get; set; }
+        [Reactive] public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
@@ -195,7 +204,10 @@ namespace Paint2.Models.Figures
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
             
             float newAngle = _angle + (float)angle;
-            this.RaiseAndSetIfChanged(ref _angle, newAngle);
+
+            isTransform = true;
+            Angle += (float)angle;
+            isTransform = false;
 
             OnGeometryChanged();
         }

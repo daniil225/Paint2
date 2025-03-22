@@ -4,8 +4,9 @@ namespace Paint2.ViewModels.Interfaces
 {
     public interface IFigureGraphicProperties
     {
-        Color SolidColor { get; }
-        Color BorderColor { get; }
-        double BorderThickness { get; }
+        Color SolidColor { get; set; }
+        Color BorderColor { get; set; }
+        double BorderThickness { get; set; }
+        DashStyle BorderStyle { get; set; }
     }
 }

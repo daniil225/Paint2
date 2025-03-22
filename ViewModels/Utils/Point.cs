@@ -9,8 +9,8 @@ namespace Paint2.ViewModels.Utils
     public class Point (double x, double y)
     {
         public static readonly Point Zero = new(0, 0);
-        public double X = x;
-        public double Y = y;
+        public double X { get; set; } = x;
+        public double Y { get; set; } = y;
 
         public Point Normalize()
         {

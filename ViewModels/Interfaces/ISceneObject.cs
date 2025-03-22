@@ -13,7 +13,7 @@ namespace Paint2.ViewModels
         // Координаты pivot'а фигуры
         Point Coordinates { get; }
         Group? Parent { get; set; }
-        float Angle { get; }
+        float Angle { get; set; }
         void Move(Point vector);
         void Rotate(double angle, Point Center);
         void Scale(double x, double y, Point Center);

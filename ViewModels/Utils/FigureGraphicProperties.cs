@@ -1,12 +1,15 @@
 using Avalonia.Media;
 using Paint2.ViewModels.Interfaces;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace Paint2.ViewModels.Utils
 {
-    public class FigureGraphicProperties : IFigureGraphicProperties
+    public class FigureGraphicProperties : ReactiveObject, IFigureGraphicProperties
     {
-        public Color SolidColor { get; init; }
-        public Color BorderColor { get; init; }
-        public double BorderThickness { get; init; }
+        [Reactive] public Color SolidColor { get; set; }
+        [Reactive] public Color BorderColor { get; set; }
+        [Reactive] public double BorderThickness { get; set; }
+        [Reactive] public DashStyle BorderStyle{ get; set; }
     }
 }

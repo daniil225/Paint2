@@ -52,7 +52,7 @@ public class MainWindowViewModel : ViewModelBase
         ////////////////////////////////////
 
         HeaderPanel = new HeaderPanelViewModel(Figures);
-        PropertiesPanel = new PropertiesPanelViewModel();
+        PropertiesPanel = new PropertiesPanelViewModel(this);
         GroupsPanel = new GroupsPanelViewModel();
         FooterPanel = new FooterPanelViewModel();
         
@@ -83,14 +83,15 @@ public class MainWindowViewModel : ViewModelBase
                     : new GridLength(0);
             });
         });
-        
+
         CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point pointerCoordinates) =>
         {
             await Task.Run(() =>
             {
+                //DashStyle style = new DashStyle([1, 1], 0);
                 var properties = new FigureGraphicProperties()
                 {
-                    SolidColor = new Color(255, 255 , 0, 0),
+                    SolidColor = new Color(255, 255, 0, 0),
                     BorderColor = new Color(255, 255, 128, 0),
                     BorderThickness = 3
                 };

@@ -70,7 +70,7 @@ namespace Paint2.ViewModels
             }
             private set { }
         }
-        public float Angle { get; private set; }
+        public float Angle { get; set; }
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
