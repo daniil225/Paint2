@@ -16,6 +16,8 @@ namespace Formats.Svg
         internal XElement Tree { get; }
         XElement _currentGroup;
 
+        const string _transparentHex = "#00000000";
+
         public Brush? Brush { get; set; }
 
         public SvgSnapshot(double width, double height)
@@ -29,29 +31,25 @@ namespace Formats.Svg
             );
             _currentGroup = Tree;
         }
-        static string NumToStr(double val)
-        {
-            return val.ToString(new NumberFormatInfo { NumberDecimalSeparator = "." });
-        }
         static string PointToString(Point p)
         {
-            return $"{NumToStr(p.X)},{NumToStr(p.Y)}";
+            return $"{p.X},{p.Y}";
         }
         static string TransformToString(ITransform a)
         {
             if (a is Translate t)
             {
-                return $"translate({NumToStr(t.X)}, {NumToStr(t.Y)})";
+                return $"translate({t.X}, {t.Y})";
             }
             else if (a is Rotate r)
             {
                 if (r.Pivot != null)
                 {
-                    return $"rotate({NumToStr(r.Angle)} {PointToString(r.Pivot)})";
+                    return $"rotate({r.Angle} {PointToString(r.Pivot)})";
                 }
                 else
                 {
-                    return $"rotate({NumToStr(r.Angle)})";
+                    return $"rotate({r.Angle})";
                 }
             }
             else
@@ -97,7 +95,7 @@ namespace Formats.Svg
                     _ => throw new ArgumentException("Некорректное направление вращения"),
                 };
 
-                return $"A {NumToStr(e3.radiusX)} {NumToStr(e3.radiusY)} {NumToStr(e3.xAxisRotation)} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
+                return $"A {e3.radiusX} {e3.radiusY} {e3.xAxisRotation} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
             }
             else if (a is PathCubicBezierTo e4)
             {
@@ -126,14 +124,22 @@ namespace Formats.Svg
         {
             return c.A / 255D;
         }
-        void ApplyBrush(XElement elem)
+        void ApplyBrush(XElement elem, bool applyFill = true)
         {
             if (Brush != null)
             {
                 elem.SetAttributeValue("stroke-width", Brush.StrokeWidth);
 
-                elem.SetAttributeValue("fill", ColorToHexRGB(Brush.Fill));
-                elem.SetAttributeValue("fill-opacity", ColorToOpacityNormalized(Brush.Fill));
+                if (applyFill == true)
+                {
+                    elem.SetAttributeValue("fill", ColorToHexRGB(Brush.Fill));
+                    elem.SetAttributeValue("fill-opacity", ColorToOpacityNormalized(Brush.Fill));
+                }
+                else
+                {
+                    elem.SetAttributeValue("fill", _transparentHex);
+                    elem.SetAttributeValue("fill-opacity", _transparentHex);
+                }
 
                 elem.SetAttributeValue("stroke", ColorToHexRGB(Brush.Stroke));
                 elem.SetAttributeValue("stroke-opacity", ColorToOpacityNormalized(Brush.Stroke));
@@ -174,7 +180,7 @@ namespace Formats.Svg
                 new XAttribute("y2", line.End.Y)
             );
             SetBaseAttrs(tmp, line);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, false);
 
             _currentGroup.Add(tmp);
         }
@@ -186,7 +192,7 @@ namespace Formats.Svg
                 new XAttribute("d", PathElementsToString(path.Elements))
             );
             SetBaseAttrs(tmp, path);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, path.IsClosed);
 
             _currentGroup.Add(tmp);
         }
@@ -212,7 +218,7 @@ namespace Formats.Svg
                 new XAttribute("points", pointArray)
             );
             SetBaseAttrs(tmp, polyline);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, false);
 
             _currentGroup.Add(tmp);
         }

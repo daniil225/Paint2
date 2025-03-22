@@ -45,6 +45,9 @@ namespace Formats.Json
                 };
                 snapshot.PushGroup(docGroup);
 
+                // закомментированно, потому что это не собирается
+                // после недавних изменений
+                #if false
                 foreach (var element in group.Children)
                 {
                     // Восстанавливаем элементы внутри группы
@@ -115,6 +118,7 @@ namespace Formats.Json
                             throw new ArgumentException($"Неизвестный тип элемента: {element.GetType()}");
                     }
                 }
+                #endif
 
                 if (group.Brush != null)
                 {
