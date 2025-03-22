@@ -27,7 +27,19 @@ namespace Paint2.Models.Figures
                     name = value;
             }
         }
-        [Reactive] public Point Coordinates { get; set; }
+        bool _supressMove = false;
+        public Point Coordinates
+        {
+            get => coordinates;
+            set
+            {
+                if (!_supressMove)
+                    Move(value - coordinates);
+
+                this.RaiseAndSetIfChanged(ref coordinates, value);
+            }
+        }
+        private Point coordinates;
         public Group? Parent
         {
             get => _parentGroup;
@@ -82,7 +94,9 @@ namespace Paint2.Models.Figures
         protected PathFigure(Group parentGroup, Point coordinates)
         {
             pathElements = [];
+            _supressMove = true;
             Coordinates = coordinates;
+            _supressMove = false;
             IsActive = true;
             IsMirrored = false;
             _parentGroup = parentGroup;
@@ -98,7 +112,9 @@ namespace Paint2.Models.Figures
 
         public void Export(IExportSnapshot snapshot)
         {
-            throw new NotImplementedException();
+            snapshot.Brush = new(GraphicProperties.BorderColor, GraphicProperties.SolidColor, GraphicProperties.BorderThickness);
+
+            snapshot.AppendPath(new DocPath(pathElements));
         }
 
         public IFigure Intersect(IFigure other)
@@ -108,9 +124,9 @@ namespace Paint2.Models.Figures
 
         public void Mirror(Point ax1, Point ax2)
         {
-            double a = ax2.X - ax1.X;
-            double b = ax2.Y - ax1.Y;
-            double c = -(a * ax1.X + b * ax1.Y);
+            double a = ax2.Y - ax1.Y;
+            double b = -(ax2.X - ax1.X);
+            double c = ax2.X * ax1.Y - ax1.X * ax2.Y;
 
             for (int i = 0; i < pathElements.Count; i++)
             {
@@ -142,7 +158,13 @@ namespace Paint2.Models.Figures
                 }
             }
 
+            _supressMove = true;
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
+            _supressMove = false;
+
+            float newAngle = (float)ReflectionAngle(ax1, ax2, _angle);
+            this.RaiseAndSetIfChanged(ref _angle, newAngle);
+
             IsMirrored = !IsMirrored;
 
             OnGeometryChanged();
@@ -188,7 +210,9 @@ namespace Paint2.Models.Figures
                 }
             }
 
+            _supressMove = true;
             Coordinates += vector;
+            _supressMove = false;
 
             OnGeometryChanged();
         }
@@ -201,8 +225,10 @@ namespace Paint2.Models.Figures
 
             RotateElements(pathElements, angle, Center);
 
+            _supressMove = true;
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
-            
+            _supressMove = false;
+
             float newAngle = _angle + (float)angle;
 
             isTransform = true;
@@ -220,7 +246,9 @@ namespace Paint2.Models.Figures
 
             RotateElements(pathElements, angle, Coordinates);
 
+            _supressMove = true;
             Coordinates = RotatePoint(Coordinates, Coordinates, cosAngle, sinAngle);
+            _supressMove= false;
 
             OnGeometryChanged();
         }
@@ -255,7 +283,9 @@ namespace Paint2.Models.Figures
                 }
             }
 
+            _supressMove = true;
             Coordinates = ScalePoint(Coordinates, Center, sx, sy);
+            _supressMove = false;
 
             OnGeometryChanged();
         }
