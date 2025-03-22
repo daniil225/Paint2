@@ -16,6 +16,9 @@ public class HeaderPanelViewModel : ViewModelBase
     [Reactive] public bool IsMoveButtonChecked { get; set; }
     [Reactive] public bool IsRotateButtonChecked { get; set; }
     [Reactive] public bool IsScaleButtonChecked { get; set; }
+    [Reactive] public bool IsHorizontalReflectionButtonChecked { get; set; }
+    [Reactive] public bool IsVerticalReflectionButtonChecked { get; set; }
+    [Reactive] public bool IsLineReflectionButtonChecked { get; set; }
     [Reactive] public bool IsIntersectButtonChecked { get; set; }
     [Reactive] public bool IsUnionButtonChecked { get; set; }
     [Reactive] public bool IsSubtractButtonChecked { get; set; }
@@ -39,6 +42,9 @@ public class HeaderPanelViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> MoveFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> RotateFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> ScaleFigureCommand { get; }
+    public ReactiveCommand<Unit, Unit> HorizontalReflectionFigureCommand { get; }
+    public ReactiveCommand<Unit, Unit> VerticalReflectionFigureCommand { get; }
+    public ReactiveCommand<Unit, Unit> LineReflectionFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> IntersectFiguresCommand { get; }
     public ReactiveCommand<Unit, Unit> UnionFiguresCommand { get; }
     public ReactiveCommand<Unit, Unit> SubtractFiguresCommand { get; }
@@ -115,6 +121,18 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             MenuMode = MenuModesEnum.ScaleFigureMode;
         });
+        HorizontalReflectionFigureCommand = ReactiveCommand.Create(() =>
+        {
+            MenuMode = MenuModesEnum.HorizontalReflectionFigureMode;
+        });
+        VerticalReflectionFigureCommand = ReactiveCommand.Create(() =>
+        {
+            MenuMode = MenuModesEnum.VerticalReflectionFigureMode;
+        });
+        LineReflectionFigureCommand = ReactiveCommand.Create(() =>
+        {
+            MenuMode = MenuModesEnum.LineReflectionFigureMode;
+        });
         IntersectFiguresCommand = ReactiveCommand.Create(() =>
         {
             MenuMode = MenuModesEnum.IntersectFiguresMode;
@@ -144,6 +162,9 @@ public class HeaderPanelViewModel : ViewModelBase
         IsMoveButtonChecked = false;
         IsRotateButtonChecked = false;
         IsScaleButtonChecked = false;
+        IsHorizontalReflectionButtonChecked = false;
+        IsVerticalReflectionButtonChecked = false;
+        IsLineReflectionButtonChecked = false;
         IsIntersectButtonChecked = false;
         IsUnionButtonChecked = false;
         IsSubtractButtonChecked = false;
@@ -169,6 +190,15 @@ public class HeaderPanelViewModel : ViewModelBase
                 break;
             case MenuModesEnum.ScaleFigureMode:
                 IsScaleButtonChecked = true;
+                break;
+            case MenuModesEnum.HorizontalReflectionFigureMode:
+                IsHorizontalReflectionButtonChecked = true;
+                break;
+            case MenuModesEnum.VerticalReflectionFigureMode:
+                IsVerticalReflectionButtonChecked = true;
+                break;
+            case MenuModesEnum.LineReflectionFigureMode:
+                IsLineReflectionButtonChecked = true;
                 break;
             case MenuModesEnum.IntersectFiguresMode:
                 IsIntersectButtonChecked = true;
@@ -196,7 +226,6 @@ public class FigureMenuItem(string iconPath, string iconName, StandardFiguresEnu
 {
     public string IconPath { get; set; } = iconPath;
     public string IconName { get; set; } = iconName;
-
     public StandardFiguresEnum FigureType { get; set; } = figureType;
 }
 
@@ -207,6 +236,9 @@ public enum MenuModesEnum
     MoveFigureMode,
     RotateFigureMode,
     ScaleFigureMode,
+    HorizontalReflectionFigureMode,
+    VerticalReflectionFigureMode,
+    LineReflectionFigureMode,
     IntersectFiguresMode,
     UnionFiguresMode,
     SubtractFiguresMode,

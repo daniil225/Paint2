@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
+using Point = Paint2.ViewModels.Utils.Point;
 
 namespace Paint2.ViewModels;
 
@@ -30,6 +31,8 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<GeometryViewModel> Figures { get; }
     public Point MovementVector { get; set; }
     public Point PrevPointerCoordinates { get; set; }
+    public bool IsReflectionLineComplete { get; set; }
+    public List<Point> ReflectionLineCoordinates { get; set; } = [];
 
     public MainWindowViewModel()
     {

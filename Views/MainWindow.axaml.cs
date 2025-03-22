@@ -43,6 +43,12 @@ namespace Paint2.Views
         {
             _activeCoordinates.Clear();
             _toDrawPoints.Clear();
+            if (_vm is null)
+            {
+                return;
+            }
+            _vm.ReflectionLineCoordinates.Clear();
+            _vm.IsReflectionLineComplete = false;
         }
         
         private void ToDrawPointsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -141,7 +147,7 @@ namespace Paint2.Views
             _vm.MovementVector = currentPoint - _vm.PrevPointerCoordinates;
             _vm.PrevPointerCoordinates = currentPoint;
 
-            if (_activeCoordinates.Count > 0 && _toDrawPoints.Count > 0)
+            if (_activeCoordinates.Count > 0 && _toDrawPoints.Count > 0 && !_vm.IsReflectionLineComplete)
             {
                 if (_activeCoordinates.Count == _toDrawPoints.Count)
                 {
@@ -188,6 +194,19 @@ namespace Paint2.Views
                         _vm.CreateFigureCommand.Execute([pointerCoordinates]);
                         break;
                     }
+                case MenuModesEnum.LineReflectionFigureMode when _vm.IsReflectionLineComplete == false:
+                    {
+                        var point = e.GetCurrentPoint(sender as Control);
+                        Point pointerCoordinates = new(point.Position.X, point.Position.Y);
+                        _activeCoordinates.Add(pointerCoordinates);
+                        _toDrawPoints.Add(pointerCoordinates);
+                        _vm.ReflectionLineCoordinates.Add(pointerCoordinates);
+                        if (_activeCoordinates.Count == 2)
+                        {
+                            _vm.IsReflectionLineComplete = true;
+                        }
+                    }
+                    break;
                 case MenuModesEnum.SelectionMode:
                     _vm.SelectedFigure = null;
                     break;
@@ -214,7 +233,8 @@ namespace Paint2.Views
 
         private void MainWindow_OnKeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.Key is Key.Escape && _vm?.HeaderPanel.MenuMode is MenuModesEnum.CreationMode)
+            if (e.Key is Key.Escape
+                && _vm?.HeaderPanel.MenuMode is MenuModesEnum.CreationMode or MenuModesEnum.LineReflectionFigureMode)
             {
                 ClearActiveCoordinates();
             }

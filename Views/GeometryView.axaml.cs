@@ -4,6 +4,7 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 
 namespace Paint2.Views
 {
@@ -34,8 +35,28 @@ namespace Paint2.Views
                         e.Handled = true;
                     }
                     break;
-                case MenuModesEnum.MoveFigureMode:
-                    _vm.Figure.Move(_vm.MainWindowViewModel.MovementVector);
+                case MenuModesEnum.HorizontalReflectionFigureMode:
+                    {
+                        _vm.Figure.MirrorHorizontal();
+                        e.Handled = true;
+                    }
+                    break;
+                case MenuModesEnum.VerticalReflectionFigureMode:
+                    {
+                        _vm.Figure.MirrorVertical();
+                        e.Handled = true;
+                    }
+                    break;
+                case MenuModesEnum.LineReflectionFigureMode:
+                    {
+                        MainWindowViewModel mvm = _vm.MainWindowViewModel;
+                        List<Point> lineCoords = mvm.ReflectionLineCoordinates;
+                        if (lineCoords.Count == 2 && mvm.IsReflectionLineComplete)
+                        {
+                            _vm.Figure.Mirror(lineCoords[0], lineCoords[1]);
+                            e.Handled = true;
+                        }
+                    }
                     break;
             }
         }

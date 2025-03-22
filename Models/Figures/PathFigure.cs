@@ -99,9 +99,9 @@ namespace Paint2.Models.Figures
 
         public void Mirror(Point ax1, Point ax2)
         {
-            double a = ax2.X - ax1.X;
-            double b = ax2.Y - ax1.Y;
-            double c = -(a * ax1.X + b * ax1.Y);
+            double a = ax2.Y - ax1.Y;
+            double b = -(ax2.X - ax1.X);
+            double c = ax2.X * ax1.Y - ax1.X * ax2.Y;
 
             for (int i = 0; i < pathElements.Count; i++)
             {
