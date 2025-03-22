@@ -31,29 +31,25 @@ namespace Formats.Svg
             );
             _currentGroup = Tree;
         }
-        static string NumToStr(double val)
-        {
-            return val.ToString(new NumberFormatInfo { NumberDecimalSeparator = "." });
-        }
         static string PointToString(Point p)
         {
-            return $"{NumToStr(p.X)},{NumToStr(p.Y)}";
+            return $"{p.X},{p.Y}";
         }
         static string TransformToString(ITransform a)
         {
             if (a is Translate t)
             {
-                return $"translate({NumToStr(t.X)}, {NumToStr(t.Y)})";
+                return $"translate({t.X}, {t.Y})";
             }
             else if (a is Rotate r)
             {
                 if (r.Pivot != null)
                 {
-                    return $"rotate({NumToStr(r.Angle)} {PointToString(r.Pivot)})";
+                    return $"rotate({r.Angle} {PointToString(r.Pivot)})";
                 }
                 else
                 {
-                    return $"rotate({NumToStr(r.Angle)})";
+                    return $"rotate({r.Angle})";
                 }
             }
             else
@@ -99,7 +95,7 @@ namespace Formats.Svg
                     _ => throw new ArgumentException("Некорректное направление вращения"),
                 };
 
-                return $"A {NumToStr(e3.radiusX)} {NumToStr(e3.radiusY)} {NumToStr(e3.xAxisRotation)} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
+                return $"A {e3.radiusX} {e3.radiusY} {e3.xAxisRotation} {largeArcFlag} {sweepFlag} {PointToString(e3.dest)}";
             }
             else if (a is PathCubicBezierTo e4)
             {

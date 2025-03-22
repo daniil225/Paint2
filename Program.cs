@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Globalization;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Serilog;
@@ -14,6 +16,7 @@ namespace Paint2
         [STAThread]
         public static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(Path.Combine("logs", "logger.txt"))
