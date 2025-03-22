@@ -1,18 +1,12 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Media;
 using DynamicData;
-using Paint2.Models.Figures;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -43,13 +37,6 @@ public class MainWindowViewModel : ViewModelBase
         Scene.CreateScene();
         // Подписываю Figures на обновление иерархии сцены
         Scene.Current.HierarchyChanged += UpdateFigures;
-
-        // Пример для работы с массивом фигур
-        //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
-        //Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
-        //Renderer renderer = new();
-        //circle.Render(renderer);
-        ////////////////////////////////////
 
         HeaderPanel = new HeaderPanelViewModel(Figures);
         PropertiesPanel = new PropertiesPanelViewModel();
@@ -88,11 +75,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
-                var properties = new FigureGraphicProperties()
+                var properties = new FigureGraphicProperties
                 {
-                    SolidColor = new Color(255, 255 , 0, 0),
-                    BorderColor = new Color(255, 255, 128, 0),
-                    BorderThickness = 3
+                    SolidColor = DefaultFigureGraphicProperties.StandardFigureSolidColor,
+                    BorderColor = DefaultFigureGraphicProperties.StandardFigureBorderColor,
+                    BorderThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness
                 };
                 var group = Scene.Current.CreateGroup("Name", properties);
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();

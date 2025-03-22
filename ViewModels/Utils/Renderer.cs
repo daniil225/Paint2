@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Media;
 using Formats;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Paint2.ViewModels.Utils;
 

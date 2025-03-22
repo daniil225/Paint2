@@ -7,7 +7,8 @@
         x:Class="Paint2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/app-logo.ico"
-        Title="Paint2">
+        Title="Paint2"
+        KeyDown="MainWindow_OnKeyDown">
     
     <Grid RowDefinitions="Auto,*,Auto, Auto" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
@@ -49,7 +50,9 @@
                                     PointerExited="Canvas_OnPointerExited"
                                     PointerPressed="Canvas_OnPointerPressed"
                                     PointerEntered="Canvas_OnPointerEntered"
-                                    Background="White" />
+                                    Loaded="Canvas_OnLoaded"
+                                    Background="White">
+                            </Canvas>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
