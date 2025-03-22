@@ -71,7 +71,7 @@ namespace Paint2.Models.Figures
                 }
                 else
                 {
-                    Rotate(value - _angle);
+                    Rotate(newAngle - _angle);
                     this.RaiseAndSetIfChanged(ref _angle, newAngle);
                 }
             }
