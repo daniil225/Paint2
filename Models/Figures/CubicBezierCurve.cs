@@ -31,7 +31,7 @@ namespace Paint2.Models.Figures
                     controlPoint2 = coordinates[2],
                     dest = coordinates[3]
                 });
-
+                newCubicBezierCurve.OnGeometryChanged();
                 return newCubicBezierCurve;
             }
         }

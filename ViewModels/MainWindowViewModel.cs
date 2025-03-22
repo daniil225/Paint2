@@ -32,7 +32,7 @@ public class MainWindowViewModel : ViewModelBase
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
-    public ReactiveCommand<Point, Unit> CreateFigureCommand { get; }
+    public ReactiveCommand<Point[], Unit> CreateFigureCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
     public Point MovementVector { get; set; }
     public Point PrevPointerCoordinates { get; set; }
@@ -84,7 +84,7 @@ public class MainWindowViewModel : ViewModelBase
             });
         });
         
-        CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point pointerCoordinates) =>
+        CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point[] pointerCoordinates) =>
         {
             await Task.Run(() =>
             {
@@ -95,9 +95,8 @@ public class MainWindowViewModel : ViewModelBase
                     BorderThickness = 3
                 };
                 var group = Scene.Current.CreateGroup("Name", properties);
-                // надо удалять пробелы
-                string figureClassName = HeaderPanel.SelectedFigureMenuItem.IconName;
-                FigureFabric.CreateFigure(figureClassName, group, [pointerCoordinates]);
+                string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();
+                FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates);
             });
         });
     }

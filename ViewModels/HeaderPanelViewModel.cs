@@ -26,11 +26,11 @@ public class HeaderPanelViewModel : ViewModelBase
     public MenuModesEnum MenuMode
     {
         get => _menuMode;
-        set
+        private set
         {
-            _menuMode = value;
             UnCheckAllButtons();
-            HandleCheckingButton(_menuMode);
+            HandleCheckingButton(value);
+            this.RaiseAndSetIfChanged(ref _menuMode, value);
         }
     }
     
@@ -52,16 +52,46 @@ public class HeaderPanelViewModel : ViewModelBase
         
         FiguresInMenu =
         [
-            new FigureMenuItem("/Assets/Figures/rectangle.svg", "Rectangle"),
-            new FigureMenuItem("/Assets/Figures/triangle.svg", "Triangle"),
-            new FigureMenuItem("/Assets/Figures/rhombus.svg", "Rhombus"),
-            new FigureMenuItem("/Assets/Figures/trapezoid.svg", "Trapezoid"),
-            new FigureMenuItem("/Assets/Figures/parallelogram.svg", "Parallelogram"),
-            new FigureMenuItem("/Assets/Figures/pentagon.svg", "Pentagon"),
-            new FigureMenuItem("/Assets/Figures/circle.svg", "Circle"),
-            new FigureMenuItem("/Assets/Figures/oval.svg", "Oval"),
-            new FigureMenuItem("/Assets/Figures/line.svg", "Line"),
-            new FigureMenuItem("/Assets/Figures/bezier-curve.svg", "Cubic Bezier curve")
+            new FigureMenuItem(
+                "/Assets/Figures/rectangle.svg", 
+                "Rectangle", 
+                StandardFiguresEnum.Rectangle),
+            new FigureMenuItem(
+                "/Assets/Figures/triangle.svg", 
+                "Triangle", 
+                StandardFiguresEnum.Triangle),
+            new FigureMenuItem(
+                "/Assets/Figures/rhombus.svg", 
+                "Rhombus", 
+                StandardFiguresEnum.Rhombus),
+            new FigureMenuItem(
+                "/Assets/Figures/trapezoid.svg", 
+                "Trapezoid", 
+                StandardFiguresEnum.Trapezoid),
+            new FigureMenuItem(
+                "/Assets/Figures/parallelogram.svg", 
+                "Parallelogram", 
+                StandardFiguresEnum.Parallelogram),
+            new FigureMenuItem(
+                "/Assets/Figures/pentagon.svg", 
+                "Pentagon", 
+                StandardFiguresEnum.Pentagon),
+            new FigureMenuItem(
+                "/Assets/Figures/circle.svg", 
+                "Circle", 
+                StandardFiguresEnum.Circle),
+            new FigureMenuItem(
+                "/Assets/Figures/oval.svg", 
+                "Oval", 
+                StandardFiguresEnum.Oval),
+            new FigureMenuItem(
+                "/Assets/Figures/line.svg", 
+                "Line", 
+                StandardFiguresEnum.Line),
+            new FigureMenuItem(
+                "/Assets/Figures/bezier-curve.svg", 
+                "Cubic Bezier curve", 
+                StandardFiguresEnum.CubicBezierCurve)
         ];
         SelectedFigureMenuItem = FiguresInMenu.First();
 
@@ -162,10 +192,12 @@ public class HeaderPanelViewModel : ViewModelBase
     }
 }
 
-public class FigureMenuItem(string iconPath, string iconName)
+public class FigureMenuItem(string iconPath, string iconName, StandardFiguresEnum figureType)
 {
     public string IconPath { get; set; } = iconPath;
     public string IconName { get; set; } = iconName;
+
+    public StandardFiguresEnum FigureType { get; set; } = figureType;
 }
 
 public enum MenuModesEnum
@@ -180,4 +212,18 @@ public enum MenuModesEnum
     SubtractFiguresMode,
     ZoomInMode,
     ZoomOutMode
+}
+
+public enum StandardFiguresEnum
+{
+    Rectangle,
+    Triangle,
+    Rhombus,
+    Trapezoid,
+    Parallelogram, 
+    Pentagon,
+    Circle,
+    Oval,
+    Line,
+    CubicBezierCurve
 }
