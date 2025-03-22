@@ -46,16 +46,19 @@ namespace Formats
     public class DocPath : DocElement
     {
         internal IEnumerable<IPathElement> Elements { get; set; }
+        internal bool IsClosed { get; private set; }
 
-        internal DocPath(IEnumerable<IPathElement> elements)
+        internal DocPath(IEnumerable<IPathElement> elements, bool isClosed)
         {
             Elements = elements;
+            IsClosed = isClosed;
         }
     }
     
     public class PathBuilder : IPathBuilder
     {
         List<IPathElement> _elements = [];
+        bool _isClosed = false;
 
         public PathBuilder() {}
         
@@ -101,12 +104,13 @@ namespace Formats
         public IPathBuilder Close()
         {
             _elements.Add(new PathClose());
-            
+            _isClosed = true;
+
             return this;
         }
         public DocPath Build()
         {
-            return new DocPath(_elements);
+            return new DocPath(_elements, _isClosed);
         }
     }
     
@@ -117,7 +121,8 @@ namespace Formats
         (double Length, double Gap)? dash = null
     ) {
         public Color Stroke = stroke;
-        // Если фигура не может иметь цвета заливки, это поле игнорируется
+        // Это поле игнорируется при отрисовке Polyline, Line,
+        // а также Path, если в нём не встречается сегмент PathClose
         public Color Fill = fill;
         public double StrokeWidth = strokeWidth;
         // Length - длина каждого штриха

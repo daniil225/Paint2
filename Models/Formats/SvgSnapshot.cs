@@ -16,6 +16,8 @@ namespace Formats.Svg
         internal XElement Tree { get; }
         XElement _currentGroup;
 
+        const string _transparentHex = "#00000000";
+
         public Brush? Brush { get; set; }
 
         public SvgSnapshot(double width, double height)
@@ -126,14 +128,22 @@ namespace Formats.Svg
         {
             return c.A / 255D;
         }
-        void ApplyBrush(XElement elem)
+        void ApplyBrush(XElement elem, bool applyFill = true)
         {
             if (Brush != null)
             {
                 elem.SetAttributeValue("stroke-width", Brush.StrokeWidth);
 
-                elem.SetAttributeValue("fill", ColorToHexRGB(Brush.Fill));
-                elem.SetAttributeValue("fill-opacity", ColorToOpacityNormalized(Brush.Fill));
+                if (applyFill == true)
+                {
+                    elem.SetAttributeValue("fill", ColorToHexRGB(Brush.Fill));
+                    elem.SetAttributeValue("fill-opacity", ColorToOpacityNormalized(Brush.Fill));
+                }
+                else
+                {
+                    elem.SetAttributeValue("fill", _transparentHex);
+                    elem.SetAttributeValue("fill-opacity", _transparentHex);
+                }
 
                 elem.SetAttributeValue("stroke", ColorToHexRGB(Brush.Stroke));
                 elem.SetAttributeValue("stroke-opacity", ColorToOpacityNormalized(Brush.Stroke));
@@ -174,7 +184,7 @@ namespace Formats.Svg
                 new XAttribute("y2", line.End.Y)
             );
             SetBaseAttrs(tmp, line);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, false);
 
             _currentGroup.Add(tmp);
         }
@@ -186,7 +196,7 @@ namespace Formats.Svg
                 new XAttribute("d", PathElementsToString(path.Elements))
             );
             SetBaseAttrs(tmp, path);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, path.IsClosed);
 
             _currentGroup.Add(tmp);
         }
@@ -212,7 +222,7 @@ namespace Formats.Svg
                 new XAttribute("points", pointArray)
             );
             SetBaseAttrs(tmp, polyline);
-            ApplyBrush(tmp);
+            ApplyBrush(tmp, false);
 
             _currentGroup.Add(tmp);
         }
