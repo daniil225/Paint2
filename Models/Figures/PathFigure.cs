@@ -58,19 +58,21 @@ namespace Paint2.Models.Figures
         }
 
         bool isTransform;
+
         public float Angle
         {
             get => _angle;
             set
             {
+                float newAngle = Math.Abs(value) > 180 ? ((value + 180) % 360 + 360) % 360 - 180 : value;
                 if (isTransform)
                 {
-                    this.RaiseAndSetIfChanged(ref _angle, value);
+                    this.RaiseAndSetIfChanged(ref _angle, newAngle);
                 }
-                else 
+                else
                 {
                     Rotate(value - _angle);
-                    this.RaiseAndSetIfChanged(ref _angle, value);
+                    this.RaiseAndSetIfChanged(ref _angle, newAngle);
                 }
             }
         }
@@ -162,8 +164,10 @@ namespace Paint2.Models.Figures
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
             _supressMove = false;
 
-            float newAngle = (float)ReflectionAngle(ax1, ax2, _angle);
-            this.RaiseAndSetIfChanged(ref _angle, newAngle);
+            float angle = (float)ReflectionAngle(ax1, ax2, _angle);
+            float newAngle = Math.Abs(angle) > 180 ? ((angle + 180) % 360 + 360) % 360 - 180 : angle;
+            _angle = newAngle;
+            this.RaisePropertyChanged(nameof(Angle));
 
             IsMirrored = !IsMirrored;
 

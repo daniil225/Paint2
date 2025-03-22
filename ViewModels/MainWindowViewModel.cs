@@ -83,7 +83,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     SolidColor = DefaultFigureGraphicProperties.StandardFigureSolidColor,
                     BorderColor = DefaultFigureGraphicProperties.StandardFigureBorderColor,
-                    BorderThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness
+                    BorderThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness,
+                    BorderStyle = []
                 };
                 var group = Scene.Current.CreateGroup("Name", properties);
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();

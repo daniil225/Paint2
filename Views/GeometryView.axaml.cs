@@ -37,18 +37,21 @@ namespace Paint2.Views
                     break;
                 case MenuModesEnum.HorizontalReflectionFigureMode:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         _vm.Figure.MirrorHorizontal();
                         e.Handled = true;
                     }
                     break;
                 case MenuModesEnum.VerticalReflectionFigureMode:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         _vm.Figure.MirrorVertical();
                         e.Handled = true;
                     }
                     break;
                 case MenuModesEnum.LineReflectionFigureMode:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         MainWindowViewModel mvm = _vm.MainWindowViewModel;
                         List<Point> lineCoords = mvm.ReflectionLineCoordinates;
                         if (lineCoords.Count == 2 && mvm.IsReflectionLineComplete)
@@ -57,6 +60,10 @@ namespace Paint2.Views
                             e.Handled = true;
                         }
                     }
+                    break;
+                default:
+                    e.Handled = true;
+                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                     break;
             }
         }
@@ -71,10 +78,12 @@ namespace Paint2.Views
             switch (_vm.MainWindowViewModel.HeaderPanel.MenuMode)
             {
                 case MenuModesEnum.MoveFigureMode when _isPointerPressed:
+                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                     _vm.Figure.Move(_vm.MainWindowViewModel.MovementVector);
                     break;
                 case MenuModesEnum.RotateFigureMode when _isPointerPressed:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         Point center = _vm.Figure.Coordinates;
                         Point movementVector = _vm.MainWindowViewModel.MovementVector;
                         Point inverseMovementVector = -movementVector;
@@ -98,6 +107,7 @@ namespace Paint2.Views
                     break;
                 case MenuModesEnum.ScaleFigureMode when _isPointerPressed:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         Point center = _vm.Figure.Coordinates;
                         Point movementVector = _vm.MainWindowViewModel.MovementVector;
                         Point inverseMovementVector = -movementVector;

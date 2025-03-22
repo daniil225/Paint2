@@ -4,6 +4,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paint2.ViewModels;
 
@@ -84,7 +85,6 @@ public class PropertiesPanelViewModel : ViewModelBase
     public PropertiesPanelViewModel(MainWindowViewModel mainWindow)
     {
         MainWindow = mainWindow;
-        SelectedBorderType = BorderTypes[0];
 
         this.WhenAnyValue(vm => vm.MainWindow.SelectedFigure)
             .Subscribe(figure => IsPropertyVisible = figure is not null);
@@ -99,6 +99,12 @@ public class PropertiesPanelViewModel : ViewModelBase
                         Xcoord = p.X;
                         Ycoord = p.Y;
                     });
+                var borderType = BorderTypes.FirstOrDefault(
+                    x => x.Style.SequenceEqual(f.GraphicProperties.BorderStyle));
+                if (borderType is not null)
+                {
+                    SelectedBorderType = borderType;
+                }
             });
         
         IsClosed = true;

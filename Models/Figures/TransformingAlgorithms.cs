@@ -21,13 +21,11 @@ namespace Paint2.Models.Figures
 
         public static double ReflectionAngle(Point ax1, Point ax2, double angle)
         {
-            if (Math.Abs(ax1.X - ax2.X) < 1e-7)
-                return -angle;
-
-            double alpha = -180.0 / Math.PI * Math.Atan((ax2.Y - ax1.Y) / (ax2.X - ax1.X));
+            double alpha = 180.0 / Math.PI * Math.Atan2((ax2.Y - ax1.Y), (ax2.X - ax1.X));
 
             return 2 * alpha - angle;
         }
+
 
         public static Point RotatePoint(Point point, Point center, double cosAngle, double sinAngle)
         {
