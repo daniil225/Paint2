@@ -85,7 +85,6 @@ public class PropertiesPanelViewModel : ViewModelBase
     public PropertiesPanelViewModel(MainWindowViewModel mainWindow)
     {
         MainWindow = mainWindow;
-        SelectedBorderType = BorderTypes[0];
 
         this.WhenAnyValue(vm => vm.MainWindow.SelectedFigure)
             .Subscribe(figure => IsPropertyVisible = figure is not null);
