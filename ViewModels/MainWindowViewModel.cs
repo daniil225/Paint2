@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.Collections;
+using Avalonia.Controls;
 using Avalonia.Media;
 using DynamicData;
 using Paint2.Models.Figures;
@@ -88,7 +89,6 @@ public class MainWindowViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
-                //DashStyle style = new DashStyle([1, 1], 0);
                 var properties = new FigureGraphicProperties()
                 {
                     SolidColor = new Color(255, 255, 0, 0),

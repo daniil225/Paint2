@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia.Collections;
+using Avalonia.Media;
 
 namespace Paint2.ViewModels.Interfaces
 {
@@ -7,6 +8,6 @@ namespace Paint2.ViewModels.Interfaces
         Color SolidColor { get; set; }
         Color BorderColor { get; set; }
         double BorderThickness { get; set; }
-        DashStyle BorderStyle { get; set; }
+        AvaloniaList<double> BorderStyle { get; set; }
     }
 }

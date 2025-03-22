@@ -52,7 +52,8 @@
 		<StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
 			<StackPanel>
 				<TextBlock Text="Border Type"/>
-				<ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}" ItemsSource="{Binding BorderTypes}">
+				<ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}" 
+				          ItemsSource="{Binding BorderTypes}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal" Spacing="10">

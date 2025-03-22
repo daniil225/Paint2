@@ -68,7 +68,7 @@ namespace Paint2.ViewModels
                 Point sum = ChildObjects.Aggregate(new Point(0, 0), (acc, obj) => acc + obj.Coordinates);
                 return sum / count;
             }
-            private set { }
+            set { } // тут надо сделать set нормальный
         }
         public float Angle { get; set; }
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
