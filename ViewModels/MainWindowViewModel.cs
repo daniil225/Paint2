@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.Collections;
+using Avalonia.Controls;
 using DynamicData;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
@@ -42,7 +43,7 @@ public class MainWindowViewModel : ViewModelBase
         Scene.Current.HierarchyChanged += UpdateFigures;
 
         HeaderPanel = new HeaderPanelViewModel(Figures);
-        PropertiesPanel = new PropertiesPanelViewModel();
+        PropertiesPanel = new PropertiesPanelViewModel(this);
         GroupsPanel = new GroupsPanelViewModel();
         FooterPanel = new FooterPanelViewModel();
         

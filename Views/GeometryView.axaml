@@ -9,14 +9,17 @@
              ClipToBounds="False">
     <Path StrokeThickness="{Binding  Figure.GraphicProperties.BorderThickness}"
           Data="{Binding Geometry}"
+		  IsVisible="{Binding Figure.IsActive}"
           PointerPressed="Path_OnPointerPressed"
           PointerMoved="Path_OnPointerMoved"
-          PointerReleased="Path_OnPointerReleased">
+          PointerReleased="Path_OnPointerReleased"
+		  StrokeDashArray="{Binding Figure.GraphicProperties.BorderStyle}">
         <Path.Fill>
             <SolidColorBrush Color="{Binding Figure.GraphicProperties.SolidColor}" />
         </Path.Fill>
         <Path.Stroke>
             <SolidColorBrush Color="{Binding Figure.GraphicProperties.BorderColor}" />
         </Path.Stroke>
+		
     </Path>
 </UserControl>
