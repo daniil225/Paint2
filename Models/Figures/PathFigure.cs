@@ -182,7 +182,7 @@ namespace Paint2.Models.Figures
             OnGeometryChanged();
         }
 
-        public void Move(Point vector)
+        public void Move(Point vector, bool isRaisedProperty = true)
         {
             for (int i = 0; i < pathElements.Count; i++)
             {
@@ -210,9 +210,16 @@ namespace Paint2.Models.Figures
                 }
             }
 
-            _supressMove = true;
-            Coordinates += vector;
-            _supressMove = false;
+            if (isRaisedProperty)
+            {
+                _supressMove = true;
+                Coordinates += vector;
+                _supressMove = false;
+            }
+            else
+            {
+                coordinates += vector;
+            }
 
             OnGeometryChanged();
         }

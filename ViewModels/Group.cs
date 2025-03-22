@@ -117,7 +117,7 @@ namespace Paint2.ViewModels
             }
             Scene.Current.OnHierarchyChanged();
         }
-        public void Move(Point vector)
+        public void Move(Point vector, bool isRaisedProperty = true)
         {
             foreach (ISceneObject obj in ChildObjects)
                 obj.Move(vector);

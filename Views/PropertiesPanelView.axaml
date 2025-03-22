@@ -14,11 +14,11 @@
 
 		<StackPanel Orientation="Horizontal" Spacing="10">
 			<TextBlock Text="Position X" VerticalAlignment="Center" Width="80"/>
-			<TextBox Text="{Binding MainWindow.SelectedFigure.Coordinates.X, StringFormat={}{0:F2}}" Width="80"/>
+			<TextBox Text="{Binding Xcoord, StringFormat={}{0:F2}}" Width="80"/>
 		</StackPanel>
 		<StackPanel Orientation="Horizontal" Spacing="10">
 			<TextBlock Text="Position Y" VerticalAlignment="Center" Width="80"/>
-			<TextBox Text="{Binding MainWindow.SelectedFigure.Coordinates.Y, StringFormat={}{0:F2}}" Width="80"/>
+			<TextBox Text="{Binding Ycoord, StringFormat={}{0:F2}}" Width="80"/>
 		</StackPanel>
 
 		<StackPanel Orientation="Horizontal" Spacing="15">

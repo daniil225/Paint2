@@ -1,4 +1,5 @@
 using Avalonia.Collections;
+using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -11,6 +12,40 @@ public class PropertiesPanelViewModel : ViewModelBase
     public MainWindowViewModel MainWindow { get; }
     [Reactive] public bool IsPropertyVisible { get; set; }
     [Reactive] public bool IsClosed { get; set; }
+
+    private double _xCoord;
+    public double Xcoord
+    {
+        get => _xCoord;
+        set
+        {
+            if (MainWindow.SelectedFigure is null)
+            {
+                return;
+            }
+            this.RaiseAndSetIfChanged(ref _xCoord, value);
+            Point coordinates = MainWindow.SelectedFigure.Coordinates;
+            MainWindow.SelectedFigure
+                .Move( new Point(value, coordinates.Y) - coordinates, false);
+        }
+    }
+    private double _yCoord;
+    public double Ycoord
+    {
+        get => _yCoord;
+        set
+        {
+            if (MainWindow.SelectedFigure is null)
+            {
+                return;
+            }
+            this.RaiseAndSetIfChanged(ref _yCoord, value);
+            Point coordinates = MainWindow.SelectedFigure.Coordinates;
+            MainWindow.SelectedFigure
+                .Move( new Point(coordinates.X, value) - coordinates, false);
+        }
+    }
+    
 
     private BorderType _selectedBorderType;
     public BorderType SelectedBorderType
@@ -54,6 +89,18 @@ public class PropertiesPanelViewModel : ViewModelBase
         this.WhenAnyValue(vm => vm.MainWindow.SelectedFigure)
             .Subscribe(figure => IsPropertyVisible = figure is not null);
 
+        this.WhenAnyValue(vm => vm.MainWindow.SelectedFigure)
+            .WhereNotNull()
+            .Subscribe(f =>
+            {
+                f.WhenAnyValue(g => g.Coordinates)
+                    .Subscribe(p => 
+                    {
+                        Xcoord = p.X;
+                        Ycoord = p.Y;
+                    });
+            });
+        
         IsClosed = true;
     }
 }
