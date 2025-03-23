@@ -12,9 +12,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
-        class CircleCreator : IFigureCreator
+        class CircleCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newCircle = new(parentGroup, coordinates[0]);
                 newCircle.Name = "Circle";

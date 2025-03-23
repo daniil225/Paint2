@@ -4,6 +4,7 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using System;
+using System.Collections.Generic;
 using System.Composition;
 
 namespace Paint2.Models.Figures
@@ -12,9 +13,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Triangle")]
-        private class TriangleCreator : IFigureCreator
+        private class TriangleCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newTri = new(parentGroup, coordinates[0]);
                 newTri.Name = "Triangle";

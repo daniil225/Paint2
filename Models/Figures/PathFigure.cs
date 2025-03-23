@@ -11,6 +11,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Composition;
 using System.Runtime.CompilerServices;
 using static Paint2.Models.Figures.TransformingAlgorithms;
 
@@ -18,6 +19,24 @@ namespace Paint2.Models.Figures
 {
     public partial class PathFigure : ReactiveObject, IFigure
     {
+        [Export(typeof(IFigureCreator))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Figure")]
+        private class FigureCreator : IFigureCreator
+        {
+            public virtual IFigure Create(Group parentGroup, Point[] coordinates)
+                => throw new NotSupportedException();
+
+            public IFigure Create(Group parentGroup, Point[] coordinates, IList<IPathElement> pathElements, string name)
+            {
+                PathFigure newFigure = new(parentGroup, coordinates[0])
+                {
+                    Name = name,
+                    pathElements = pathElements
+                };
+
+                return newFigure;
+            }
+        }
         public string Name
         {
             get => name;

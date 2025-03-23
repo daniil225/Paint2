@@ -12,9 +12,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Pentagon")]
-        private class PentagonCreator : IFigureCreator
+        private class PentagonCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newPentagon = new(parentGroup, coordinates[0]);
                 newPentagon.Name = "Pentagon";
