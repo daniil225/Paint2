@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform.Storage;
 using Formats.Json;
 using Formats.Svg;
 using Paint2.ViewModels.Interfaces;
@@ -191,13 +190,13 @@ public class HeaderPanelViewModel : ViewModelBase
                 }
                 string path = CurrentSavedToPath;
                 string extension = Path.GetExtension(path);
-                // IExportSnapshot snapshot = extension switch
-                // {
-                //     ".json" => new JsonSnapshot(),
-                //     ".svg" => new SvgSnapshot(100, 100),
-                //     _ => new JsonSnapshot()
-                // };
-                //Scene.Current.SaveScene(snapshot, path);
+                 IExportSnapshot snapshot = extension switch
+                 {
+                     ".json" => new JsonSnapshot(),
+                     ".svg" => new SvgSnapshot(100, 100),
+                     _ => new JsonSnapshot()
+                 };
+                Scene.Current.SaveScene(snapshot, path);
             });
         });
         CreateCommand = ReactiveCommand.CreateFromTask(async () =>
