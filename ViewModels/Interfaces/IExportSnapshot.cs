@@ -1,9 +1,5 @@
 ﻿using Formats;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Paint2.ViewModels.Utils;
 
 namespace Paint2.ViewModels.Interfaces
 {
@@ -22,6 +18,6 @@ namespace Paint2.ViewModels.Interfaces
         void AppendPolygon(DocPolygon polygon);
         // Сложная фигура, состоящая из PathElement.
         // Создаётся с помощью PathBuilder
-        void AppendPath(DocPath path);
+        void AppendPath(DocPath path, Point center);
     }
 }

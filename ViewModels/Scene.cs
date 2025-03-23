@@ -58,7 +58,8 @@ namespace Paint2.ViewModels
 
                             PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
 
-                            snapshot.AppendPath(pathBuilder.Build());
+                            throw new System.NotImplementedException("Нужно передать правильный center");
+                            snapshot.AppendPath(pathBuilder.Build(), new(0, 0));
                         }
                     }
                     else

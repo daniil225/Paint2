@@ -185,7 +185,7 @@ namespace Formats.Svg
             _currentGroup.Add(tmp);
         }
 
-        public void AppendPath(DocPath path)
+        public void AppendPath(DocPath path, Point _)
         {
             var tmp = new XElement(
                 "path",
