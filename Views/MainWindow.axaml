@@ -41,7 +41,7 @@
                           Width="4"
                           IsVisible="{Binding IsGroupsPanelVisible}"
                           Background="DarkGray"></GridSplitter>
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2" ColumnSpan="3">
                 <ItemsControl HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               Background="#F3F3F3"
