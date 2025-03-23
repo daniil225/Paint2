@@ -30,6 +30,7 @@ namespace Paint2.Models.Figures
                 newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X + halfSide, coordinates[0].Y + halfSide) });
                 newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - halfSide, coordinates[0].Y + halfSide) });
                 newRect.pathElements.Add(new PathClose());
+                newRect.IsClosed = true;
                 newRect.OnGeometryChanged();
 
                 return newRect;

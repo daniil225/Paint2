@@ -81,6 +81,7 @@ namespace Paint2.Models.Figures
         public event PropertyChangedEventHandler GeometryChanged;
         [Reactive] public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
+        public bool IsClosed { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
             get => _graphicProperties ?? Parent.GraphicProperties;
@@ -116,7 +117,7 @@ namespace Paint2.Models.Figures
         {
             snapshot.Brush = new(GraphicProperties.BorderColor, GraphicProperties.SolidColor, GraphicProperties.BorderThickness);
 
-            snapshot.AppendPath(new DocPath(pathElements));
+            snapshot.AppendPath(new DocPath(pathElements, IsClosed));
         }
 
         public IFigure Intersect(IFigure other)

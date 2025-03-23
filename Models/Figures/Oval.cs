@@ -42,6 +42,7 @@ namespace Paint2.Models.Figures
                     dest = new Point(coordinates[0].X + Rx, coordinates[0].Y)
                 });
                 newOval.pathElements.Add(new PathClose());
+                newOval.IsClosed = true;
                 newOval.OnGeometryChanged();
 
                 return newOval;
