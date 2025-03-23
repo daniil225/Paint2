@@ -2,6 +2,7 @@ using Avalonia.Media;
 using Paint2.ViewModels.Utils;
 using Paint2.ViewModels.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Formats
 {
@@ -64,6 +65,7 @@ namespace Formats
         public PathBuilder(List<IPathElement> elements)
         {
             _elements = elements;
+            _isClosed = elements.OfType<PathClose>().Any();
         }
 
         public IPathBuilder MoveTo(Point dest)
