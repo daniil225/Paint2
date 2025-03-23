@@ -1,9 +1,12 @@
 ﻿using Paint2.ViewModels.Interfaces;
+using Paint2.Models.Figures;
+using Formats;
 using ReactiveUI;
 using Serilog;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace Paint2.ViewModels
 {
@@ -23,11 +26,50 @@ namespace Paint2.ViewModels
         {
             _groups = [];
         }
-
-        // Не помню какие именно тут параметры нужны были
-        public void SaveScene(IExportSnapshot snapshort, string path)
+        public void SaveScene(IExportSnapshot snapshot, string path)
         {
-            ExportStrategy.SaveTo(snapshort, path);
+            // Обход объектов в глубину через стек
+            var stack = new Stack<(Group, IEnumerator<ISceneObject>)>();
+
+            foreach (var rootGroup in _groups)
+            {
+                snapshot.PushGroup(new Formats.DocGroup() { Name = rootGroup.Name });
+                stack.Push((rootGroup, rootGroup.ChildObjects.GetEnumerator()));
+
+                while (stack.Count > 0)
+                {
+                    var (currentGroup, enumerator) = stack.Peek();
+
+                    if (enumerator.MoveNext())
+                    {
+                        var child = enumerator.Current;
+
+                        if (child is Group nestedGroup) // Вложенная группа
+                        {
+                            snapshot.PushGroup(new Formats.DocGroup() { Name = nestedGroup.Name });
+                            stack.Push((nestedGroup, nestedGroup.ChildObjects.GetEnumerator()));
+                        }
+                        else if (child is PathFigure pathFigure) // Фигура
+                        {
+                            var solidColor = pathFigure.GraphicProperties?.SolidColor ?? new(0, 0, 0, 0);
+                            var borderColor = pathFigure.GraphicProperties?.BorderColor ?? new(0, 0, 0, 0);
+                            var borderThickness = pathFigure.GraphicProperties?.BorderThickness ?? 0;
+                            snapshot.Brush = new(borderColor, solidColor, borderThickness);
+
+                            PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
+                            pathBuilder.Close();
+
+                            snapshot.AppendPath(pathBuilder.Build());
+                        }
+                    }
+                    else
+                    {
+                        stack.Pop();
+                        snapshot.Pop();
+                    }
+                }
+            }
+            ExportStrategy.SaveTo(snapshot, path);
         }
         public void LoadScene(string path)
         {

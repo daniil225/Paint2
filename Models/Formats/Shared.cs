@@ -61,7 +61,11 @@ namespace Formats
         bool _isClosed = false;
 
         public PathBuilder() {}
-        
+        public PathBuilder(List<IPathElement> elements)
+        {
+            _elements = elements;
+        }
+
         public IPathBuilder MoveTo(Point dest)
         {
             _elements.Add(new PathMoveTo() { dest = dest });
