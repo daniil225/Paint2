@@ -61,6 +61,8 @@ namespace Paint2.Views
                         }
                     }
                     break;
+                case MenuModesEnum.ToggleZoomMode:
+                    break;
                 default:
                     e.Handled = true;
                     _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;

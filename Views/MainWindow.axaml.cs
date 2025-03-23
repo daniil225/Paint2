@@ -327,41 +327,33 @@ namespace Paint2.Views
             }
             
             const double minZoom = 0.4;
-            const double maxZoom = 5.0;
+            const double maxZoom = 8.0;
             
             TransformGroup transformGroup = _canvas.RenderTransform as TransformGroup ?? new TransformGroup();
             ScaleTransform? scaleTransform = transformGroup.Children.OfType<ScaleTransform>().FirstOrDefault();
             TranslateTransform? translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
-
-            if (scaleTransform is null)
-            {
-                scaleTransform = new ScaleTransform { ScaleX = 1, ScaleY = 1 };
-                transformGroup.Children.Add(scaleTransform);
-            }
-
+            
             if (translateTransform is null)
             {
                 translateTransform = new TranslateTransform();
                 transformGroup.Children.Add(translateTransform);
             }
             
+            if (scaleTransform is null)
+            {
+                scaleTransform = new ScaleTransform { ScaleX = 1, ScaleY = 1 };
+                transformGroup.Children.Add(scaleTransform);
+            }
+            
             double newScaleX = scaleTransform.ScaleX * scaleFactor;
             double newScaleY = scaleTransform.ScaleY * scaleFactor;
-            
             newScaleX = Math.Max(minZoom, Math.Min(maxZoom, newScaleX));
             newScaleY = Math.Max(minZoom, Math.Min(maxZoom, newScaleY));
-
             scaleTransform.ScaleX = newScaleX;
             scaleTransform.ScaleY = newScaleY;
 
-            double prevScaleX = scaleTransform.ScaleX;
-            double prevScaleY = scaleTransform.ScaleY;
-
-            double deltaX = zoomCenter.X - (_canvas.Bounds.Width / 2);
-            double deltaY = zoomCenter.Y - (_canvas.Bounds.Height / 2);
-
-            translateTransform.X = ((translateTransform.X - deltaX) * (scaleFactor / prevScaleX)) + deltaX;
-            translateTransform.Y = ((translateTransform.Y - deltaY) * (scaleFactor / prevScaleY)) + deltaY;
+            translateTransform.X = (_canvas.Bounds.Width / 2) - zoomCenter.X;
+            translateTransform.Y = (_canvas.Bounds.Height / 2) - zoomCenter.Y;
 
             _canvas.RenderTransform = transformGroup;
         }
