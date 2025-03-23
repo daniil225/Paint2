@@ -10,7 +10,8 @@ public class HeaderPanelViewModel : ViewModelBase
 {
     [Reactive] public ObservableCollection<FigureMenuItem> FiguresInMenu { get; set; }
     [Reactive] public FigureMenuItem SelectedFigureMenuItem { get; set; }
-    
+
+    [Reactive] public bool IsDevelopersPopupOpen { get; set; }
     [Reactive] public bool IsCreateButtonChecked { get; set; }
     [Reactive] public bool IsSelectButtonChecked { get; set; }
     [Reactive] public bool IsMoveButtonChecked { get; set; }
@@ -36,7 +37,8 @@ public class HeaderPanelViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref _menuMode, value);
         }
     }
-    
+
+    public ReactiveCommand<Unit, Unit> ToggleDevelopersPopupCommand { get; }
     public ReactiveCommand<Unit, Unit> AddFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> SelectFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> MoveFigureCommand { get; }
@@ -100,6 +102,11 @@ public class HeaderPanelViewModel : ViewModelBase
                 StandardFiguresEnum.CubicBezierCurve)
         ];
         SelectedFigureMenuItem = FiguresInMenu.First();
+
+        ToggleDevelopersPopupCommand = ReactiveCommand.Create(() =>
+        {
+            IsDevelopersPopupOpen = !IsDevelopersPopupOpen;
+        });
 
         AddFigureCommand = ReactiveCommand.Create(() =>
         {
