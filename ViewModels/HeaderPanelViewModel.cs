@@ -1,8 +1,16 @@
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
+using Formats.Json;
+using Formats.Svg;
+using Paint2.ViewModels.Interfaces;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace Paint2.ViewModels;
 
@@ -10,6 +18,17 @@ public class HeaderPanelViewModel : ViewModelBase
 {
     [Reactive] public ObservableCollection<FigureMenuItem> FiguresInMenu { get; set; }
     [Reactive] public FigureMenuItem SelectedFigureMenuItem { get; set; }
+
+    private string? _currentSavedToPath;
+    public string? CurrentSavedToPath
+    {
+        get => _currentSavedToPath;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _currentSavedToPath, value);
+            _mainWindow.FooterPanel.CurrentDocument = value;
+        }
+    }
     
     [Reactive] public bool IsCreateButtonChecked { get; set; }
     [Reactive] public bool IsSelectButtonChecked { get; set; }
@@ -50,9 +69,17 @@ public class HeaderPanelViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> SubtractFiguresCommand { get; }
     public ReactiveCommand<Unit, Unit> ZoomInCommand { get; }
     public ReactiveCommand<Unit, Unit> ZoomOutCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> CreateCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenCommand { get; }
+    public ReactiveCommand<Unit, Unit> ExitCommand { get; }
 
-    public HeaderPanelViewModel(ObservableCollection<GeometryViewModel> figures)
+    private readonly MainWindowViewModel _mainWindow;
+    
+    public HeaderPanelViewModel(MainWindowViewModel mainWindow)
     {
+        _mainWindow = mainWindow;
         UnCheckAllButtons();
         HandleCheckingButton(MenuModesEnum.CreationMode);
         
@@ -152,6 +179,53 @@ public class HeaderPanelViewModel : ViewModelBase
         ZoomOutCommand = ReactiveCommand.Create(() =>
         {
             MenuMode = MenuModesEnum.ZoomOutMode;
+        });
+        
+        SaveCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                if (CurrentSavedToPath is null)
+                {
+                    return;
+                }
+                string path = CurrentSavedToPath;
+                string extension = Path.GetExtension(path);
+                // IExportSnapshot snapshot = extension switch
+                // {
+                //     ".json" => new JsonSnapshot(),
+                //     ".svg" => new SvgSnapshot(100, 100),
+                //     _ => new JsonSnapshot()
+                // };
+                //Scene.Current.SaveScene(snapshot, path);
+            });
+        });
+        CreateCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                SaveCommand.Execute();
+                Scene.Current.ResetScene();
+                _mainWindow.SelectedFigure = null;
+            });
+        });
+        ExitCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                SaveCommand.Execute();
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopApp)
+                {
+                    desktopApp.Shutdown();
+                }
+            });
+        });
+        OpenCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                SaveCommand.Execute();
+            });
         });
     }
     

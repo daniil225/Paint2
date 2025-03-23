@@ -42,7 +42,7 @@ public class MainWindowViewModel : ViewModelBase
         // Подписываю Figures на обновление иерархии сцены
         Scene.Current.HierarchyChanged += UpdateFigures;
 
-        HeaderPanel = new HeaderPanelViewModel(Figures);
+        HeaderPanel = new HeaderPanelViewModel(this);
         PropertiesPanel = new PropertiesPanelViewModel(this);
         GroupsPanel = new GroupsPanelViewModel();
         FooterPanel = new FooterPanelViewModel();

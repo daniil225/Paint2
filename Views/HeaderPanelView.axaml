@@ -10,28 +10,33 @@
         <DockPanel Background="White">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Create">
+                    <MenuItem Header="_Create"
+                              Click="CreateMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource NoteAddRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Open">
+                    <MenuItem Header="_Open"
+                              Click="OpenMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource FolderOpenRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Save">
+                    <MenuItem Header="_Save"
+                              Click="SaveMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SaveRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Save as">
+                    <MenuItem Header="_Save as"
+                              Click="SaveAsMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SaveAsRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="_Exit">
+                    <MenuItem Header="_Exit"
+                              Click="ExitMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SignOutRegular}"></PathIcon>
                         </MenuItem.Icon>
