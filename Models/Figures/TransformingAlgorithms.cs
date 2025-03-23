@@ -43,29 +43,27 @@ namespace Paint2.Models.Figures
 
             for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElements[i] is PathMoveTo pathMove)
+                pathElements[i] = pathElements[i] switch
                 {
-                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
-                    pathArc.xAxisRotation += angle;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
+                    PathMoveTo pathMove => new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) },
+                    PathLineTo pathLine => new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) },
+                    PathArcTo pathArc => new PathArcTo()
+                    {
+                        radiusX = pathArc.radiusX,
+                        radiusY = pathArc.radiusY,
+                        xAxisRotation = pathArc.xAxisRotation + angle,
+                        largeArcFlag = pathArc.largeArcFlag,
+                        sweepDirection = pathArc.sweepDirection,
+                        dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle)
+                    },
+                    PathCubicBezierTo pathCubicBezier => new PathCubicBezierTo()
                     {
                         dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
                         controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
                         controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
-                    };
-                }
+                    },
+                    _ => pathElements[i]
+                };
             }
         }
 
