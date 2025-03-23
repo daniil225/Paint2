@@ -307,6 +307,11 @@ namespace Paint2.Views
             if (sender is Canvas canvas)
             {
                 _canvas = canvas;
+                if (_vm is null)
+                {
+                    return;
+                }
+                _vm.Canvas = canvas;
             }
         }
 

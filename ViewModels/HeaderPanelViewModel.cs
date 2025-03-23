@@ -211,10 +211,12 @@ public class HeaderPanelViewModel : ViewModelBase
                 }
                 string path = CurrentSavedToPath;
                 string extension = Path.GetExtension(path);
+                double width = mainWindow.Canvas.Bounds.Width;
+                double height = mainWindow.Canvas.Bounds.Height;
                  IExportSnapshot snapshot = extension switch
                  {
                      ".json" => new JsonSnapshot(),
-                     ".svg" => new SvgSnapshot(100, 100),
+                     ".svg" => new SvgSnapshot(width, height),
                      _ => new JsonSnapshot()
                  };
                 Scene.Current.SaveScene(snapshot, path);

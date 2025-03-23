@@ -34,6 +34,8 @@ public class MainWindowViewModel : ViewModelBase
     public Point PrevPointerCoordinates { get; set; }
     public bool IsReflectionLineComplete { get; set; }
     public List<Point> ReflectionLineCoordinates { get; set; } = [];
+    
+    public Canvas Canvas { get; set; }
 
     public MainWindowViewModel()
     {
