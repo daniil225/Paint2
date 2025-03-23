@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Paint2.ViewModels;
+using Paint2.ViewModels.Enums;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using System;
@@ -20,6 +21,9 @@ namespace Paint2.Views
         private readonly List<Point> _activeCoordinates = [];
         private readonly ObservableCollection<Point> _toDrawPoints = [];
         private Canvas? _canvas;
+        private bool _isDragging;
+        private Avalonia.Point _initialMousePosition;
+        private Point _initialCanvasPosition;
         
         public MainWindow()
         {
@@ -37,6 +41,10 @@ namespace Paint2.Views
                     hvm => hvm.MenuMode)
                 .Subscribe(_ => ClearActiveCoordinates());
             
+            _vm?.HeaderPanel
+                .WhenAnyValue(hvm => hvm.SelectedZoomMenuItem.Mode)
+                .Subscribe(OnZoomModeChanged);
+            
         }
 
         private void ClearActiveCoordinates()
@@ -50,6 +58,20 @@ namespace Paint2.Views
             _vm.ReflectionLineCoordinates.Clear();
             _vm.IsReflectionLineComplete = false;
         }
+        
+        private void OnZoomModeChanged(ZoomModeEnum newZoomMode)
+        {
+            if (_vm is null || _canvas is null)
+            {
+                return;
+            }
+
+            if (newZoomMode == ZoomModeEnum.ZoomDefault)
+            {
+                ResetCanvasZoom();
+            }
+        }
+
         
         private void ToDrawPointsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -158,6 +180,30 @@ namespace Paint2.Views
                     _toDrawPoints[^1] = currentPoint;
                 }
             }
+
+            if (_vm.HeaderPanel.MenuMode == MenuModesEnum.SceneMoveMode && _isDragging)
+            {
+                var deltaX = point.Position.X - _initialMousePosition.X;
+                var deltaY = point.Position.Y - _initialMousePosition.Y;
+
+                // Обновляем сдвиг канваса
+                var transformGroup = _canvas?.RenderTransform as TransformGroup ?? new TransformGroup();
+                var translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
+                if (translateTransform is null)
+                {
+                    translateTransform = new TranslateTransform();
+                    transformGroup.Children.Add(translateTransform);
+                }
+
+                // Применяем новый сдвиг
+                translateTransform.X = _initialCanvasPosition.X + deltaX;
+                translateTransform.Y = _initialCanvasPosition.Y + deltaY;
+
+                if (_canvas != null)
+                {
+                    _canvas.RenderTransform = transformGroup;
+                }
+            }
         }
 
         private void Canvas_OnPointerExited(object? sender, PointerEventArgs e)
@@ -171,14 +217,14 @@ namespace Paint2.Views
             {
                 return;
             }
+            
+            var point = e.GetCurrentPoint(sender as Control);
+            Point pointerCoordinates = new(point.Position.X, point.Position.Y);
 
             switch (_vm.HeaderPanel.MenuMode)
             {
                 case MenuModesEnum.CreationMode:
                     {
-                        var point = e.GetCurrentPoint(sender as Control);
-                        Point pointerCoordinates = new(point.Position.X, point.Position.Y);
-
                         if (_vm.HeaderPanel.SelectedFigureMenuItem.FigureType is StandardFiguresEnum.CubicBezierCurve)
                         {
                             _activeCoordinates.Add(pointerCoordinates);
@@ -196,8 +242,6 @@ namespace Paint2.Views
                     }
                 case MenuModesEnum.LineReflectionFigureMode when _vm.IsReflectionLineComplete == false:
                     {
-                        var point = e.GetCurrentPoint(sender as Control);
-                        Point pointerCoordinates = new(point.Position.X, point.Position.Y);
                         _activeCoordinates.Add(pointerCoordinates);
                         _toDrawPoints.Add(pointerCoordinates);
                         _vm.ReflectionLineCoordinates.Add(pointerCoordinates);
@@ -210,6 +254,41 @@ namespace Paint2.Views
                 case MenuModesEnum.SelectionMode:
                     _vm.SelectedFigure = null;
                     break;
+                case MenuModesEnum.ToggleZoomMode:
+                    double scaleFactor;
+                    var activeZoomMode = _vm.HeaderPanel.SelectedZoomMenuItem.Mode;
+
+                    switch (activeZoomMode)
+                    {
+                        case ZoomModeEnum.ZoomIn:
+                            scaleFactor = 1.2;
+                            break;
+                        case ZoomModeEnum.ZoomOut:
+                            scaleFactor = 0.8;
+                            break;
+                        case ZoomModeEnum.ZoomDefault:
+                            ResetCanvasZoom();
+                            return;
+                        default:
+                            scaleFactor = 1;
+                            break;
+                    }
+                    ZoomToPoint(pointerCoordinates, scaleFactor);
+                    break;
+            }
+            
+            if (_vm.HeaderPanel.MenuMode == MenuModesEnum.SceneMoveMode && e.GetCurrentPoint(sender as Control).Properties.IsLeftButtonPressed)
+            {
+                _initialMousePosition = point.Position;
+                    
+                if (_canvas is not null)
+                {
+                    TransformGroup transformGroup = _canvas.RenderTransform as TransformGroup ?? new TransformGroup();
+                    TranslateTransform? translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
+                    _initialCanvasPosition = translateTransform is not null ? new Point(translateTransform.X, translateTransform.Y) : new Point(0, 0);
+                }
+
+                _isDragging = true;
             }
         }
 
@@ -238,6 +317,86 @@ namespace Paint2.Views
             {
                 ClearActiveCoordinates();
             }
+        }
+        
+        private void ZoomToPoint(Point zoomCenter, double scaleFactor)
+        {
+            if (_canvas is null)
+            {
+                return;
+            }
+            
+            const double minZoom = 0.4;
+            const double maxZoom = 8.0;
+            
+            TransformGroup transformGroup = _canvas.RenderTransform as TransformGroup ?? new TransformGroup();
+            ScaleTransform? scaleTransform = transformGroup.Children.OfType<ScaleTransform>().FirstOrDefault();
+            TranslateTransform? translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
+            
+            if (translateTransform is null)
+            {
+                translateTransform = new TranslateTransform();
+                transformGroup.Children.Add(translateTransform);
+            }
+            
+            if (scaleTransform is null)
+            {
+                scaleTransform = new ScaleTransform { ScaleX = 1, ScaleY = 1 };
+                transformGroup.Children.Add(scaleTransform);
+            }
+            
+            double newScaleX = scaleTransform.ScaleX * scaleFactor;
+            double newScaleY = scaleTransform.ScaleY * scaleFactor;
+            newScaleX = Math.Max(minZoom, Math.Min(maxZoom, newScaleX));
+            newScaleY = Math.Max(minZoom, Math.Min(maxZoom, newScaleY));
+            scaleTransform.ScaleX = newScaleX;
+            scaleTransform.ScaleY = newScaleY;
+
+            translateTransform.X = (_canvas.Bounds.Width / 2) - zoomCenter.X;
+            translateTransform.Y = (_canvas.Bounds.Height / 2) - zoomCenter.Y;
+
+            _canvas.RenderTransform = transformGroup;
+        }
+        
+        private void ResetCanvasZoom()
+        {
+            if (_canvas is null)
+            {
+                return;
+            }
+
+            TransformGroup transformGroup = _canvas.RenderTransform as TransformGroup ?? new TransformGroup();
+            
+            ScaleTransform? scaleTransform = transformGroup.Children.OfType<ScaleTransform>().FirstOrDefault();
+            if (scaleTransform is null)
+            {
+                scaleTransform = new ScaleTransform { ScaleX = 1, ScaleY = 1 };
+                transformGroup.Children.Add(scaleTransform);
+            }
+            else
+            {
+                scaleTransform.ScaleX = 1;
+                scaleTransform.ScaleY = 1;
+            }
+            
+            TranslateTransform? translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
+            if (translateTransform is null)
+            {
+                translateTransform = new TranslateTransform();
+                transformGroup.Children.Add(translateTransform);
+            }
+            else
+            {
+                translateTransform.X = 0;
+                translateTransform.Y = 0;
+            }
+
+            _canvas.RenderTransform = transformGroup;
+        }
+
+        private void Canvas_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            _isDragging = false;
         }
     }
 }
