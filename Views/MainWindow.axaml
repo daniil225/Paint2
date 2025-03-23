@@ -27,6 +27,7 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ContentControl Content="{Binding GroupsPanel}" />
                 </ScrollViewer>
+                <!-- TODO: кнопка пропала -->
                 <Button Width="48" Height="48"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
@@ -43,6 +44,7 @@
             <Grid Grid.Column="2">
                 <ItemsControl HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
+                              Background="#F3F3F3"
                     ItemsSource="{Binding Figures}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -50,6 +52,7 @@
                                     PointerExited="Canvas_OnPointerExited"
                                     PointerPressed="Canvas_OnPointerPressed"
                                     PointerEntered="Canvas_OnPointerEntered"
+                                    PointerReleased="Canvas_OnPointerReleased"
                                     Loaded="Canvas_OnLoaded"
                                     Background="White">
                             </Canvas>

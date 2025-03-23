@@ -1,3 +1,4 @@
+using Paint2.ViewModels.Enums;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Collections.ObjectModel;
@@ -9,8 +10,9 @@ namespace Paint2.ViewModels;
 public class HeaderPanelViewModel : ViewModelBase
 {
     [Reactive] public ObservableCollection<FigureMenuItem> FiguresInMenu { get; set; }
+    [Reactive] public ObservableCollection<ZoomOption> ZoomOptions { get; set; }
     [Reactive] public FigureMenuItem SelectedFigureMenuItem { get; set; }
-    
+    [Reactive] public ZoomOption SelectedZoomMenuItem { get; set; }
     [Reactive] public bool IsCreateButtonChecked { get; set; }
     [Reactive] public bool IsSelectButtonChecked { get; set; }
     [Reactive] public bool IsMoveButtonChecked { get; set; }
@@ -22,9 +24,9 @@ public class HeaderPanelViewModel : ViewModelBase
     [Reactive] public bool IsIntersectButtonChecked { get; set; }
     [Reactive] public bool IsUnionButtonChecked { get; set; }
     [Reactive] public bool IsSubtractButtonChecked { get; set; }
-    [Reactive] public bool IsZoomInButtonChecked { get; set; }
-    [Reactive] public bool IsZoomOutButtonChecked { get; set; }
-
+    [Reactive] public bool IsSceneMoveButtonChecked { get; set; }
+    [Reactive] public bool IsZoomButtonChecked { get; set; }
+    
     private MenuModesEnum _menuMode;
     public MenuModesEnum MenuMode
     {
@@ -48,8 +50,8 @@ public class HeaderPanelViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> IntersectFiguresCommand { get; }
     public ReactiveCommand<Unit, Unit> UnionFiguresCommand { get; }
     public ReactiveCommand<Unit, Unit> SubtractFiguresCommand { get; }
-    public ReactiveCommand<Unit, Unit> ZoomInCommand { get; }
-    public ReactiveCommand<Unit, Unit> ZoomOutCommand { get; }
+    public ReactiveCommand<Unit, Unit> SceneMoveCommand { get; }
+    public ReactiveCommand<Unit, Unit> ToggleZoomCommand { get; }
 
     public HeaderPanelViewModel(ObservableCollection<GeometryViewModel> figures)
     {
@@ -101,6 +103,24 @@ public class HeaderPanelViewModel : ViewModelBase
         ];
         SelectedFigureMenuItem = FiguresInMenu.First();
 
+        ZoomOptions =
+        [
+            new ZoomOption(
+                "Zoom default", 
+                "/Assets/ZoomIcons/ZoomDefault.svg",
+                ZoomModeEnum.ZoomDefault),
+            new ZoomOption(
+                "Zoom In",
+                "/Assets/ZoomIcons/ZoomIn.svg",
+                ZoomModeEnum.ZoomIn),
+            new ZoomOption(
+                "Zoom Out", 
+                "/Assets/ZoomIcons/ZoomOut.svg", 
+                ZoomModeEnum.ZoomOut
+                )
+        ];
+        SelectedZoomMenuItem = ZoomOptions.First();
+
         AddFigureCommand = ReactiveCommand.Create(() =>
         {
             MenuMode = MenuModesEnum.CreationMode;
@@ -145,13 +165,13 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             MenuMode = MenuModesEnum.SubtractFiguresMode;
         });
-        ZoomInCommand = ReactiveCommand.Create(() =>
+        SceneMoveCommand = ReactiveCommand.Create(() =>
         {
-            MenuMode = MenuModesEnum.ZoomInMode;
+            MenuMode = MenuModesEnum.SceneMoveMode;
         });
-        ZoomOutCommand = ReactiveCommand.Create(() =>
+        ToggleZoomCommand = ReactiveCommand.Create(() =>
         {
-            MenuMode = MenuModesEnum.ZoomOutMode;
+            MenuMode = MenuModesEnum.ToggleZoomMode;
         });
     }
     
@@ -168,8 +188,8 @@ public class HeaderPanelViewModel : ViewModelBase
         IsIntersectButtonChecked = false;
         IsUnionButtonChecked = false;
         IsSubtractButtonChecked = false;
-        IsZoomInButtonChecked = false;
-        IsZoomOutButtonChecked = false;
+        IsSceneMoveButtonChecked = false;
+        IsZoomButtonChecked = false;
     }
 
     private void HandleCheckingButton(MenuModesEnum mode)
@@ -209,11 +229,11 @@ public class HeaderPanelViewModel : ViewModelBase
             case MenuModesEnum.SubtractFiguresMode:
                 IsSubtractButtonChecked = true;
                 break;
-            case MenuModesEnum.ZoomInMode:
-                IsZoomInButtonChecked = true;
+            case MenuModesEnum.SceneMoveMode:
+                IsSceneMoveButtonChecked = true;
                 break;
-            case MenuModesEnum.ZoomOutMode:
-                IsZoomOutButtonChecked = true;
+            case MenuModesEnum.ToggleZoomMode:
+                IsZoomButtonChecked = true;
                 break;
             default:
                 IsCreateButtonChecked = true;
@@ -229,6 +249,14 @@ public class FigureMenuItem(string iconPath, string iconName, StandardFiguresEnu
     public StandardFiguresEnum FigureType { get; set; } = figureType;
 }
 
+
+public class ZoomOption(string name, string iconPath, ZoomModeEnum mode)
+{
+    public string Name { get; } = name;
+    public string IconPath { get; set; } = iconPath;
+    public ZoomModeEnum Mode { get; set; } = mode;
+}
+
 public enum MenuModesEnum
 {
     CreationMode,
@@ -242,8 +270,8 @@ public enum MenuModesEnum
     IntersectFiguresMode,
     UnionFiguresMode,
     SubtractFiguresMode,
-    ZoomInMode,
-    ZoomOutMode
+    SceneMoveMode,
+    ToggleZoomMode
 }
 
 public enum StandardFiguresEnum
