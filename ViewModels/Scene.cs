@@ -57,7 +57,6 @@ namespace Paint2.ViewModels
                             snapshot.Brush = new(borderColor, solidColor, borderThickness);
 
                             PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
-                            pathBuilder.Close();
 
                             snapshot.AppendPath(pathBuilder.Build());
                         }
