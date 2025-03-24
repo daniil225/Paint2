@@ -15,6 +15,7 @@ class Tests
 {
     public static void SnapshotGeneral(IExportSnapshot snap)
     {
+        var someCenter = new Point(6.9, 7);
         var clockwise = Avalonia.Media.SweepDirection.Clockwise;
         
         snap.PushGroup(new DocGroup() { Name = "group1" });
@@ -37,7 +38,7 @@ class Tests
             .CubicBezierTo(ctrl1, ctrl2, pos2)
             .Close()
             .Build();
-        snap.AppendPath(path);
+        snap.AppendPath(path, someCenter);
 
         snap.Brush = new(new(255, 0, 0, 200), new(255, 255, 0, 255), 0.2);
         snap.AppendLine(new(pos1, ctrl1));
@@ -84,6 +85,7 @@ class Tests
     }
     public static void SnapshotOnlyPaths(IExportSnapshot snap)
     {
+        var someCenter = new Point(6.9, 7);
         var clockwise = Avalonia.Media.SweepDirection.Clockwise;
         var counterClockwise = Avalonia.Media.SweepDirection.CounterClockwise;
 
@@ -96,7 +98,8 @@ class Tests
                 .LineTo(new(200, 200))
                 .LineTo(new(0, 200))
                 .Close()
-                .Build()
+                .Build(),
+            someCenter
         );
 
         // примеры бинарных операций
@@ -113,7 +116,8 @@ class Tests
                     .ArcTo(20, 15, 30, false, clockwise, interP2)
                     .ArcTo(20, 15, 30, true, clockwise, interP1)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
             // эллипс B
             snap.AppendPath(
@@ -122,7 +126,8 @@ class Tests
                     .ArcTo(20, 15, 30, true, clockwise, interP2)
                     .ArcTo(20, 15, 30, false, clockwise, interP1)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
             // ленивая стрелка
             snap.AppendPath(
@@ -131,7 +136,8 @@ class Tests
                     .LineTo(new(110, 35))
                     .MoveTo(new(105, 30))
                     .LineTo(new(105, 40))
-                    .Build()
+                    .Build(),
+                someCenter
             );
             snap.Brush.Fill = new(255, 180, 0, 220);
             // результат пересечения
@@ -143,7 +149,8 @@ class Tests
                     .ArcTo(20, 15, 30, false, clockwise, interP2)
                     .ArcTo(20, 15, 30, false, clockwise, interP1)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
             // результат объединения
             interP1.Y += ySpace;
@@ -154,7 +161,8 @@ class Tests
                     .ArcTo(20, 15, 30, true, clockwise, interP2)
                     .ArcTo(20, 15, 30, true, clockwise, interP1)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
             // результат A - B
             interP1.Y += ySpace;
@@ -165,7 +173,8 @@ class Tests
                     .ArcTo(20, 15, 30, false, counterClockwise, interP2)
                     .ArcTo(20, 15, 30, true, clockwise, interP1)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
             // A|B - A&B
             interP1.Y += ySpace;
@@ -179,12 +188,14 @@ class Tests
                     .MoveTo(interP1)
                     .ArcTo(20, 15, 30, true, clockwise, interP2)
                     .ArcTo(20, 15, 30, false, counterClockwise, interP1)
-                    .Build()
+                    .Build(),
+                someCenter
             );
         snap.Pop();
     }
     public static void SnapshotMirror(IExportSnapshot snap)
     {
+        var someCenter = new Point(6.9, 7);
         var clockwise = Avalonia.Media.SweepDirection.Clockwise;
         var counterClockwise = Avalonia.Media.SweepDirection.CounterClockwise;
 
@@ -197,7 +208,8 @@ class Tests
                 .LineTo(new(200, 200))
                 .LineTo(new(0, 200))
                 .Close()
-                .Build()
+                .Build(),
+            someCenter
         );
 
         // зеркало
@@ -208,7 +220,8 @@ class Tests
                 .LineTo(new(100, 190))
                 .MoveTo(new(10, 100))
                 .LineTo(new(190, 100))
-                .Build()
+                .Build(),
+            someCenter
         );
 
         snap.Brush = new(new(255, 255, 0, 0), new(255, 180, 0, 220), 1, null);
@@ -223,7 +236,8 @@ class Tests
                     .MoveTo(p1)
                     .ArcTo(20, 15, angle, true, clockwise, p2)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
 
             // I
@@ -234,7 +248,8 @@ class Tests
                     .MoveTo(p1)
                     .ArcTo(20, 15, -angle, true, counterClockwise, p2)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
 
             // II
@@ -245,7 +260,8 @@ class Tests
                     .MoveTo(p1)
                     .ArcTo(20, 15, angle, true, clockwise, p2)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
 
             // III
@@ -256,7 +272,8 @@ class Tests
                     .MoveTo(p1)
                     .ArcTo(20, 15, -angle, true, counterClockwise, p2)
                     .Close()
-                    .Build()
+                    .Build(),
+                someCenter
             );
         snap.Pop();
     }
