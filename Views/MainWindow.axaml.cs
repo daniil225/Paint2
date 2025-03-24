@@ -107,10 +107,10 @@ namespace Paint2.Views
                 IsClosed = false, IsFilled = false, StartPoint = aPoint0, Segments = [line]
             };
             PathGeometry pathGeometry = new() { Figures = [pathFigure] };
-            SolidColorBrush strokeBrush = new() { Color = DefaultFigureGraphicProperties.ActiveFigureBorderColor };
+            SolidColorBrush strokeBrush = new() { Color = DefaultGraphicProperties.ActiveFigureBorderColor };
             return new Path
             {
-                StrokeThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness,
+                StrokeThickness = DefaultGraphicProperties.StandardFigureBorderThickness,
                 Data = pathGeometry,
                 Stroke = strokeBrush
             };
@@ -127,10 +127,10 @@ namespace Paint2.Views
                 IsClosed = false, IsFilled = false, StartPoint = aPoint0, Segments = [bezierCurve]
             };
             PathGeometry pathGeometry = new() { Figures = [pathFigure] };
-            SolidColorBrush strokeBrush = new() { Color = DefaultFigureGraphicProperties.ActiveFigureBorderColor };
+            SolidColorBrush strokeBrush = new() { Color = DefaultGraphicProperties.ActiveFigureBorderColor };
             return new Path
             {
-                StrokeThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness,
+                StrokeThickness = DefaultGraphicProperties.StandardFigureBorderThickness,
                 Data = pathGeometry,
                 Stroke = strokeBrush
             };
@@ -148,10 +148,10 @@ namespace Paint2.Views
                 IsClosed = false, IsFilled = false, StartPoint = aPoint0, Segments = [bezierCurve]
             };
             PathGeometry pathGeometry = new() { Figures = [pathFigure] };
-            SolidColorBrush strokeBrush = new() { Color = DefaultFigureGraphicProperties.ActiveFigureBorderColor };
+            SolidColorBrush strokeBrush = new() { Color = DefaultGraphicProperties.ActiveFigureBorderColor };
             return new Path
             {
-                StrokeThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness,
+                StrokeThickness = DefaultGraphicProperties.StandardFigureBorderThickness,
                 Data = pathGeometry,
                 Stroke = strokeBrush
             };
