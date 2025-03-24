@@ -80,8 +80,8 @@ public class PDFExporter : IExportFormat
         canvas.SetLineWidth((float)Brush.StrokeWidth);
 
         canvas.SetFillColorRgb(Brush.Fill.R/255f, Brush.Fill.G/255f, Brush.Fill.B/255f);
-            
-        canvas.SetLineDash([(float)Brush.Dash.Value.Length, (float)Brush.Dash.Value.Gap],0);
+
+        canvas.SetLineDash([(float)Brush.Dash[0], (float)Brush.Dash[1]],0);
 
         PdfExtGState gState = new();
 

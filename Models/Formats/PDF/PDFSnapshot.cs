@@ -42,7 +42,7 @@ public class PDFSnapshot : IExportSnapshot
         _currentGroup.Children.Add(pDFLine);
     }
 
-    public void AppendPath(DocPath path)
+    public void AppendPath(DocPath path, Point _)
     {
         PDFPath pDPath = new PDFPath(path, Brush);
         _currentGroup.Children.Add(pDPath);
@@ -93,14 +93,14 @@ public abstract class PDFElement
         Brush = new(brush);
         if (brush == null)
         {
-            Brush = new(new(0, 0, 0, 0), new(0, 0, 0, 0), 1, new(0, 0));
+            Brush = new(new(0, 0, 0, 0), new(0, 0, 0, 0), 1, new List<double> {1,0});
         }
         else if (Brush.Fill == null)
             Brush.Fill = new(0, 0, 0, 0);
         else if (Brush.Stroke == null)
             Brush.Stroke = new(0, 0, 0, 0);
         else if (Brush.Dash == null)
-            Brush.Dash = new(1, 0);
+            Brush.Dash = new List<double> { 1, 0 };
     }
 
     public PDFElement(Brush? brush, string? name, IEnumerable<ITransform>? transforms) {
