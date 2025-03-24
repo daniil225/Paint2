@@ -143,10 +143,10 @@ namespace Formats.Svg
 
                 elem.SetAttributeValue("stroke", ColorToHexRGB(Brush.Stroke));
                 elem.SetAttributeValue("stroke-opacity", ColorToOpacityNormalized(Brush.Stroke));
-                if (Brush.Dash.HasValue)
+                if (Brush.Dash != null)
                 {
-                    var (Length, Gap) = Brush.Dash.Value;
-                    elem.SetAttributeValue("stroke-dasharray", $"{Length} {Gap}");
+                    var dasharray = string.Join(" ", Brush.Dash.Select(d => d.ToString()));
+                    elem.SetAttributeValue("stroke-dasharray", dasharray);
                 }
             }
         }
