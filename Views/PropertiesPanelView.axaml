@@ -7,46 +7,25 @@
              x:Class="Paint2.Views.PropertiesPanelView"
              x:DataType="vm:PropertiesPanelViewModel">
 
-	<StackPanel Spacing="20" Margin="20">
+	<StackPanel Spacing="20" Margin="20" IsVisible="{Binding IsPropertyVisible}">
 		<TextBlock Text="Properties" FontSize="18" FontWeight="Bold"/>
 
-		<CheckBox Content="{Binding CurrentFigureName}" IsChecked="True"/>
+		<CheckBox Content="{Binding MainWindow.SelectedFigure.Name }" IsChecked="{Binding MainWindow.SelectedFigure.IsActive}"/>
 
 		<StackPanel Orientation="Horizontal" Spacing="10">
 			<TextBlock Text="Position X" VerticalAlignment="Center" Width="80"/>
-			<TextBox Text="{Binding PositionX, StringFormat={}{0:F2}}" Width="80"/>
+			<TextBox Text="{Binding Xcoord, StringFormat={}{0:F2}}" Width="80"/>
 		</StackPanel>
 		<StackPanel Orientation="Horizontal" Spacing="10">
 			<TextBlock Text="Position Y" VerticalAlignment="Center" Width="80"/>
-			<TextBox Text="{Binding PositionY, StringFormat={}{0:F2}}" Width="80"/>
-		</StackPanel>
-
-		<StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
-			<StackPanel>
-				<TextBlock Text="Width"/>
-				<TextBox Text="{Binding Width, StringFormat={}{0:F2}}" Width="80"/>
-				<Slider Minimum="0" Maximum="100" Value="{Binding PercentOfWidth}" Width="150"/>
-				<Grid Width="150" Margin="0,-15,0,0">
-					<TextBlock Text="0%" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-					<TextBlock Text="100%" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-				</Grid>
-			</StackPanel>
-			<StackPanel>
-				<TextBlock Text="Height"/>
-				<TextBox Text="{Binding Height, StringFormat={}{0:F2}}" Width="80"/>
-				<Slider Minimum="0" Maximum="100" Value="{Binding PercentOfHeight}" Width="150"/>
-				<Grid Width="150" Margin="0,-15,0,0">
-					<TextBlock Text="0%" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-					<TextBlock Text="100%" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-				</Grid>
-			</StackPanel>
+			<TextBox Text="{Binding Ycoord, StringFormat={}{0:F2}}" Width="80"/>
 		</StackPanel>
 
 		<StackPanel Orientation="Horizontal" Spacing="15">
 			<StackPanel>
 				<TextBlock Text="Angle"/>
-				<TextBox Text="{Binding Angle, StringFormat={}{0:F2}}" Width="80"/>
-				<Slider Minimum="-180" Maximum="180" Value="{Binding Angle}" Width="150"/>
+				<TextBox Text="{Binding MainWindow.SelectedFigure.Angle, StringFormat={}{0:F2}}" Width="80"/>
+				<Slider Minimum="-180" Maximum="180" Value="{Binding MainWindow.SelectedFigure.Angle}" Width="150"/>
 				<Grid Width="150" Margin="0,-15,0,0">
 					<TextBlock Text="-180" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 					<TextBlock Text="180" HorizontalAlignment="Right" VerticalAlignment="Top"/>
@@ -56,19 +35,15 @@
 
 		<StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
 			<StackPanel>
-				<ColorPicker Color="{Binding SelectedSolidColor}"/>
+				<ColorPicker Color="{Binding MainWindow.SelectedFigure.GraphicProperties.SolidColor}"/>
 				<TextBlock Text="Solid Color" HorizontalAlignment="Center"/>
 			</StackPanel>
 			<StackPanel>
-				<ColorPicker Color="{Binding SelectedBorderColor}"/>
+				<ColorPicker Color="{Binding MainWindow.SelectedFigure.GraphicProperties.BorderColor}"/>
 				<TextBlock Text="Border Color" HorizontalAlignment="Center"/>
 			</StackPanel>
 		</StackPanel>
 
-		<StackPanel Orientation="Horizontal" Spacing="5">
-			<CheckBox Content="Reflected" IsChecked="{Binding IsReflected}" IsHitTestVisible="False"/>
-			<TextBlock Text="ℹ️" ToolTip.Tip="Этот параметр недоступен для изменения" VerticalAlignment="Center"/>
-		</StackPanel>
 		<StackPanel Orientation="Horizontal" Spacing="5">
 			<CheckBox Content="IsClosed" IsChecked="{Binding IsClosed}" IsHitTestVisible="False"/>
 			<TextBlock Text="ℹ️" ToolTip.Tip="Этот параметр недоступен для изменения" VerticalAlignment="Center"/>
@@ -77,7 +52,8 @@
 		<StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
 			<StackPanel>
 				<TextBlock Text="Border Type"/>
-				<ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}" ItemsSource="{Binding BorderTypes}">
+				<ComboBox Width="200" Height="40" SelectedItem="{Binding SelectedBorderType}" 
+				          ItemsSource="{Binding BorderTypes}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal" Spacing="10">
@@ -90,7 +66,7 @@
 			</StackPanel>
 			<StackPanel>
 				<TextBlock Text="Border Width"/>
-				<TextBox Text="{Binding BorderWidth, StringFormat={}{0:F2}}" Width="80"/>
+				<TextBox Text="{Binding MainWindow.SelectedFigure.GraphicProperties.BorderThickness, StringFormat={}{0:F2}}" Width="80"/>
 			</StackPanel>
 		</StackPanel>
 	</StackPanel>

@@ -27,6 +27,7 @@ namespace Paint2.Models.Figures
                 newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X, coordinates[0].Y + halfDiagonal) });
                 newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - halfDiagonal, coordinates[0].Y) });
                 newPhombus.pathElements.Add(new PathClose());
+                newPhombus.IsClosed = true;
                 newPhombus.OnGeometryChanged();
 
                 return newPhombus;

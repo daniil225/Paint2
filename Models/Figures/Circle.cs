@@ -41,6 +41,7 @@ namespace Paint2.Models.Figures
                     dest = new Point(coordinates[0].X + R, coordinates[0].Y)
                 });
                 newCircle.pathElements.Add(new PathClose());
+                newCircle.IsClosed = true;
                 newCircle.OnGeometryChanged();
                 return newCircle;
             }

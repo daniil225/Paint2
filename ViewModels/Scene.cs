@@ -1,6 +1,8 @@
 ﻿using Paint2.ViewModels.Interfaces;
 using Paint2.Models.Figures;
 using Formats;
+using Formats.Json;
+using Formats.Svg;
 using ReactiveUI;
 using Serilog;
 using System.Collections.Generic;
@@ -69,7 +71,14 @@ namespace Paint2.ViewModels
                     }
                 }
             }
-            ExportStrategy.SaveTo(snapshot, path);
+            
+            IExportFormat exportStrategy = snapshot switch
+            {
+                JsonSnapshot => new JsonExporter(),
+                SvgSnapshot => new SvgExporter(),
+                _ => new JsonExporter()
+            };
+            exportStrategy.SaveTo(snapshot, path);
         }
         public void LoadScene(string path)
         {

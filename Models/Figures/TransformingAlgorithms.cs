@@ -1,8 +1,10 @@
 ﻿using Formats;
+using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,13 +21,11 @@ namespace Paint2.Models.Figures
 
         public static double ReflectionAngle(Point ax1, Point ax2, double angle)
         {
-            if (Math.Abs(ax1.X - ax2.X) < 1e-7)
-                return -angle;
-
-            double alpha = -180.0 / Math.PI * Math.Atan((ax2.Y - ax1.Y) / (ax2.X - ax1.X));
+            double alpha = 180.0 / Math.PI * Math.Atan2((ax2.Y - ax1.Y), (ax2.X - ax1.X));
 
             return 2 * alpha - angle;
         }
+
 
         public static Point RotatePoint(Point point, Point center, double cosAngle, double sinAngle)
         {
@@ -33,6 +33,40 @@ namespace Paint2.Models.Figures
             double rotatedY = (point.X - center.X) * sinAngle + (point.Y - center.Y) * cosAngle + center.Y;
 
             return new Point(rotatedX, rotatedY);
+        }
+
+        public static void RotateElements(IList<IPathElement> pathElements, double angle, Point Center)
+        {
+            double radians = angle * Math.PI / 180;
+            double cosAngle = Math.Cos(radians);
+            double sinAngle = Math.Sin(radians);
+
+            for (int i = 0; i < pathElements.Count; i++)
+            {
+                if (pathElements[i] is PathMoveTo pathMove)
+                {
+                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
+                }
+                else if (pathElements[i] is PathLineTo pathLine)
+                {
+                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
+                }
+                else if (pathElements[i] is PathArcTo pathArc)
+                {
+                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
+                    pathArc.xAxisRotation += angle;
+                    pathElements[i] = pathArc;
+                }
+                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
+                {
+                    pathElements[i] = new PathCubicBezierTo()
+                    {
+                        dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
+                        controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
+                        controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
+                    };
+                }
+            }
         }
 
         public static Point ScalePoint(Point point, Point center, double sx, double sy)
