@@ -84,7 +84,8 @@ namespace Paint2.ViewModels
         }
         public void LoadScene(string path)
         {
-            ImportStrategy.LoadFrom(path);
+            JsonImporter importStrategy = new();
+            importStrategy.LoadFrom(path);
         }
         public static void CreateScene()
         {

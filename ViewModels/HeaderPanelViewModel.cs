@@ -248,7 +248,12 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
+                if (CurrentSavedToPath is null)
+                {
+                    return;
+                }
                 SaveCommand.Execute();
+                Scene.Current.LoadScene(CurrentSavedToPath);
             });
         });
     }
