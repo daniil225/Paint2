@@ -70,22 +70,23 @@ namespace Formats
 
         public IPathBuilder MoveTo(Point dest)
         {
-            _elements.Add(new PathMoveTo() { dest = dest });
+            _elements.Add(new PathMoveTo() { dest = new(dest) });
             
             return this;
         }
         public IPathBuilder LineTo(Point dest)
         {
-            _elements.Add(new PathLineTo() { dest = dest });
+            _elements.Add(new PathLineTo() { dest = new(dest) });
             
             return this;
         }
         public IPathBuilder CubicBezierTo(Point controlPoint1, Point controlPoint2, Point dest)
         {
-            _elements.Add(new PathCubicBezierTo() {
-                dest = dest,
-                controlPoint1 = controlPoint1,
-                controlPoint2 = controlPoint2
+            _elements.Add(new PathCubicBezierTo()
+            {
+                dest = new(dest),
+                controlPoint1 = new(controlPoint1),
+                controlPoint2 = new(controlPoint2)
             });
 
             return this;
@@ -97,7 +98,7 @@ namespace Formats
             Point dest
         ) {
             _elements.Add(new PathArcTo() {
-                dest = dest,
+                dest = new(dest),
                 radiusX = radiusX,
                 radiusY = radiusY,
                 xAxisRotation = xAxisRotation,
@@ -134,6 +135,17 @@ namespace Formats
             Fill = fill;
             StrokeWidth = strokeWidth;
             Dash = dash;
+        }
+
+        public Brush(Brush other)
+        {
+            if(other != null)
+            {
+                Stroke = other.Stroke;
+                Fill = other.Fill;
+                StrokeWidth = other.StrokeWidth;
+                Dash = other.Dash;
+            }
         }
     }
 
