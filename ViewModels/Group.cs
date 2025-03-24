@@ -68,9 +68,9 @@ namespace Paint2.ViewModels
                 Point sum = ChildObjects.Aggregate(new Point(0, 0), (acc, obj) => acc + obj.Coordinates);
                 return sum / count;
             }
-            private set { }
+            set { } // тут надо сделать set нормальный
         }
-        public float Angle { get; private set; }
+        public float Angle { get; set; }
         public Geometry Geometry { get; set; } // для группы это свойство по идеи не должно использоваться
         public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
@@ -117,7 +117,7 @@ namespace Paint2.ViewModels
             }
             Scene.Current.OnHierarchyChanged();
         }
-        public void Move(Point vector)
+        public void Move(Point vector, bool isRaisedProperty = true)
         {
             foreach (ISceneObject obj in ChildObjects)
                 obj.Move(vector);

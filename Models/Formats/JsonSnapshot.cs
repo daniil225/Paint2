@@ -133,8 +133,9 @@ namespace Formats.Json
             _currentGroup?.Children.Add(jsonPolygon);
         }
 
-        public void AppendPath(DocPath path)
+        public void AppendPath(DocPath path, Point center)
         {
+            throw new NotImplementedException("Нужно обработать center");
             var jsonPath = new JsonPath
             {
                 Elements = path.Elements,

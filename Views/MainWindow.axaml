@@ -7,7 +7,8 @@
         x:Class="Paint2.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/app-logo.ico"
-        Title="Paint2">
+        Title="Paint2"
+        KeyDown="MainWindow_OnKeyDown">
     
     <Grid RowDefinitions="Auto,*,Auto, Auto" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
@@ -26,6 +27,7 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ContentControl Content="{Binding GroupsPanel}" />
                 </ScrollViewer>
+                <!-- TODO: кнопка пропала -->
                 <Button Width="48" Height="48"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
@@ -39,9 +41,10 @@
                           Width="4"
                           IsVisible="{Binding IsGroupsPanelVisible}"
                           Background="DarkGray"></GridSplitter>
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2" ColumnSpan="3">
                 <ItemsControl HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
+                              Background="#F3F3F3"
                     ItemsSource="{Binding Figures}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -49,7 +52,10 @@
                                     PointerExited="Canvas_OnPointerExited"
                                     PointerPressed="Canvas_OnPointerPressed"
                                     PointerEntered="Canvas_OnPointerEntered"
-                                    Background="White" />
+                                    PointerReleased="Canvas_OnPointerReleased"
+                                    Loaded="Canvas_OnLoaded"
+                                    Background="White">
+                            </Canvas>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>

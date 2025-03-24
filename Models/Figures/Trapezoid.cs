@@ -27,6 +27,7 @@ namespace Paint2.Models.Figures
                 newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X + upperBase / 2.0, coordinates[0].Y - height / 2.0) });
                 newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - upperBase / 2.0, coordinates[0].Y - height / 2.0) });
                 newTrap.pathElements.Add(new PathClose());
+                newTrap.IsClosed = true;
                 newTrap.OnGeometryChanged();
 
                 return newTrap;

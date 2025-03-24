@@ -4,6 +4,7 @@ using Paint2.ViewModels;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 
 namespace Paint2.Views
 {
@@ -29,10 +30,42 @@ namespace Paint2.Views
             switch (_vm.MainWindowViewModel.HeaderPanel.MenuMode)
             {
                 case MenuModesEnum.SelectionMode:
-                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                    {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                        e.Handled = true;
+                    }
                     break;
-                case MenuModesEnum.MoveFigureMode:
-                    _vm.Figure.Move(_vm.MainWindowViewModel.MovementVector);
+                case MenuModesEnum.HorizontalReflectionFigureMode:
+                    {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                        _vm.Figure.MirrorHorizontal();
+                        e.Handled = true;
+                    }
+                    break;
+                case MenuModesEnum.VerticalReflectionFigureMode:
+                    {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                        _vm.Figure.MirrorVertical();
+                        e.Handled = true;
+                    }
+                    break;
+                case MenuModesEnum.LineReflectionFigureMode:
+                    {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
+                        MainWindowViewModel mvm = _vm.MainWindowViewModel;
+                        List<Point> lineCoords = mvm.ReflectionLineCoordinates;
+                        if (lineCoords.Count == 2 && mvm.IsReflectionLineComplete)
+                        {
+                            _vm.Figure.Mirror(lineCoords[0], lineCoords[1]);
+                            e.Handled = true;
+                        }
+                    }
+                    break;
+                case MenuModesEnum.ToggleZoomMode:
+                    break;
+                default:
+                    e.Handled = true;
+                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                     break;
             }
         }
@@ -47,10 +80,12 @@ namespace Paint2.Views
             switch (_vm.MainWindowViewModel.HeaderPanel.MenuMode)
             {
                 case MenuModesEnum.MoveFigureMode when _isPointerPressed:
+                    _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                     _vm.Figure.Move(_vm.MainWindowViewModel.MovementVector);
                     break;
                 case MenuModesEnum.RotateFigureMode when _isPointerPressed:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         Point center = _vm.Figure.Coordinates;
                         Point movementVector = _vm.MainWindowViewModel.MovementVector;
                         Point inverseMovementVector = -movementVector;
@@ -74,6 +109,7 @@ namespace Paint2.Views
                     break;
                 case MenuModesEnum.ScaleFigureMode when _isPointerPressed:
                     {
+                        _vm.MainWindowViewModel.SelectedFigure = _vm.Figure;
                         Point center = _vm.Figure.Coordinates;
                         Point movementVector = _vm.MainWindowViewModel.MovementVector;
                         Point inverseMovementVector = -movementVector;
@@ -81,6 +117,10 @@ namespace Paint2.Views
                         Point centerToPrevPointVector = inverseMovementVector - centerToPointVector;
                         double lengthPrev = centerToPrevPointVector.Magnitude();
                         double lengthCurrent = centerToPointVector.Magnitude();
+                        if (lengthPrev < 1e-2 || lengthCurrent < 1e-2)
+                        {
+                            return;
+                        }
                         double scale = lengthCurrent / lengthPrev;
                         _vm.Figure.Scale(scale, scale, center);
                     }

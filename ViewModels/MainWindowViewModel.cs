@@ -1,20 +1,16 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
+﻿using Avalonia.Collections;
+using Avalonia.Controls;
 using DynamicData;
-using Paint2.Models.Figures;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using Point = Paint2.ViewModels.Utils.Point;
 
 namespace Paint2.ViewModels;
 
@@ -25,17 +21,21 @@ public class MainWindowViewModel : ViewModelBase
     public HeaderPanelViewModel HeaderPanel { get; }
     public FooterPanelViewModel FooterPanel { get; }
     
-    [Reactive] public IFigure SelectedFigure { get; set; }
+    [Reactive] public IFigure? SelectedFigure { get; set; }
     [Reactive] public bool IsPropertiesPanelVisible { get; set; }
     [Reactive] public bool IsGroupsPanelVisible { get; set; }
     [Reactive] public GridLength PropertiesColumnWidth { get; set; }
     [Reactive] public GridLength GroupsColumnWidth { get; set; }
     public ReactiveCommand<Unit, Unit> HidePropertiesPanelCommand { get; }
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
-    public ReactiveCommand<Point, Unit> CreateFigureCommand { get; }
+    public ReactiveCommand<Point[], Unit> CreateFigureCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
     public Point MovementVector { get; set; }
     public Point PrevPointerCoordinates { get; set; }
+    public bool IsReflectionLineComplete { get; set; }
+    public List<Point> ReflectionLineCoordinates { get; set; } = [];
+    
+    public Canvas Canvas { get; set; }
 
     public MainWindowViewModel()
     {
@@ -44,15 +44,8 @@ public class MainWindowViewModel : ViewModelBase
         // Подписываю Figures на обновление иерархии сцены
         Scene.Current.HierarchyChanged += UpdateFigures;
 
-        // Пример для работы с массивом фигур
-        //IFigure circle = FigureFabric.CreateFigure("Circle", new Group(""), new Dictionary<string, Point> { { "Coordinates", Point.Zero } });
-        //Figures.Add(new GeometryViewModel { Figure = circle, Properties = properties });
-        //Renderer renderer = new();
-        //circle.Render(renderer);
-        ////////////////////////////////////
-
-        HeaderPanel = new HeaderPanelViewModel(Figures);
-        PropertiesPanel = new PropertiesPanelViewModel();
+        HeaderPanel = new HeaderPanelViewModel(this);
+        PropertiesPanel = new PropertiesPanelViewModel(this);
         GroupsPanel = new GroupsPanelViewModel();
         FooterPanel = new FooterPanelViewModel();
         
@@ -84,20 +77,20 @@ public class MainWindowViewModel : ViewModelBase
             });
         });
         
-        CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point pointerCoordinates) =>
+        CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point[] pointerCoordinates) =>
         {
             await Task.Run(() =>
             {
-                var properties = new FigureGraphicProperties()
+                var properties = new FigureGraphicProperties
                 {
-                    SolidColor = new Color(255, 255 , 0, 0),
-                    BorderColor = new Color(255, 255, 128, 0),
-                    BorderThickness = 3
+                    SolidColor = DefaultFigureGraphicProperties.StandardFigureSolidColor,
+                    BorderColor = DefaultFigureGraphicProperties.StandardFigureBorderColor,
+                    BorderThickness = DefaultFigureGraphicProperties.StandardFigureBorderThickness,
+                    BorderStyle = []
                 };
                 var group = Scene.Current.CreateGroup("Name", properties);
-                // надо удалять пробелы
-                string figureClassName = HeaderPanel.SelectedFigureMenuItem.IconName;
-                FigureFabric.CreateFigure(figureClassName, group, [pointerCoordinates]);
+                string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();
+                FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates);
             });
         });
     }

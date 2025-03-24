@@ -3,35 +3,40 @@
              xmlns:vm="using:Paint2.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1800" d:DesignHeight="450"
              x:Class="Paint2.Views.HeaderPanelView"
              x:DataType="vm:HeaderPanelViewModel">
     <StackPanel Background="Gainsboro">
         <DockPanel Background="White">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Create">
+                    <MenuItem Header="_Create"
+                              Click="CreateMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource NoteAddRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Open">
+                    <MenuItem Header="_Open"
+                              Click="OpenMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource FolderOpenRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Save">
+                    <MenuItem Header="_Save"
+                              Click="SaveMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SaveRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Save as">
+                    <MenuItem Header="_Save as"
+                              Click="SaveAsMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SaveAsRegular}"></PathIcon>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="_Exit">
+                    <MenuItem Header="_Exit"
+                              Click="ExitMenuItem_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource SignOutRegular}"></PathIcon>
                         </MenuItem.Icon>
@@ -176,26 +181,82 @@
                     CornerRadius="3"
                     Padding="10" Margin="10">
                 <StackPanel>
-                    <TextBlock HorizontalAlignment="Center">Zoom</TextBlock>
+                    <TextBlock HorizontalAlignment="Center">Reflections</TextBlock>
                     <Separator></Separator>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <ToggleButton Command="{Binding ZoomInCommand}"
-                                      IsChecked="{Binding IsZoomInButtonChecked}"
-                                      ToolTip.Tip="Zoom in"
+                        <ToggleButton Command="{Binding HorizontalReflectionFigureCommand}"
+                                      IsChecked="{Binding IsHorizontalReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a horizontal line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/HorizontalReflection.svg"></Svg>
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding VerticalReflectionFigureCommand}"
+                                      IsChecked="{Binding IsVerticalReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a vertical line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/VerticalReflection.svg"></Svg>
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding LineReflectionFigureCommand}"
+                                      IsChecked="{Binding IsLineReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a given line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/LineReflection.svg"></Svg>
+                        </ToggleButton>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
+                    BorderThickness="2"
+                    CornerRadius="3"
+                    Padding="10" Margin="10">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center">Navigation</TextBlock>
+                    <Separator></Separator>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <ToggleButton Command="{Binding SceneMoveCommand}"
+                                      IsChecked="{Binding IsSceneMoveButtonChecked}"
+                                      ToolTip.Tip="Scene move"
                                       Background="Transparent"
                                       Padding="5">
                             <PathIcon Width="48" Height="48"
-                                      Data="{StaticResource ZoomInRegular}">
+                                      Data="{StaticResource SceneMoveRegular}">
                             </PathIcon>
                         </ToggleButton>
-                        <ToggleButton Command="{Binding ZoomOutCommand}"
-                                      IsChecked="{Binding IsZoomOutButtonChecked}"
-                                      ToolTip.Tip="Zoom out"
-                                      Background="Transparent"
-                                      Padding="5">
-                            <PathIcon Width="48" Height="48"
-                                      Data="{StaticResource ZoomOutRegular}">
-                            </PathIcon>
+                        <ToggleButton Command="{Binding ToggleZoomCommand}"
+                                      IsChecked="{Binding IsZoomButtonChecked}"
+                                      ToolTip.Tip="Zoom mods"
+                                      Padding="5"
+                                      Background="Transparent">
+                            <Button.Content>
+                                <Svg Path="{Binding SelectedZoomMenuItem.IconPath}"
+                                     Width="48" Height="48">
+                                </Svg>
+                            </Button.Content>
+                            <Button.Flyout>
+                                <Flyout Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+                                    <ListBox Width="75"
+                                             ItemsSource="{Binding ZoomOptions}"
+                                             SelectedItem="{Binding SelectedZoomMenuItem}">
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ZoomOption}">
+                                                <Svg ToolTip.Tip="{Binding Name}"
+                                                     Path="{Binding IconPath}"
+                                                     Width="48" Height="48">
+                                                </Svg>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Flyout>
+                            </Button.Flyout>
                         </ToggleButton>
                     </StackPanel>
                 </StackPanel>

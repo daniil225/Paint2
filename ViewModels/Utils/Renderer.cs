@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Media;
 using Formats;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Paint2.ViewModels.Utils;
 
@@ -49,6 +48,8 @@ public static class Renderer
                     }
                 case PathCubicBezierTo cubicBezier:
                     {
+                        pathFigure.IsClosed = false;
+                        pathFigure.IsFilled = false;
                         var aDest = new Avalonia.Point(cubicBezier.dest.X, cubicBezier.dest.Y);
                         var aControlPoint1 = new Avalonia.Point(
                             cubicBezier.controlPoint1.X, cubicBezier.controlPoint1.Y);

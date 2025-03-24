@@ -26,6 +26,7 @@ namespace Paint2.Models.Figures
                 newTri.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X + lengthSide / 2.0, coordinates[0].Y - lengthSide / (2 * sqrt3)) });
                 newTri.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - lengthSide / 2.0, coordinates[0].Y - lengthSide / (2 * sqrt3)) });
                 newTri.pathElements.Add(new PathClose());
+                newTri.IsClosed = true;
                 newTri.OnGeometryChanged();
 
                 return newTri;

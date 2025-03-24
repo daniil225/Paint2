@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia.Controls.Templates;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Formats;
 using Paint2.ViewModels;
@@ -26,7 +27,19 @@ namespace Paint2.Models.Figures
                     name = value;
             }
         }
-        public Point Coordinates { get; private set; }
+        bool _supressMove = false;
+        public Point Coordinates
+        {
+            get => coordinates;
+            set
+            {
+                if (!_supressMove)
+                    Move(value - coordinates);
+
+                this.RaiseAndSetIfChanged(ref coordinates, value);
+            }
+        }
+        private Point coordinates;
         public Group? Parent
         {
             get => _parentGroup;
@@ -43,10 +56,32 @@ namespace Paint2.Models.Figures
                 }
             }
         }
-        public float Angle { get; private set; }
+
+        bool isTransform;
+
+        public float Angle
+        {
+            get => _angle;
+            set
+            {
+                float newAngle = Math.Abs(value) > 180 ? ((value + 180) % 360 + 360) % 360 - 180 : value;
+                if (isTransform)
+                {
+                    this.RaiseAndSetIfChanged(ref _angle, newAngle);
+                }
+                else
+                {
+                    Rotate(newAngle - _angle);
+                    this.RaiseAndSetIfChanged(ref _angle, newAngle);
+                }
+            }
+        }
+        private float _angle;
+
         public event PropertyChangedEventHandler GeometryChanged;
-        public bool IsActive { get; set; }
+        [Reactive] public bool IsActive { get; set; }
         public bool IsMirrored { get; set; }
+        public bool IsClosed { get; set; }
         public IFigureGraphicProperties? GraphicProperties
         {
             get => _graphicProperties ?? Parent.GraphicProperties;
@@ -62,7 +97,9 @@ namespace Paint2.Models.Figures
         protected PathFigure(Group parentGroup, Point coordinates)
         {
             pathElements = [];
+            _supressMove = true;
             Coordinates = coordinates;
+            _supressMove = false;
             IsActive = true;
             IsMirrored = false;
             _parentGroup = parentGroup;
@@ -78,7 +115,9 @@ namespace Paint2.Models.Figures
 
         public void Export(IExportSnapshot snapshot)
         {
-            throw new NotImplementedException();
+            snapshot.Brush = new(GraphicProperties.BorderColor, GraphicProperties.SolidColor, GraphicProperties.BorderThickness);
+
+            snapshot.AppendPath(new DocPath(pathElements, IsClosed));
         }
 
         public IFigure Intersect(IFigure other)
@@ -88,9 +127,9 @@ namespace Paint2.Models.Figures
 
         public void Mirror(Point ax1, Point ax2)
         {
-            double a = ax2.X - ax1.X;
-            double b = ax2.Y - ax1.Y;
-            double c = -(a * ax1.X + b * ax1.Y);
+            double a = ax2.Y - ax1.Y;
+            double b = -(ax2.X - ax1.X);
+            double c = ax2.X * ax1.Y - ax1.X * ax2.Y;
 
             for (int i = 0; i < pathElements.Count; i++)
             {
@@ -122,7 +161,15 @@ namespace Paint2.Models.Figures
                 }
             }
 
+            _supressMove = true;
             Coordinates = ReflectionPoint(a, b, c, Coordinates);
+            _supressMove = false;
+
+            float angle = (float)ReflectionAngle(ax1, ax2, _angle);
+            float newAngle = Math.Abs(angle) > 180 ? ((angle + 180) % 360 + 360) % 360 - 180 : angle;
+            _angle = newAngle;
+            this.RaisePropertyChanged(nameof(Angle));
+
             IsMirrored = !IsMirrored;
 
             OnGeometryChanged();
@@ -140,7 +187,7 @@ namespace Paint2.Models.Figures
             OnGeometryChanged();
         }
 
-        public void Move(Point vector)
+        public void Move(Point vector, bool isRaisedProperty = true)
         {
             for (int i = 0; i < pathElements.Count; i++)
             {
@@ -168,7 +215,16 @@ namespace Paint2.Models.Figures
                 }
             }
 
-            Coordinates += vector;
+            if (isRaisedProperty)
+            {
+                _supressMove = true;
+                Coordinates += vector;
+                _supressMove = false;
+            }
+            else
+            {
+                coordinates += vector;
+            }
 
             OnGeometryChanged();
         }
@@ -179,34 +235,32 @@ namespace Paint2.Models.Figures
             double cosAngle = Math.Cos(radians);
             double sinAngle = Math.Sin(radians);
 
-            for (int i = 0; i < pathElements.Count; i++)
-            {
-                if (pathElements[i] is PathMoveTo pathMove)
-                {
-                    pathElements[i] = new PathMoveTo() { dest = RotatePoint(pathMove.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = RotatePoint(pathLine.dest, Center, cosAngle, sinAngle) };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest = RotatePoint(pathArc.dest, Center, cosAngle, sinAngle);
-                    pathArc.xAxisRotation += angle;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
-                    {
-                        dest = RotatePoint(pathCubicBezier.dest, Center, cosAngle, sinAngle),
-                        controlPoint1 = RotatePoint(pathCubicBezier.controlPoint1, Center, cosAngle, sinAngle),
-                        controlPoint2 = RotatePoint(pathCubicBezier.controlPoint2, Center, cosAngle, sinAngle)
-                    };
-                }
-            }
+            RotateElements(pathElements, angle, Center);
 
+            _supressMove = true;
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
+            _supressMove = false;
+
+            float newAngle = _angle + (float)angle;
+
+            isTransform = true;
+            Angle += (float)angle;
+            isTransform = false;
+
+            OnGeometryChanged();
+        }
+
+        private void Rotate(double angle)
+        {
+            double radians = angle * Math.PI / 180;
+            double cosAngle = Math.Cos(radians);
+            double sinAngle = Math.Sin(radians);
+
+            RotateElements(pathElements, angle, Coordinates);
+
+            _supressMove = true;
+            Coordinates = RotatePoint(Coordinates, Coordinates, cosAngle, sinAngle);
+            _supressMove= false;
 
             OnGeometryChanged();
         }
@@ -241,7 +295,9 @@ namespace Paint2.Models.Figures
                 }
             }
 
+            _supressMove = true;
             Coordinates = ScalePoint(Coordinates, Center, sx, sy);
+            _supressMove = false;
 
             OnGeometryChanged();
         }
