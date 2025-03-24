@@ -8,6 +8,7 @@ using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels;
 using Point = Paint2.ViewModels.Utils.Point;
 using Serilog;
+using Formats;
 
 
 class FigureMetadata
@@ -17,6 +18,7 @@ class FigureMetadata
 public interface IFigureCreator
 {
     IFigure Create(Group parentGroup, Point[] coordinates);
+    IFigure Create(Group parentGroup, Point[] coordinates, IList<IPathElement> pathElements, string name);
 }
 
 public static class FigureFabric
