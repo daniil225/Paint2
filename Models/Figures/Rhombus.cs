@@ -13,9 +13,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Rhombus")]
-        class RhombusCreator : IFigureCreator
+        class RhombusCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newPhombus = new(parentGroup, coordinates[0]);
                 newPhombus.Name = "Rhombus";

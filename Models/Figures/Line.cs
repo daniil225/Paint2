@@ -11,9 +11,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Line")]
-        class LineCreator : IFigureCreator
+        class LineCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newLine = new(parentGroup, coordinates[0]);
                 newLine.Name = "Line";

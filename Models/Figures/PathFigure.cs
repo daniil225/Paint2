@@ -11,6 +11,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Composition;
 using System.Runtime.CompilerServices;
 using static Paint2.Models.Figures.TransformingAlgorithms;
 
@@ -18,6 +19,24 @@ namespace Paint2.Models.Figures
 {
     public partial class PathFigure : ReactiveObject, IFigure
     {
+        [Export(typeof(IFigureCreator))]
+        [ExportMetadata(nameof(FigureMetadata.Name), "Figure")]
+        private class FigureCreator : IFigureCreator
+        {
+            public virtual IFigure Create(Group parentGroup, Point[] coordinates)
+                => throw new NotSupportedException();
+
+            public IFigure Create(Group parentGroup, Point[] coordinates, IList<IPathElement> pathElements, string name)
+            {
+                PathFigure newFigure = new(parentGroup, coordinates[0])
+                {
+                    Name = name,
+                    pathElements = pathElements
+                };
+
+                return newFigure;
+            }
+        }
         public string Name
         {
             get => name;
@@ -133,32 +152,29 @@ namespace Paint2.Models.Figures
 
             for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElements[i] is PathMoveTo pathMove)
+                pathElements[i] = pathElements[i] switch
                 {
-                    pathElements[i] = new PathMoveTo() { dest = ReflectionPoint(a, b, c, pathMove.dest) };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = ReflectionPoint(a, b, c, pathLine.dest) };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest = ReflectionPoint(a, b, c, pathArc.dest);
-                    pathArc.xAxisRotation = ReflectionAngle(ax1, ax2, pathArc.xAxisRotation);
-                    pathArc.sweepDirection = pathArc.sweepDirection == SweepDirection.Clockwise ?
-                                             SweepDirection.CounterClockwise :
-                                             SweepDirection.Clockwise;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
+                    PathMoveTo pathMove => new PathMoveTo() { dest = ReflectionPoint(a, b, c, pathMove.dest) },
+                    PathLineTo pathLine => new PathLineTo() { dest = ReflectionPoint(a, b, c, pathLine.dest) },
+                    PathArcTo pathArc => new PathArcTo()
+                    {
+                        radiusX = pathArc.radiusX,
+                        radiusY = pathArc.radiusY,
+                        xAxisRotation = ReflectionAngle(ax1, ax2, pathArc.xAxisRotation),
+                        largeArcFlag = pathArc.largeArcFlag,
+                        sweepDirection = pathArc.sweepDirection == SweepDirection.Clockwise ?
+                                                                   SweepDirection.CounterClockwise :
+                                                                   SweepDirection.Clockwise,
+                        dest = ReflectionPoint(a, b, c, pathArc.dest)
+                    },
+                    PathCubicBezierTo pathCubicBezier => new PathCubicBezierTo()
                     {
                         dest = ReflectionPoint(a, b, c, pathCubicBezier.dest),
                         controlPoint1 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint1),
                         controlPoint2 = ReflectionPoint(a, b, c, pathCubicBezier.controlPoint2)
-                    };
-                }
+                    },
+                    _ => pathElements[i]
+                };
             }
 
             _supressMove = true;
@@ -191,28 +207,27 @@ namespace Paint2.Models.Figures
         {
             for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElements[i] is PathMoveTo pathMove)
+                pathElements[i] = pathElements[i] switch
                 {
-                    pathElements[i] = new PathMoveTo() { dest = pathMove.dest + vector };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = pathLine.dest + vector };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest += vector;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
+                    PathMoveTo pathMove => new PathMoveTo() { dest = pathMove.dest + vector },
+                    PathLineTo pathLine => new PathLineTo() { dest = pathLine.dest + vector },
+                    PathArcTo pathArc => new PathArcTo()
+                    {
+                        radiusX = pathArc.radiusX,
+                        radiusY = pathArc.radiusY,
+                        xAxisRotation = pathArc.xAxisRotation,
+                        largeArcFlag = pathArc.largeArcFlag,
+                        sweepDirection = pathArc.sweepDirection,
+                        dest = pathArc.dest + vector,
+                    },
+                    PathCubicBezierTo pathCubicBezier => new PathCubicBezierTo()
                     {
                         controlPoint1 = pathCubicBezier.controlPoint1 + vector,
                         controlPoint2 = pathCubicBezier.controlPoint2 + vector,
                         dest = pathCubicBezier.dest + vector
-                    };
-                }
+                    },
+                    _ => pathElements[i]
+                };
             }
 
             if (isRaisedProperty)
@@ -225,6 +240,7 @@ namespace Paint2.Models.Figures
             {
                 coordinates += vector;
             }
+            _supressMove = false;
 
             OnGeometryChanged();
         }
@@ -240,8 +256,6 @@ namespace Paint2.Models.Figures
             _supressMove = true;
             Coordinates = RotatePoint(Coordinates, Center, cosAngle, sinAngle);
             _supressMove = false;
-
-            float newAngle = _angle + (float)angle;
 
             isTransform = true;
             Angle += (float)angle;
@@ -260,7 +274,7 @@ namespace Paint2.Models.Figures
 
             _supressMove = true;
             Coordinates = RotatePoint(Coordinates, Coordinates, cosAngle, sinAngle);
-            _supressMove= false;
+            _supressMove = false;
 
             OnGeometryChanged();
         }
@@ -269,30 +283,27 @@ namespace Paint2.Models.Figures
         {
             for (int i = 0; i < pathElements.Count; i++)
             {
-                if (pathElements[i] is PathMoveTo pathMove)
+                pathElements[i] = pathElements[i] switch
                 {
-                    pathElements[i] = new PathMoveTo() { dest = ScalePoint(pathMove.dest, Center, sx, sy) };
-                }
-                else if (pathElements[i] is PathLineTo pathLine)
-                {
-                    pathElements[i] = new PathLineTo() { dest = ScalePoint(pathLine.dest, Center, sx, sy) };
-                }
-                else if (pathElements[i] is PathArcTo pathArc)
-                {
-                    pathArc.dest = ScalePoint(pathArc.dest, Center, sx, sy);
-                    pathArc.radiusX *= sx;
-                    pathArc.radiusY *= sy;
-                    pathElements[i] = pathArc;
-                }
-                else if (pathElements[i] is PathCubicBezierTo pathCubicBezier)
-                {
-                    pathElements[i] = new PathCubicBezierTo()
+                    PathMoveTo pathMove => new PathMoveTo() { dest = ScalePoint(pathMove.dest, Center, sx, sy) },
+                    PathLineTo pathLine => new PathLineTo() { dest = ScalePoint(pathLine.dest, Center, sx, sy) },
+                    PathArcTo pathArc => new PathArcTo()
+                    {
+                        radiusX = pathArc.radiusX * sx,
+                        radiusY = pathArc.radiusY * sy,
+                        xAxisRotation = pathArc.xAxisRotation,
+                        largeArcFlag = pathArc.largeArcFlag,
+                        sweepDirection = pathArc.sweepDirection,
+                        dest = ScalePoint(pathArc.dest, Center, sx, sy)
+                    },
+                    PathCubicBezierTo pathCubicBezier => new PathCubicBezierTo()
                     {
                         dest = ScalePoint(pathCubicBezier.dest, Center, sx, sy),
                         controlPoint1 = ScalePoint(pathCubicBezier.controlPoint1, Center, sx, sy),
                         controlPoint2 = ScalePoint(pathCubicBezier.controlPoint2, Center, sx, sy)
-                    };
-                }
+                    },
+                    _ => pathElements[i]
+                };
             }
 
             _supressMove = true;
