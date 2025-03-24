@@ -1,7 +1,6 @@
-using System;
 using System.IO;
-
 using Paint2.ViewModels.Interfaces;
+using System;
 
 namespace Formats.Json
 {
@@ -9,13 +8,10 @@ namespace Formats.Json
     {
         public void SaveTo(IExportSnapshot snapshot, string destinationPath)
         {
-            var jsonSnap = snapshot as JsonSnapshot;
-            if (jsonSnap == null)
-            {
-                throw new ArgumentException("Неверный снимок передан для JsonExporter.");
-            }
-            var jsonContent = jsonSnap.ToJson();
-            File.WriteAllText(destinationPath, jsonContent);
+            var jsonSnapshot = snapshot as JsonSnapshot ?? throw new InvalidOperationException("Snapshot is not of type JsonSnapshot.");
+
+            var jsonOutput = jsonSnapshot.Serialize();
+            File.WriteAllText(destinationPath, jsonOutput);
         }
     }
 
