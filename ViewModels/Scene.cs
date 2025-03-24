@@ -56,12 +56,12 @@ namespace Paint2.ViewModels
                             var solidColor = pathFigure.GraphicProperties?.SolidColor ?? new(0, 0, 0, 0);
                             var borderColor = pathFigure.GraphicProperties?.BorderColor ?? new(0, 0, 0, 0);
                             var borderThickness = pathFigure.GraphicProperties?.BorderThickness ?? 0;
-                            snapshot.Brush = new(borderColor, solidColor, borderThickness);
+                            var dash = pathFigure.GraphicProperties?.BorderStyle.ToList() ?? [];
+                            snapshot.Brush = new(borderColor, solidColor, borderThickness, dash);
 
                             PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
 
-                            throw new System.NotImplementedException("Нужно передать правильный center");
-                            snapshot.AppendPath(pathBuilder.Build(), new(0, 0));
+                            snapshot.AppendPath(pathBuilder.Build(), child.Coordinates);
                         }
                     }
                     else

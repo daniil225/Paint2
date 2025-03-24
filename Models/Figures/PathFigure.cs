@@ -117,7 +117,7 @@ namespace Paint2.Models.Figures
         {
             snapshot.Brush = new(GraphicProperties.BorderColor, GraphicProperties.SolidColor, GraphicProperties.BorderThickness);
 
-            snapshot.AppendPath(new DocPath(pathElements, IsClosed));
+            snapshot.AppendPath(new DocPath(pathElements, IsClosed), Coordinates);
         }
 
         public IFigure Intersect(IFigure other)
