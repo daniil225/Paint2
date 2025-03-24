@@ -119,23 +119,22 @@ namespace Formats
             return new DocPath(_elements, _isClosed);
         }
     }
-    
-    public class Brush(
-        Color stroke,
-        Color fill,
-        double strokeWidth,
-        (double Length, double Gap)? dash = null
-    ) {
-        public Color Stroke = stroke;
+
+    public class Brush
+    {
+        public Color Stroke { get; set; }
         // Это поле игнорируется при отрисовке Polyline, Line,
         // а также Path, если в нём не встречается сегмент PathClose
-        public Color Fill = fill;
-        public double StrokeWidth = strokeWidth;
-        // Length - длина каждого штриха
-        // Gap - расстояние между штрихами
-        // для сплошных линий рекомендуется использовать null вместо
-        // нулевого значения Gap
-        public (double Length, double Gap)? Dash = dash;
+        public Color Fill { get; set; }
+        public double StrokeWidth { get; set; }
+        public List<double>? Dash { get; set; }
+        public Brush(Color stroke, Color fill, double strokeWidth, List<double>? dash = null)
+        {
+            Stroke = stroke;
+            Fill = fill;
+            StrokeWidth = strokeWidth;
+            Dash = dash;
+        }
     }
 
     public interface IPathElement;

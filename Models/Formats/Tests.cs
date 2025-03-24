@@ -56,7 +56,7 @@ class Tests
                     new Translate(-20, -20),
                 ]
         });
-        snap.Brush.Dash = (2, 1);
+        snap.Brush.Dash = [2, 1];
         snap.Brush.Stroke = new(255, 255, 255, 160);
         snap.Brush.StrokeWidth = 1;
         snap.AppendRect(new DocRect(new(15, 15), 10, 10));
@@ -213,7 +213,7 @@ class Tests
         );
 
         // зеркало
-        snap.Brush = new(new(255, 150, 150, 255), new(0, 255, 255, 255), 2, (10, 5));
+        snap.Brush = new(new(255, 150, 150, 255), new(0, 255, 255, 255), 2, [10, 5]);
         snap.AppendPath(
             new PathBuilder()
                 .MoveTo(new(100, 10))

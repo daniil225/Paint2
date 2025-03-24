@@ -1,203 +1,255 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
+using System.Linq;
 using System;
+using Avalonia.Media;
+using System.Text.Json;
+using System.Collections.Generic;
+using Paint2;
 
 namespace Formats.Json
 {
     public class JsonSnapshot : IExportSnapshot
     {
+        const string _transparentHex = "#00000000";
+        private readonly JsonArray _objects = new();
+        private JsonObject? _currentGroup;
+
         public Brush? Brush { get; set; }
 
-        private readonly List<JsonGroup> _tree = new();
-        private JsonGroup? _currentGroup;
-        private int _groupLevel = 0;
-
-        public JsonSnapshot()
+        private static string PointToString(Point p)
         {
-            _currentGroup = new JsonGroup();
-            _tree.Add(_currentGroup);
+            return $"{p.X}, {p.Y}";
         }
 
-        public string ToJson()
+        private JsonObject CreateBaseObject(DocElement element)
         {
-            var options = new JsonSerializerOptions 
+            var baseObject = new JsonObject
             {
-                WriteIndented = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull 
+                ["id"] = element.Name,
+                ["transform"] = element.Transforms.Any() ? TransformsToString(element.Transforms) : null
             };
-            return JsonSerializer.Serialize(_tree, options);
+            return baseObject;
         }
+
+        private static string TransformsToString(IEnumerable<ITransform> transforms)
+        {
+            return string.Join("; ", transforms.Select(t =>
+            {
+                if (t is Translate translate)
+                    return $"translate({translate.X}, {translate.Y})";
+                if (t is Rotate rotate)
+                    return rotate.Pivot != null
+                        ? $"rotate({rotate.Angle}, {rotate.Pivot.X}, {rotate.Pivot.Y})"
+                        : $"rotate({rotate.Angle})";
+                throw new NotSupportedException($"Unknown transform type: {t.GetType().Name}");
+            }));
+        }
+
+        static string ColorToHexRGB(Color c)
+        {
+            return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+        }
+        static double ColorToOpacityNormalized(Color c)
+        {
+            return c.A / 255D;
+        }
+
+        private void ApplyBrush(JsonObject obj, bool applyFill = true)
+        {
+            if (Brush is not null)
+            {
+                obj["stroke-width"] = Brush.StrokeWidth.ToString();
+                if (applyFill == true)
+                {
+                    obj["fill"] = ColorToHexRGB(Brush.Fill);
+                    obj["fill-opacity"] = ColorToOpacityNormalized(Brush.Fill).ToString();
+                }
+                else
+                {
+                    obj["fill"] = _transparentHex;
+                    obj["fill-opacity"] = _transparentHex;
+                }
+
+                obj["stroke"] = ColorToHexRGB(Brush.Stroke);
+                obj["stroke-opacity"] = ColorToOpacityNormalized(Brush.Stroke).ToString();
+                if (Brush.Dash != null)
+                {
+                    var dasharray = string.Join(" ", Brush.Dash.Select(d => d.ToString()));
+                    obj["stroke-dasharray"] = dasharray;
+                }
+            }
+        }
+
         public void PushGroup(DocGroup group)
         {
-            var newGroup = new JsonGroup
-            {
-                Name = group.Name,
-                Transforms = group.Transforms
-            };
+            var groupObject = CreateBaseObject(group);
+            groupObject["type"] = "g";
+            groupObject["children"] = new JsonArray();
 
-            if (_currentGroup != null)
+            if (_currentGroup is not null)
             {
-                _currentGroup.Children.Add(newGroup);
-                newGroup.Parent = _currentGroup;
+                var childrenArray = _currentGroup["children"] as JsonArray;
+                childrenArray?.Add(groupObject);
+            }
+            else
+            {
+                _objects.Add(groupObject);
             }
 
-            _currentGroup = newGroup;
-            _groupLevel++;
+            _currentGroup = groupObject;
         }
 
         public void Pop()
         {
-            if (_currentGroup?.Parent != null)
+            if (_currentGroup is null)
             {
-                _currentGroup = _currentGroup.Parent;
+                throw new InvalidOperationException("No group to pop.");
             }
-            else
-            {
-                throw new InvalidOperationException("Попытка вызвать Pop() при отсутствии текущей группы.");
-            }
+
+            var parentGroup = _objects.OfType<JsonObject>().FirstOrDefault(g => (g["children"] as JsonArray)?.Contains(_currentGroup!) == true);
+
+            _currentGroup = parentGroup;
         }
 
         public void AppendRect(DocRect rect)
         {
-            var jsonRect = new JsonRect
-            {
-                X = rect.Position.X,
-                Y = rect.Position.Y,
-                Width = rect.Width,
-                Height = rect.Height,
-                Name = rect.Name,
-                Transforms = rect.Transforms,
-                Brush = Brush
-            };
+            var rectObject = CreateBaseObject(rect);
+            rectObject["type"] = "rect";
+            rectObject["x"] = rect.Position.X;
+            rectObject["y"] = rect.Position.Y;
+            rectObject["width"] = rect.Width;
+            rectObject["height"] = rect.Height;
+            ApplyBrush(rectObject);
 
-            _currentGroup?.Children.Add(jsonRect);
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
+            {
+                childrenArray.Add(rectObject);
+            }
+            else
+            {
+                _objects.Add(rectObject);
+            }
         }
 
         public void AppendCircle(DocCircle circle)
         {
-            var jsonCircle = new JsonCircle
-            {
-                X = circle.Center.X,
-                Y = circle.Center.Y,
-                Radius = circle.Radius,
-                Name = circle.Name,
-                Transforms = circle.Transforms,
-                Brush = Brush
-            };
+            var circleObject = CreateBaseObject(circle);
+            circleObject["type"] = "circle";
+            circleObject["cx"] = circle.Center.X;
+            circleObject["cy"] = circle.Center.Y;
+            circleObject["r"] = circle.Radius;
+            ApplyBrush(circleObject);
 
-            _currentGroup?.Children.Add(jsonCircle);
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
+            {
+                childrenArray.Add(circleObject);
+            }
+            else
+            {
+                _objects.Add(circleObject);
+            }
         }
 
         public void AppendLine(DocLine line)
         {
-            var jsonLine = new JsonLine
-            {
-                X1 = line.Start.X,
-                Y1 = line.Start.Y,
-                X2 = line.End.X,
-                Y2 = line.End.Y,
-                Name = line.Name,
-                Transforms = line.Transforms,
-                Brush = Brush
-            };
+            var lineObject = CreateBaseObject(line);
+            lineObject["type"] = "line";
+            lineObject["x1"] = line.Start.X;
+            lineObject["y1"] = line.Start.Y;
+            lineObject["x2"] = line.End.X;
+            lineObject["y2"] = line.End.Y;
+            ApplyBrush(lineObject);
 
-            _currentGroup?.Children.Add(jsonLine);
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
+            {
+                childrenArray.Add(lineObject);
+            }
+            else
+            {
+                _objects.Add(lineObject);
+            }
         }
 
         public void AppendPolyline(DocPolyline polyline)
         {
-            var jsonPolyline = new JsonPolyline
-            {
-                Points = polyline.Points,
-                Name = polyline.Name,
-                Transforms = polyline.Transforms,
-                Brush = Brush
-            };
+            var polylineObject = CreateBaseObject(polyline);
+            polylineObject["type"] = "polyline";
+            polylineObject["points"] = string.Join(" ", polyline.Points.Select(PointToString));
+            ApplyBrush(polylineObject);
 
-            _currentGroup?.Children.Add(jsonPolyline);
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
+            {
+                childrenArray.Add(polylineObject);
+            }
+            else
+            {
+                _objects.Add(polylineObject);
+            }
         }
 
         public void AppendPolygon(DocPolygon polygon)
         {
-            var jsonPolygon = new JsonPolygon
-            {
-                Points = polygon.Points,
-                Name = polygon.Name,
-                Transforms = polygon.Transforms,
-                Brush = Brush
-            };
+            var polygonObject = CreateBaseObject(polygon);
+            polygonObject["type"] = "polygon";
+            polygonObject["points"] = string.Join(" ", polygon.Points.Select(PointToString));
+            ApplyBrush(polygonObject);
 
-            _currentGroup?.Children.Add(jsonPolygon);
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
+            {
+                childrenArray.Add(polygonObject);
+            }
+            else
+            {
+                _objects.Add(polygonObject);
+            }
         }
 
-        public void AppendPath(DocPath path, Point center)
+        public void AppendPath(DocPath path, Point _)
         {
-            throw new NotImplementedException("Нужно обработать center");
-            var jsonPath = new JsonPath
+            var pathObject = CreateBaseObject(path);
+            pathObject["type"] = "path";
+            pathObject["d"] = string.Join(" ", path.Elements.Select(PathElementToString));
+            ApplyBrush(pathObject);
+
+            var childrenArray = _currentGroup?["children"] as JsonArray;
+            if (childrenArray != null)
             {
-                Elements = path.Elements,
-                Name = path.Name,
-                Transforms = path.Transforms,
-                Brush = Brush
-            };
-
-            _currentGroup?.Children.Add(jsonPath);
+                childrenArray.Add(pathObject);
+            }
+            else
+            {
+                _objects.Add(pathObject);
+            }
         }
-    }
 
-    public abstract class JsonElement
-    {
-        public string? Name { get; set; }
-        public IEnumerable<ITransform>? Transforms { get; set; }
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Formats.Brush? Brush { get; set; }
-    }
+        private static string PathElementToString(IPathElement element)
+        {
+            return element switch
+            {
+                PathMoveTo move => $"M {PointToString(move.dest)}",
+                PathLineTo line => $"L {PointToString(line.dest)}",
+                PathCubicBezierTo cubic => $"C {PointToString(cubic.controlPoint1)} " +
+                                           $"{PointToString(cubic.controlPoint2)} {PointToString(cubic.dest)}",
+                PathArcTo arc => $"A {arc.radiusX} {arc.radiusY} {arc.xAxisRotation} " +
+                                 $"{(arc.largeArcFlag ? 1 : 0)} {(arc.sweepDirection == SweepDirection.Clockwise ? 1 : 0)} {PointToString(arc.dest)}",
+                PathClose _ => "Z",
+                _ => throw new NotSupportedException($"Unknown path element: {element.GetType().Name}")
+            };
+        }
 
-    public class JsonGroup : JsonElement
-    {
-        public List<JsonElement> Children { get; set; } = new();
-        [JsonIgnore]
-        public JsonGroup? Parent { get; set; }
-    }
-
-    public class JsonRect : JsonElement
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-    }
-
-    public class JsonCircle : JsonElement
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Radius { get; set; }
-    }
-
-    public class JsonLine : JsonElement
-    {
-        public double X1 { get; set; }
-        public double Y1 { get; set; }
-        public double X2 { get; set; }
-        public double Y2 { get; set; }
-    }
-
-    public class JsonPolyline : JsonElement
-    {
-        public IEnumerable<Point>? Points { get; set; }
-    }
-
-    public class JsonPolygon : JsonElement
-    {
-        public IEnumerable<Point> Points { get; set; }
-    }
-
-    public class JsonPath : JsonElement
-    {
-        public IEnumerable<IPathElement>? Elements { get; set; }
+        public string Serialize()
+        {
+            return _objects.ToJsonString(new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+        }
     }
 }
