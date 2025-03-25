@@ -160,11 +160,7 @@ public class MainWindowViewModel : ViewModelBase
                 Point center = new(Canvas.Bounds.Width / 2d, Canvas.Bounds.Height / 2d);
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();
                 IFigure? figure = FigureFabric.CreateFigure(figureClassName, group, [center], defaultProperties);
-                if (figure is null)
-                {
-                    return null;
-                }
-                return figure;
+                return figure ?? null;
             });
         });
     }

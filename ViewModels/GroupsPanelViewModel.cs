@@ -106,6 +106,40 @@ public class GroupsPanelViewModel : ViewModelBase
         }
         return null;
     }
+
+    public void BuildGroupsBySceneHierarchy()
+    {
+        Stack<(Node, IEnumerator<ISceneObject>)> stack = new();
+
+        foreach (Group rootGroup in Scene.Current.Groups)
+        {
+            Node groupNode = new(rootGroup.Name, _mainWindow) { NodeSceneObject = rootGroup, Parent = null };
+            groupNode.NodeDeleted += OnNodeDeleted;
+            Nodes.Add(groupNode);
+            stack.Push((groupNode, rootGroup.ChildObjects.GetEnumerator()));
+
+            while (stack.Count > 0)
+            {
+                (Node currentGroup, IEnumerator<ISceneObject> enumerator) = stack.Peek();
+
+                if (enumerator.MoveNext())
+                {
+                    ISceneObject child = enumerator.Current;
+                    Node node = new(child.Name, _mainWindow) 
+                        { NodeSceneObject = child, Parent = currentGroup };
+                    currentGroup.SubNodes.Add(node);
+                    if (child is Group nestedGroup)
+                    {
+                        stack.Push((node, nestedGroup.ChildObjects.GetEnumerator()));
+                    }
+                }
+                else
+                {
+                    stack.Pop();
+                }
+            }
+        }
+    }
 }
 
 public class Node : ReactiveObject
