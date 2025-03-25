@@ -236,7 +236,6 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
-                SaveCommand.Execute();
                 _mainWindow.GroupsPanel.Nodes.Clear();
                 Scene.Current.ResetScene();
                 _mainWindow.SelectedFigure = null;
@@ -261,7 +260,6 @@ public class HeaderPanelViewModel : ViewModelBase
                 {
                     return;
                 }
-                SaveCommand.Execute();
                 Scene.Current.LoadScene(CurrentSavedToPath);
             });
         });
