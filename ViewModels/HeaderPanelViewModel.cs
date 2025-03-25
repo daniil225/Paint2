@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Formats.Json;
+using Formats.PDF;
 using Formats.Svg;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Enums;
@@ -217,6 +218,7 @@ public class HeaderPanelViewModel : ViewModelBase
                  {
                      ".json" => new JsonSnapshot(),
                      ".svg" => new SvgSnapshot(width, height),
+                     ".pdf" => new PDFSnapshot((float)width, (float)height),
                      _ => new JsonSnapshot()
                  };
                 Scene.Current.SaveScene(snapshot, path);
@@ -246,7 +248,12 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
+                if (CurrentSavedToPath is null)
+                {
+                    return;
+                }
                 SaveCommand.Execute();
+                Scene.Current.LoadScene(CurrentSavedToPath);
             });
         });
     }

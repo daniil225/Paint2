@@ -14,6 +14,7 @@ using iText.Kernel.Pdf.Extgstate;
 using Avalonia.Media;
 using Paint2.ViewModels.Utils;
 using Point = Paint2.ViewModels.Utils.Point;
+using Avalonia;
 
 namespace Formats.PDF;
 
@@ -81,9 +82,15 @@ public class PDFExporter : IExportFormat
 
         canvas.SetFillColorRgb(Brush.Fill.R/255f, Brush.Fill.G/255f, Brush.Fill.B/255f);
 
-        canvas.SetLineDash([(float)Brush.Dash[0], (float)Brush.Dash[1]],0);
+        float[] dashArray = Brush.Dash.Select(d => (float)d).ToArray();
 
-        PdfExtGState gState = new();
+        if (dashArray.Count() != 0)
+            canvas.SetLineDash(dashArray, 0);
+        else
+            canvas.SetLineDash(0);
+
+
+       PdfExtGState gState = new();
 
         gState.SetFillOpacity(Brush.Fill.A/255f);
 
@@ -303,35 +310,48 @@ public class PDFExporter : IExportFormat
         {
             extent = extent - 360;
         }
-
+        
         double rectLL_X = cX - radiusX;
         double rectLL_Y = cY - radiusY;
 
         double rectUR_X = cX + radiusX;
         double rectUR_Y = cY + radiusY;
 
+        IList<double[]> list = PdfCanvas.BezierArc(rectLL_X, rectLL_Y, rectUR_X, rectUR_Y, angle, extent);
+        //if (list.IsEmpty())
+        //{
+        //    return this;
+        //}
 
-        double angle1 = angle + extent / 3d;
+        List<double[]> listRotated = new List<double[]>(list.Count);
 
-        double angle2 = angle + extent * 2d / 3d;
-
-        double angle_fin = angle + extent;
-
-        double[] Curve_PointsX = { radiusX * Math.Cos(angle1/180*Math.PI), radiusX * Math.Cos(angle2/180*Math.PI)};
-
-        double[] Curve_PointsY = { radiusY * Math.Sin(angle1/ 180 * Math.PI), radiusY * Math.Sin(angle2/ 180 * Math.PI) };
-
-        double[] Curve_PointsRotateX = new double[2];
-
-        double[] Curve_PointsRotateY = new double[2];
-
-        for (int i = 0; i < 2;i++)
+        for(int i =0;i<list.Count;i++)
         {
-            Curve_PointsRotateX[i] = cosA * Curve_PointsX[i] - sinA * Curve_PointsY[i] + cX;
-            Curve_PointsRotateY[i] = cosA * Curve_PointsY[i] + sinA * Curve_PointsX[i] + cY;
+            listRotated.Add(new double[8]);
+
+            double[] CurrentArray = list[i]; 
+
+            for(int j = 0;j< CurrentArray.Length;j+=2)
+            {
+                double x = cosA * (CurrentArray[j]-cX) - sinA * (CurrentArray[j + 1]-cY) + cX;
+                double y = cosA * (CurrentArray[j + 1]-cY) + sinA * (CurrentArray[j]-cX) + cY;
+                CurrentArray[j] = x;
+                CurrentArray[j + 1] = y;
+            }
+            listRotated[i] = CurrentArray;
         }
-            
-        canvas.CurveTo(Curve_PointsRotateX[0], Curve_PointsRotateY[0], Curve_PointsRotateX[1], Curve_PointsRotateY[1], x2,y2);
+
+        double[] array = listRotated[0];
+        //canvas.MoveTo(x1, y1);
+
+        for (int i = 0; i < list.Count-1; i++)
+        {
+            array = listRotated[i];
+            canvas.CurveTo(array[2], array[3], array[4], array[5], array[6], array[7]);
+        }
+
+        array = listRotated[list.Count - 1];
+        canvas.CurveTo(array[2], array[3], array[4], array[5], x2, y2);
 
         return arc.dest;
     }
