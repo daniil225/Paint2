@@ -259,39 +259,6 @@
                     CornerRadius="3"
                     Padding="10" Margin="10">
                 <StackPanel>
-                    <TextBlock HorizontalAlignment="Center">Reflections</TextBlock>
-                    <Separator></Separator>
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <ToggleButton Command="{Binding HorizontalReflectionFigureCommand}"
-                                      IsChecked="{Binding IsHorizontalReflectionButtonChecked}"
-                                      ToolTip.Tip="Reflect a figure relative to a horizontal line"
-                                      Background="Transparent"
-                                      Padding="5">
-                            <Svg Width="48" Height="48" Path="/Assets/Reflections/HorizontalReflection.svg"></Svg>
-                        </ToggleButton>
-                        <ToggleButton Command="{Binding VerticalReflectionFigureCommand}"
-                                      IsChecked="{Binding IsVerticalReflectionButtonChecked}"
-                                      ToolTip.Tip="Reflect a figure relative to a vertical line"
-                                      Background="Transparent"
-                                      Padding="5">
-                            <Svg Width="48" Height="48" Path="/Assets/Reflections/VerticalReflection.svg"></Svg>
-                        </ToggleButton>
-                        <ToggleButton Command="{Binding LineReflectionFigureCommand}"
-                                      IsChecked="{Binding IsLineReflectionButtonChecked}"
-                                      ToolTip.Tip="Reflect a figure relative to a given line"
-                                      Background="Transparent"
-                                      Padding="5">
-                            <Svg Width="48" Height="48" Path="/Assets/Reflections/LineReflection.svg"></Svg>
-                        </ToggleButton>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-            <Border Background="#f0f0f0"
-                    BorderBrush="Transparent"
-                    BorderThickness="2"
-                    CornerRadius="3"
-                    Padding="10" Margin="10">
-                <StackPanel>
                     <TextBlock HorizontalAlignment="Center">Navigation</TextBlock>
                     <Separator></Separator>
                     <StackPanel Orientation="Horizontal" Spacing="10">
