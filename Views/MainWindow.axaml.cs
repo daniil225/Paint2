@@ -186,7 +186,7 @@ namespace Paint2.Views
                 var deltaX = point.Position.X - _initialMousePosition.X;
                 var deltaY = point.Position.Y - _initialMousePosition.Y;
 
-                // Обновляем сдвиг канваса
+                // ��������� ����� �������
                 var transformGroup = _canvas?.RenderTransform as TransformGroup ?? new TransformGroup();
                 var translateTransform = transformGroup.Children.OfType<TranslateTransform>().FirstOrDefault();
                 if (translateTransform is null)
@@ -195,7 +195,7 @@ namespace Paint2.Views
                     transformGroup.Children.Add(translateTransform);
                 }
 
-                // Применяем новый сдвиг
+                // ��������� ����� �����
                 translateTransform.X = _initialCanvasPosition.X + deltaX;
                 translateTransform.Y = _initialCanvasPosition.Y + deltaY;
 

@@ -2,6 +2,7 @@
 using Paint2.Models.Figures;
 using Formats;
 using Formats.Json;
+using Formats.PDF;
 using Formats.Svg;
 using ReactiveUI;
 using Serilog;
@@ -76,13 +77,15 @@ namespace Paint2.ViewModels
             {
                 JsonSnapshot => new JsonExporter(),
                 SvgSnapshot => new SvgExporter(),
+                PDFSnapshot => new PDFExporter(),
                 _ => new JsonExporter()
             };
             exportStrategy.SaveTo(snapshot, path);
         }
         public void LoadScene(string path)
         {
-            ImportStrategy.LoadFrom(path);
+            JsonImporter importStrategy = new();
+            importStrategy.LoadFrom(path);
         }
         public static void CreateScene()
         {

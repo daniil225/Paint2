@@ -12,9 +12,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Parallelogram")]
-        class ParallelogramCreator : IFigureCreator
+        class ParallelogramCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newParallelogram = new(parentGroup, coordinates[0]);
                 newParallelogram.Name = "Parallelogram";

@@ -15,9 +15,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "CubicBezierCurve")]
-        private class CubicBezierCurveCreator : IFigureCreator
+        private class CubicBezierCurveCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 Point center = 1.0 / 8.0 * coordinates[0] + 3.0 / 8.0 * coordinates[1] + 3.0 / 8.0 * coordinates[2] + 1.0 / 8.0 * coordinates[3];
 

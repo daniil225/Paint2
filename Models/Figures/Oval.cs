@@ -12,9 +12,9 @@ namespace Paint2.Models.Figures
     {
         [Export(typeof(IFigureCreator))]
         [ExportMetadata(nameof(FigureMetadata.Name), "Oval")]
-        class OvalCreator : IFigureCreator
+        class OvalCreator : FigureCreator
         {
-            public IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates)
             {
                 PathFigure newOval = new(parentGroup, coordinates[0]);
                 newOval.Name = "Oval";
