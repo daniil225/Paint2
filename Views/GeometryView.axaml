@@ -13,7 +13,8 @@
           PointerPressed="Path_OnPointerPressed"
           PointerMoved="Path_OnPointerMoved"
           PointerReleased="Path_OnPointerReleased"
-		  StrokeDashArray="{Binding Figure.GraphicProperties.BorderStyle}">
+		  StrokeDashArray="{Binding Figure.GraphicProperties.BorderStyle}"
+          Effect="{Binding ShadowEffect}">
         <Path.Fill>
             <SolidColorBrush Color="{Binding Figure.GraphicProperties.SolidColor}" />
         </Path.Fill>
