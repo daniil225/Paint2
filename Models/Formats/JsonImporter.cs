@@ -86,7 +86,7 @@ namespace Formats.Json
             var pathBuilder = new PathBuilder();
             ParsePathData(pathData, pathBuilder);
             var newPath = pathBuilder.Build();
-            var coordinates = newPath.Elements.OfType<PathMoveTo>().FirstOrDefault().dest ?? Point.Zero;
+            Point coordinates = CalculateCenter(newPath);
             var figureProperties = new FigureGraphicProperties
             {
                 SolidColor = brush.Fill,
@@ -96,6 +96,47 @@ namespace Formats.Json
             };
 
             FigureFabric.LoadFigure(name, parentGroup, coordinates, [.. newPath.Elements]).GraphicProperties = figureProperties;
+        }
+
+        private Point CalculateCenter(DocPath path)
+        {
+    
+            double sumX = 0, sumY = 0;
+            int count = 0;
+
+            foreach (var element in path.Elements)
+            {
+                if (element is PathMoveTo move)
+                {
+                    sumX += move.dest.X;
+                    sumY += move.dest.Y;
+                    count++;
+                }
+                else if (element is PathLineTo line)
+                {
+                    sumX += line.dest.X;
+                    sumY += line.dest.Y;
+                    count++;
+                }
+                else if (element is PathArcTo arc)
+                {
+                    sumX += arc.dest.X;
+                    sumY += arc.dest.Y;
+                    count++;
+                }
+                else if (element is PathCubicBezierTo cubic)
+                {
+                    sumX += cubic.dest.X;
+                    sumY += cubic.dest.Y;
+                    count++;
+                }
+        
+            }
+
+            if (count == 0)
+                return Point.Zero;
+
+            return new Point(sumX / count, sumY / count);
         }
 
         private Brush ParseBrush(JsonObject obj)
