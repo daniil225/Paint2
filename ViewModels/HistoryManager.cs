@@ -12,7 +12,10 @@ namespace Paint2.ViewModels
 
         public static void MakeSceneSnapshot()
         {
-            pathsToSnapshots.RemoveRange(pointer, pathsToSnapshots.Count - 1);
+            if (pointer == -1)
+                pathsToSnapshots.Clear();
+            else if (pointer < pathsToSnapshots.Count - 1)
+                pathsToSnapshots.RemoveRange(pointer, pathsToSnapshots.Count - 1);
 
             string tempFileName = Path.GetTempFileName();
             pathsToSnapshots.Add(tempFileName);
@@ -25,18 +28,19 @@ namespace Paint2.ViewModels
         }
         public static void Undo()
         {
-            if (pointer <= 0)
+            if (pointer >= 0)
             {
+                string path = pathsToSnapshots[pointer];
+                //Scene.Current.LoadScene(path);
                 pointer--;
-                Scene.Current.LoadScene(pathsToSnapshots[pointer]);
             }
         }
         public static void Redo()
         {
-            if (pointer < pathsToSnapshots.Count)
+            if (pointer < pathsToSnapshots.Count - 1)
             {
                 pointer++;
-                Scene.Current.LoadScene(pathsToSnapshots[pointer]);
+                //Scene.Current.LoadScene(pathsToSnapshots[pointer]);
             }
         }
     }
