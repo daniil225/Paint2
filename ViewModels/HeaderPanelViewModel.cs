@@ -261,8 +261,6 @@ public class HeaderPanelViewModel : ViewModelBase
                     return;
                 }
                 Scene.Current.LoadScene(CurrentSavedToPath);
-                _mainWindow.GroupsPanel.ClearSceneHierarchy();
-                _mainWindow.GroupsPanel.BuildGroupsBySceneHierarchy();
             });
         });
     }
