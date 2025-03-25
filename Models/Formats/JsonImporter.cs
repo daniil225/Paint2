@@ -82,8 +82,15 @@ namespace Formats.Json
             var pathBuilder = new PathBuilder();
             ParsePathData(pathData, pathBuilder);
             var newPath = pathBuilder.Build();
+            var figureProperties = new FigureGraphicProperties
+            {
+                SolidColor = brush.Fill,
+                BorderColor = brush.Stroke,
+                BorderThickness = brush.StrokeWidth,
+                BorderStyle = [.. brush.Dash ?? new List<double>()]
+            };
 
-            Scene.Current.CreateGroup("Path", (IFigureGraphicProperties)brush, parentGroup);
+            Scene.Current.CreateGroup("Path", figureProperties, parentGroup);
         }
 
         private Brush ParseBrush(JsonObject obj)
