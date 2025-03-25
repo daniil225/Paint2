@@ -31,19 +31,26 @@ namespace Formats.Json
                 return;
             }
 
+            Group? currentParentGroup = null;
+
             foreach (var objNode in objectsArray)
             {
-                ImportObject(objNode.AsObject(), null);
+                currentParentGroup = ImportObject(objNode.AsObject(), currentParentGroup);
+                var type = objNode["type"]?.ToString();
+                if (type == "g")
+                {
+                    currentParentGroup = Scene.Current.Groups.LastOrDefault();
+                }
             }
         }
 
-        private void ImportObject(JsonObject obj, Group? parentGroup)
+        private Group? ImportObject(JsonObject obj, Group? parentGroup)
         {
             string? type = obj["type"]?.ToString();
             string? name = obj["id"]?.ToString();
             if (type == null || name == null)
             {
-                return;
+                return parentGroup;;
             }
 
             if (type == "g")
@@ -58,6 +65,7 @@ namespace Formats.Json
                         ImportObject(childNode.AsObject(), newGroup);
                     }
                 }
+                return newGroup;
             }
             else
             {
@@ -71,6 +79,7 @@ namespace Formats.Json
                     default:
                         throw new NotSupportedException($"Unsupported object type: {type}");
                 }
+                return parentGroup;
             }
         }
 
@@ -82,6 +91,7 @@ namespace Formats.Json
             var pathBuilder = new PathBuilder();
             ParsePathData(pathData, pathBuilder);
             var newPath = pathBuilder.Build();
+            var startPoint = newPath.Elements.OfType<PathMoveTo>().FirstOrDefault().dest ?? new Point(0, 0);
             var figureProperties = new FigureGraphicProperties
             {
                 SolidColor = brush.Fill,
