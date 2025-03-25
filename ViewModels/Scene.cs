@@ -19,8 +19,6 @@ namespace Paint2.ViewModels
         
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public IImportFormat ImportStrategy { get; set; }
-        public IExportFormat ExportStrategy { get; set; }
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
 
         private List<Group> _groups { get; set; }
