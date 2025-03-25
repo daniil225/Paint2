@@ -1,13 +1,7 @@
 ﻿using Formats.Json;
-using Formats.Svg;
 using Paint2.ViewModels.Interfaces;
-using Paint2.Views;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paint2.ViewModels
 {
@@ -22,7 +16,10 @@ namespace Paint2.ViewModels
 
             string tempFileName = Path.GetTempFileName();
             pathsToSnapshots.Add(tempFileName);
-            pointer++;
+            if (pathsToSnapshots.Count > 128 )
+                pathsToSnapshots.RemoveAt(0);
+            else
+                pointer++;
             IExportSnapshot snapshot = new JsonSnapshot();
             Scene.Current.SaveScene(snapshot, tempFileName);
         }
