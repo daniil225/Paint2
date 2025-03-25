@@ -19,8 +19,11 @@ namespace Paint2.ViewModels
 
             string tempFileName = Path.GetTempFileName();
             pathsToSnapshots.Add(tempFileName);
-            if (pathsToSnapshots.Count > 128 )
+            if (pathsToSnapshots.Count > 128)
+            {
+                File.Delete(pathsToSnapshots[0]);
                 pathsToSnapshots.RemoveAt(0);
+            }
             else
                 pointer++;
             IExportSnapshot snapshot = new JsonSnapshot();
