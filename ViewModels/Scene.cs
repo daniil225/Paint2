@@ -16,7 +16,8 @@ namespace Paint2.ViewModels
     public class Scene : ReactiveObject
     {
         public event PropertyChangedEventHandler HierarchyChanged;
-        
+        public event PropertyChangedEventHandler SceneReloaded;
+
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
@@ -88,6 +89,7 @@ namespace Paint2.ViewModels
         {
             JsonImporter importer = new();
             importer.LoadFrom(path);
+            OnSceneReloaded();
             OnHierarchyChanged();
         }
         public static void CreateScene()
@@ -154,6 +156,10 @@ namespace Paint2.ViewModels
         {
             HistoryManager.MakeSceneSnapshot();
             HierarchyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+        public void OnSceneReloaded([CallerMemberName] string prop = "")
+        {
+            SceneReloaded?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

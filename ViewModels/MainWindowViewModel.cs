@@ -48,6 +48,7 @@ public class MainWindowViewModel : ViewModelBase
         Scene.CreateScene();
         // Подписываю Figures на обновление иерархии сцены
         Scene.Current.HierarchyChanged += UpdateFigures;
+        Scene.Current.SceneReloaded += UpdateNodes;
 
         HeaderPanel = new HeaderPanelViewModel(this);
         PropertiesPanel = new PropertiesPanelViewModel(this);
@@ -198,5 +199,10 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
         return figures;
+    }
+    private void UpdateNodes(object? sender, PropertyChangedEventArgs e)
+    {
+        GroupsPanel?.ClearSceneHierarchy();
+        GroupsPanel?.BuildGroupsBySceneHierarchy();
     }
 }

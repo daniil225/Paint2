@@ -25,16 +25,9 @@ namespace Formats.Json
             Scene scene = Scene.Current;
             scene.ResetScene();
 
-            Group? currentParentGroup = null;
-
             foreach (var objNode in objectsArray)
             {
-                currentParentGroup = ImportObject(objNode.AsObject(), currentParentGroup);
-                var type = objNode["type"]?.ToString();
-                if (type == "g")
-                {
-                    currentParentGroup = Scene.Current.Groups.LastOrDefault();
-                }
+                ImportObject(objNode.AsObject(), null);
             }
         }
 
