@@ -12,7 +12,7 @@ namespace Paint2.ViewModels;
 
 public class GroupsPanelViewModel : ViewModelBase
 {
-    public ObservableCollection<Node> Nodes { get; }
+    [Reactive] public ObservableCollection<Node> Nodes { get; set; }
     public ReactiveCommand<string?, Unit> AddGroupCommand { get; }
 
     private Node? _selectedNode;
@@ -139,6 +139,11 @@ public class GroupsPanelViewModel : ViewModelBase
                 }
             }
         }
+    }
+
+    public void ClearSceneHierarchy()
+    {
+        Nodes = [];
     }
 }
 
