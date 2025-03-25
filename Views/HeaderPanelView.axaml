@@ -43,7 +43,7 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Info">
-                    <MenuItem Header="_Developers">
+                    <MenuItem Header="_Developers" Command="{Binding ToggleDevelopersPopupCommand}">
                         <MenuItem.Icon>
                             <PathIcon Data="{StaticResource PeopleTeamRegular}"></PathIcon>
                         </MenuItem.Icon>
@@ -51,6 +51,51 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
+
+		<Popup Name="DevelopersPopup" IsOpen="{Binding IsDevelopersPopupOpen}" PlacementMode="Center">
+			<Border Background="White" Padding="10" CornerRadius="8" BorderBrush="Black" BorderThickness="1">
+				<StackPanel Spacing="20">
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="👥 Команда" FontWeight="Bold" FontSize="16" TextAlignment="Center" />
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="🚀 TeamLead" FontWeight="Bold" />
+						<TextBlock Text="• Исакин Даниил (@daniil225)" Margin="10,0,0,5"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="🎨 GUI" FontWeight="Bold"/>
+						<TextBlock Text="• Присяжнюк Андрей (@prinida)" FontWeight="Bold" Margin="10,0,0,0"/>
+						<TextBlock Text="• Федотов Алексей (@MathsAp)" Margin="10,0,0,0"/>
+						<TextBlock Text="• Ватлин Илья (@ilyavtln)" Margin="10,0,0,5"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="🧠 Logic" FontWeight="Bold"/>
+						<TextBlock Text="• Овчинников Иван (@Vefery)" FontWeight="Bold" Margin="10,0,0,0"/>
+						<TextBlock Text="• Лойченко Данила (@chek1337)" Margin="10,0,0,0"/>
+						<TextBlock Text="• Клычков Артем (@Yuruka00)" Margin="10,0,0,5"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="📐 Geometry" FontWeight="Bold"/>
+						<TextBlock Text="• Киреев Дмитрий (@KiroDK02)" FontWeight="Bold" Margin="10,0,0,5"/>
+						<TextBlock Text="• Голубь Андрей (@bashma27)" Margin="10,0,0,0"/>
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical">
+						<TextBlock Text="📂 IO" FontWeight="Bold"/>
+						<TextBlock Text="• Афонин Антон (@RocketRide9)" FontWeight="Bold" Margin="10,0,0,0"/>
+						<TextBlock Text="• Кулупаев Данила (@lilDanila)" Margin="10,0,0,0"/>
+						<TextBlock Text="• Томчаковский Илья (@ITomchakovskiy)" Margin="10,0,0,5"/>
+					</StackPanel>
+
+					<Button Content="Закрыть" Command="{Binding ToggleDevelopersPopupCommand}" HorizontalAlignment="Center"/>
+				</StackPanel>
+			</Border>
+		</Popup>
+		
         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
             <Border Background="#f0f0f0"
                     BorderBrush="Transparent"
@@ -171,6 +216,39 @@
                             <PathIcon Width="48" Height="48"
                                       Data="{StaticResource ScaleRegular}">
                             </PathIcon>
+                        </ToggleButton>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Background="#f0f0f0"
+                    BorderBrush="Transparent"
+                    BorderThickness="2"
+                    CornerRadius="3"
+                    Padding="10" Margin="10">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center">Reflections</TextBlock>
+                    <Separator></Separator>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <ToggleButton Command="{Binding HorizontalReflectionFigureCommand}"
+                                      IsChecked="{Binding IsHorizontalReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a horizontal line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/HorizontalReflection.svg"></Svg>
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding VerticalReflectionFigureCommand}"
+                                      IsChecked="{Binding IsVerticalReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a vertical line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/VerticalReflection.svg"></Svg>
+                        </ToggleButton>
+                        <ToggleButton Command="{Binding LineReflectionFigureCommand}"
+                                      IsChecked="{Binding IsLineReflectionButtonChecked}"
+                                      ToolTip.Tip="Reflect a figure relative to a given line"
+                                      Background="Transparent"
+                                      Padding="5">
+                            <Svg Width="48" Height="48" Path="/Assets/Reflections/LineReflection.svg"></Svg>
                         </ToggleButton>
                     </StackPanel>
                 </StackPanel>
