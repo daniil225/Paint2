@@ -33,11 +33,11 @@ namespace Formats.Json
 
             foreach (var objNode in objectsArray)
             {
-                ImportObject(objNode.AsObject());
+                ImportObject(objNode.AsObject(), null);
             }
         }
 
-        private void ImportObject(JsonObject obj)
+        private void ImportObject(JsonObject obj, Group? parentGroup)
         {
             string? type = obj["type"]?.ToString();
             string? name = obj["id"]?.ToString();
@@ -49,7 +49,15 @@ namespace Formats.Json
             if (type == "g")
             {
                 var properties = ParseGraphicProperties(obj);
-                Scene.Current.CreateGroup(name, properties);
+                var newGroup = Scene.Current.CreateGroup(name, properties, parentGroup);
+                var childrenArray = obj["children"]?.AsArray();
+                if (childrenArray != null)
+                {
+                    foreach (var childNode in childrenArray)
+                    {
+                        ImportObject(childNode.AsObject(), newGroup);
+                    }
+                }
             }
             else
             {
@@ -58,7 +66,7 @@ namespace Formats.Json
                 switch (type)
                 {
                     case "path":
-                        ImportPath(obj, brush);
+                        ImportPath(obj, brush, parentGroup);
                         break;
                     default:
                         throw new NotSupportedException($"Unsupported object type: {type}");
@@ -66,17 +74,16 @@ namespace Formats.Json
             }
         }
 
-        private void ImportPath(JsonObject obj, Brush brush)
+        private void ImportPath(JsonObject obj, Brush brush, Group? parentGroup)
         {
             var pathData = obj["d"]?.ToString();
             if (string.IsNullOrWhiteSpace(pathData)) return;
 
             var pathBuilder = new PathBuilder();
             ParsePathData(pathData, pathBuilder);
+            var newPath = pathBuilder.Build();
 
-            pathBuilder.Build();
-
-            Scene.Current.CreateGroup("Path", (IFigureGraphicProperties)brush, null);
+            Scene.Current.CreateGroup("Path", (IFigureGraphicProperties)brush, parentGroup);
         }
 
         private Brush ParseBrush(JsonObject obj)
