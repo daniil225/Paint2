@@ -9,7 +9,12 @@
         Icon="/Assets/app-logo.ico"
         Title="Paint2"
         KeyDown="MainWindow_OnKeyDown">
-    
+
+	<Window.KeyBindings>
+		<KeyBinding Gesture="Ctrl+Z" Command="{Binding UndoCommand}" />
+		<KeyBinding Gesture="Ctrl+Shift+Z" Command="{Binding RedoCommand}" />
+	</Window.KeyBindings>
+	
     <Grid RowDefinitions="Auto,*,Auto, Auto" ColumnDefinitions="*">
         <StackPanel Grid.Row="0">
             <ContentControl Content="{Binding HeaderPanel}"></ContentControl>

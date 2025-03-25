@@ -43,6 +43,7 @@ namespace Paint2.Models.Figures
                 newCircle.pathElements.Add(new PathClose());
                 newCircle.IsClosed = true;
                 newCircle.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
                 return newCircle;
             }
         }

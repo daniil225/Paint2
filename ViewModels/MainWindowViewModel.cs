@@ -32,6 +32,8 @@ public class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> HideGroupsPanelCommand { get; }
     public ReactiveCommand<Point[], Unit> CreateFigureCommand { get; }
     public ReactiveCommand<Group, ISceneObject?> CreateFigureInGroupCommand { get; }
+    public ReactiveCommand<Unit, Unit> UndoCommand { get; }
+    public ReactiveCommand<Unit, Unit> RedoCommand { get; }
     public ObservableCollection<GeometryViewModel> Figures { get; }
     public Point MovementVector { get; set; }
     public Point PrevPointerCoordinates { get; set; }
@@ -79,7 +81,21 @@ public class MainWindowViewModel : ViewModelBase
                     : new GridLength(0);
             });
         });
-        
+        UndoCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                HistoryManager.Undo();
+            });
+        });
+        RedoCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Task.Run(() =>
+            {
+                HistoryManager.Redo();
+            });
+        });
+
         CreateFigureCommand = ReactiveCommand.CreateFromTask(async (Point[] pointerCoordinates) =>
         {
             await Task.Run(async () =>
@@ -161,11 +177,11 @@ public class MainWindowViewModel : ViewModelBase
         var figures = new ObservableCollection<GeometryViewModel>();
         foreach (var obj in hierarchy)
         {
-            if (obj is Group group) // Assuming IGroup is your group interface/class
+            if (obj is Group group)
             {
                 figures.AddRange(ScanBranch(group.ChildObjects));
             }
-            else // It's a figure
+            else
             {
                 figures.Add(new GeometryViewModel((IFigure)obj, this));
             }

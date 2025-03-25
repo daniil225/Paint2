@@ -131,6 +131,7 @@ namespace Paint2.Views
         private void Path_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             _isPointerPressed = false;
+            HistoryManager.MakeSceneSnapshot();
         }
     }
 }

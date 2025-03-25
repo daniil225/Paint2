@@ -20,6 +20,7 @@ namespace Paint2.ViewModels
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
+        public bool IsInTransaction { get; set; }
 
         private List<Group> _groups { get; set; }
 
@@ -87,10 +88,12 @@ namespace Paint2.ViewModels
         {
             JsonImporter importer = new();
             importer.LoadFrom(path);
+            OnHierarchyChanged();
         }
         public static void CreateScene()
         {
             Current = new Scene();
+            HistoryManager.MakeSceneSnapshot();
         }
         public Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
         {
@@ -103,15 +106,18 @@ namespace Paint2.ViewModels
             {
                 newGroup.Parent = parentGroup;
             }
+            OnHierarchyChanged();
             return newGroup;
         }
         public void AddGroupToRoot(Group group)
         {
             Current._groups.Add(group);
+            OnHierarchyChanged();
         }
         public void RemoveGroupFromRoot(Group group)
         {
             Current._groups.Remove(group);
+            OnHierarchyChanged();
         }
         public void MoveGroupInsideRoot(int newId, Group group)
         {
@@ -127,6 +133,8 @@ namespace Paint2.ViewModels
                 else
                     _groups.Add(group);
                 _groups.RemoveAll((item) => item is null);
+
+                OnHierarchyChanged();
             }
         }
         public void RemoveObject(ISceneObject sceneObject)
@@ -144,6 +152,7 @@ namespace Paint2.ViewModels
         }
         public void OnHierarchyChanged([CallerMemberName] string prop = "")
         {
+            HistoryManager.MakeSceneSnapshot();
             HierarchyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }

@@ -26,9 +26,9 @@ namespace Paint2.Models.Figures
             public virtual IFigure Create(Group parentGroup, Point[] coordinates)
                 => throw new NotSupportedException();
 
-            public IFigure Create(Group parentGroup, Point[] coordinates, IList<IPathElement> pathElements, string name)
+            public IFigure Create(Group parentGroup, Point coordinates, IList<IPathElement> pathElements, string name)
             {
-                PathFigure newFigure = new(parentGroup, coordinates[0])
+                PathFigure newFigure = new(parentGroup, coordinates)
                 {
                     Name = name,
                     pathElements = pathElements
@@ -124,8 +124,6 @@ namespace Paint2.Models.Figures
             IsMirrored = false;
             _parentGroup = parentGroup;
             _parentGroup.SetIfParent(this, true);
-
-            Scene.Current.OnHierarchyChanged();
         }
 
         private void OnGeometryChanged([CallerMemberName] string prop = "")

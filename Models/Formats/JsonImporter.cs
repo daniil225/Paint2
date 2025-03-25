@@ -15,21 +15,15 @@ namespace Formats.Json
         public void LoadFrom(string destinationPath)
         {
             var jsonContent = File.ReadAllText(destinationPath);
-            var jsonObject = JsonNode.Parse(jsonContent) as JsonObject;
+            var objectsArray = JsonNode.Parse(jsonContent) as JsonArray;
 
-            if (jsonObject == null)
+            if (objectsArray == null)
             {
                 throw new InvalidDataException("Invalid JSON format.");
             }
 
             Scene scene = Scene.Current;
             scene.ResetScene();
-
-            var objectsArray = jsonObject["objects"]?.AsArray();
-            if (objectsArray == null)
-            {
-                return;
-            }
 
             Group? currentParentGroup = null;
 
@@ -86,21 +80,22 @@ namespace Formats.Json
         private void ImportPath(JsonObject obj, Brush brush, Group? parentGroup)
         {
             var pathData = obj["d"]?.ToString();
+            string name = obj["id"].ToString();
             if (string.IsNullOrWhiteSpace(pathData)) return;
 
             var pathBuilder = new PathBuilder();
             ParsePathData(pathData, pathBuilder);
             var newPath = pathBuilder.Build();
-            var startPoint = newPath.Elements.OfType<PathMoveTo>().FirstOrDefault().dest ?? new Point(0, 0);
+            var coordinates = newPath.Elements.OfType<PathMoveTo>().FirstOrDefault().dest ?? Point.Zero;
             var figureProperties = new FigureGraphicProperties
             {
                 SolidColor = brush.Fill,
                 BorderColor = brush.Stroke,
                 BorderThickness = brush.StrokeWidth,
-                BorderStyle = [.. brush.Dash ?? new List<double>()]
+                BorderStyle = [.. brush.Dash ?? []]
             };
 
-            Scene.Current.CreateGroup("Path", figureProperties, parentGroup);
+            FigureFabric.LoadFigure(name, parentGroup, coordinates, [.. newPath.Elements]).GraphicProperties = figureProperties;
         }
 
         private Brush ParseBrush(JsonObject obj)
@@ -109,10 +104,14 @@ namespace Formats.Json
             var strokeColor = ParseColor(obj["stroke"]?.ToString(), obj["stroke-opacity"]?.ToString());
             var strokeWidth = double.Parse(obj["stroke-width"]?.ToString() ?? "0");
 
-            var dashArray = obj["stroke-dasharray"]?.ToString()
-                ?.Split(' ')
-                ?.Select(double.Parse)
-                ?.ToList();
+            var dashString = obj["stroke-dasharray"]?.ToString();
+            List<double>? dashArray = null;
+            if (!string.IsNullOrEmpty(dashString))
+            {
+                dashArray = dashString?.Split(' ')
+                    ?.Select(double.Parse)
+                    ?.ToList();
+            }
 
             return new Brush(strokeColor, fillColor, strokeWidth, dashArray);
         }
@@ -134,7 +133,7 @@ namespace Formats.Json
             if (string.IsNullOrWhiteSpace(pathData))
             {
                 throw new ArgumentException("Path data cannot be null or empty.");
-            } 
+            }
 
             var regex = new System.Text.RegularExpressions.Regex(@"([MmLlCcSsQqTtAaZz])|(-?\d*\.?\d+(?:[eE][+-]?\d+)?)");
             var matches = regex.Matches(pathData);
@@ -170,14 +169,14 @@ namespace Formats.Json
         {
             switch (char.ToUpper(command))
             {
-                case 'M': 
+                case 'M':
                     for (int i = 0; i < args.Count; i += 2)
                     {
                         pathBuilder.MoveTo(new Point(args[i], args[i + 1]));
                     }
                     break;
 
-                case 'L': 
+                case 'L':
                     for (int i = 0; i < args.Count; i += 2)
                     {
                         pathBuilder.LineTo(new Point(args[i], args[i + 1]));

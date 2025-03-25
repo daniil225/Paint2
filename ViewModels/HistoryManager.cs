@@ -12,10 +12,13 @@ namespace Paint2.ViewModels
 
         public static void MakeSceneSnapshot()
         {
+            if (Scene.Current.IsInTransaction)
+                return;
+
             if (pointer == -1)
                 pathsToSnapshots.Clear();
             else if (pointer < pathsToSnapshots.Count - 1)
-                pathsToSnapshots.RemoveRange(pointer, pathsToSnapshots.Count - 1);
+                pathsToSnapshots.RemoveRange(pointer + 1, pathsToSnapshots.Count - (pointer + 1));
 
             string tempFileName = Path.GetTempFileName();
             pathsToSnapshots.Add(tempFileName);
@@ -31,19 +34,20 @@ namespace Paint2.ViewModels
         }
         public static void Undo()
         {
-            if (pointer >= 0)
+            if (pointer > 0)
             {
-                string path = pathsToSnapshots[pointer];
-                //Scene.Current.LoadScene(path);
-                pointer--;
+                Scene.Current.IsInTransaction = true;
+                Scene.Current.LoadScene(pathsToSnapshots[--pointer]);
+                Scene.Current.IsInTransaction = false;
             }
         }
         public static void Redo()
         {
             if (pointer < pathsToSnapshots.Count - 1)
             {
-                pointer++;
-                //Scene.Current.LoadScene(pathsToSnapshots[pointer]);
+                Scene.Current.IsInTransaction = true;
+                Scene.Current.LoadScene(pathsToSnapshots[++pointer]);
+                Scene.Current.IsInTransaction = false;
             }
         }
     }

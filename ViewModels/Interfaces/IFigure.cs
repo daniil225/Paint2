@@ -9,7 +9,7 @@ namespace Paint2.ViewModels.Interfaces
 {
     public interface IFigure : ISceneObject
     {
-        IFigureGraphicProperties? GraphicProperties { get; set; }
+        IFigureGraphicProperties GraphicProperties { get; set; }
         IReadOnlyCollection<IPathElement> PathElements { get; }
         event PropertyChangedEventHandler GeometryChanged;
         IFigure Intersect(IFigure other);
