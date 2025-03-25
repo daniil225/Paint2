@@ -21,6 +21,8 @@ public class HeaderPanelViewModel : ViewModelBase
     [Reactive] public ObservableCollection<ZoomOption> ZoomOptions { get; set; }
     [Reactive] public FigureMenuItem SelectedFigureMenuItem { get; set; }
 
+    [Reactive] public bool IsDevelopersPopupOpen { get; set; }
+
     private string? _currentSavedToPath;
     public string? CurrentSavedToPath
     {
@@ -58,7 +60,8 @@ public class HeaderPanelViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref _menuMode, value);
         }
     }
-    
+
+    public ReactiveCommand<Unit, Unit> ToggleDevelopersPopupCommand { get; }
     public ReactiveCommand<Unit, Unit> AddFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> SelectFigureCommand { get; }
     public ReactiveCommand<Unit, Unit> MoveFigureCommand { get; }
@@ -149,6 +152,11 @@ public class HeaderPanelViewModel : ViewModelBase
         ];
         SelectedZoomMenuItem = ZoomOptions.First();
 
+        ToggleDevelopersPopupCommand = ReactiveCommand.Create(() =>
+        {
+            IsDevelopersPopupOpen = !IsDevelopersPopupOpen;
+        });
+
         AddFigureCommand = ReactiveCommand.Create(() =>
         {
             MenuMode = MenuModesEnum.CreationMode;
@@ -228,7 +236,7 @@ public class HeaderPanelViewModel : ViewModelBase
         {
             await Task.Run(() =>
             {
-                SaveCommand.Execute();
+                _mainWindow.GroupsPanel.Nodes.Clear();
                 Scene.Current.ResetScene();
                 _mainWindow.SelectedFigure = null;
             });
@@ -252,7 +260,6 @@ public class HeaderPanelViewModel : ViewModelBase
                 {
                     return;
                 }
-                SaveCommand.Execute();
                 Scene.Current.LoadScene(CurrentSavedToPath);
             });
         });

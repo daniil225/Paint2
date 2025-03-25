@@ -14,7 +14,8 @@
             </ContextMenu>
         </StackPanel.ContextMenu>
         
-        <TreeView ItemsSource="{Binding Nodes}">
+        <TreeView ItemsSource="{Binding Nodes}"
+                  SelectedItem="{Binding SelectedNode}">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding SubNodes}">
                     <StackPanel>

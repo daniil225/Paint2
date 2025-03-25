@@ -77,6 +77,12 @@ public partial class GroupsPanelView : UserControl
         if (_draggedNode == null || _draggedNode == targetNode) return;
 
         if (DataContext is not GroupsPanelViewModel viewModel) { return; }
+        
+        Group? targetGroup = targetNode.NodeSceneObject as Group;
+        if (targetGroup is null)
+        {
+            return;
+        }
 
         // Если узел корневой
         if (_draggedNode.Parent == null)
@@ -89,6 +95,7 @@ public partial class GroupsPanelView : UserControl
         }
 
         // Устанавливаем нового родителя
+        _draggedNode.NodeSceneObject.Parent = targetGroup;
         _draggedNode.Parent = targetNode;
         targetNode.SubNodes.Add(_draggedNode);
 
