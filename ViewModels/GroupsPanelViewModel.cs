@@ -1,4 +1,3 @@
-using Formats;
 using Paint2.ViewModels.Interfaces;
 using Paint2.ViewModels.Utils;
 using ReactiveUI;
@@ -6,7 +5,6 @@ using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -56,7 +54,7 @@ public class GroupsPanelViewModel : ViewModelBase
     private void AddRootNode(string? name)
     {
         string newGroupName = name ?? "New group";
-        Node newNode = new(newGroupName);
+        Node newNode = new(newGroupName, _mainWindow);
         Nodes.Add(newNode);
         FigureGraphicProperties properties = new()
         {
@@ -115,20 +113,23 @@ public class Node : ReactiveObject
     [Reactive] public string Title { get; set; }
     [Reactive] public bool IsEditing { get; set; }
     public ObservableCollection<Node> SubNodes { get; }
-    public ReactiveCommand<ISceneObject, Unit> AddCommand { get; }
+    public ReactiveCommand<ISceneObject?, Unit> AddCommand { get; }
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
     public Node? Parent { get; set; }
     public ISceneObject NodeSceneObject { get; set; }
 
     public event Action<Node>? NodeDeleted;
 
-    public Node(string title)
+    private MainWindowViewModel _mainWindow;
+
+    public Node(string title, MainWindowViewModel mainWindow)
     {
         Title = title;
         SubNodes = [];
+        _mainWindow = mainWindow;
 
         AddCommand = ReactiveCommand.CreateFromTask(
-            async (ISceneObject sceneObject) =>
+            async (ISceneObject? sceneObject) =>
             {
                 await Task.Run(() => Add(sceneObject));
             });
@@ -141,7 +142,7 @@ public class Node : ReactiveObject
         SubNodes = subNodes;
 
         AddCommand = ReactiveCommand.CreateFromTask(
-            async (ISceneObject sceneObject) =>
+            async (ISceneObject? sceneObject) =>
             {
                 await Task.Run(() => Add(sceneObject));
             });
@@ -153,10 +154,27 @@ public class Node : ReactiveObject
         }
     }
 
-    private void Add(ISceneObject sceneObject)
+    private void Add(ISceneObject? sceneObject)
     {
-        var newNode = new Node(sceneObject.Name) { NodeSceneObject = sceneObject, Parent = this };
-
+        if (sceneObject is null)
+        {
+            if (NodeSceneObject is not Group parentGroup)
+            {
+                return;
+            }
+            _mainWindow.CreateFigureInGroupCommand.Execute(parentGroup)
+                .Subscribe(so =>
+                {
+                    if (so is null)
+                    {
+                        return;
+                    }
+                    Node newNode = new(so.Name, _mainWindow) { NodeSceneObject = so, Parent = this };
+                    SubNodes.Add(newNode);
+                });
+            return;
+        }
+        Node newNode = new(sceneObject.Name, _mainWindow) { NodeSceneObject = sceneObject, Parent = this };
         SubNodes.Add(newNode);
     }
 
@@ -166,6 +184,7 @@ public class Node : ReactiveObject
         if (Parent != null)
         {
             Parent.SubNodes.Remove(this);
+            Scene.Current.RemoveObject(NodeSceneObject);
             return;
         }
 
