@@ -25,6 +25,7 @@ namespace Paint2.Models.Figures
             {
                 if (!string.IsNullOrWhiteSpace(value))
                     name = value;
+                this.RaisePropertyChanged();
             }
         }
         bool _supressMove = false;

@@ -110,7 +110,21 @@ public class GroupsPanelViewModel : ViewModelBase
 
 public class Node : ReactiveObject
 {
-    [Reactive] public string Title { get; set; }
+    private string _title;
+
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _title, value);
+            if (NodeSceneObject is null)
+            {
+                return;
+            }
+            NodeSceneObject.Name = value;
+        }
+    }
     [Reactive] public bool IsEditing { get; set; }
     public ObservableCollection<Node> SubNodes { get; }
     public ReactiveCommand<ISceneObject?, Unit> AddCommand { get; }
