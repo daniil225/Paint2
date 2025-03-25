@@ -14,7 +14,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Pentagon")]
         private class PentagonCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newPentagon = new(parentGroup, coordinates[0]);
                 newPentagon.Name = "Pentagon";
@@ -33,7 +33,9 @@ namespace Paint2.Models.Figures
                 newPentagon.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - R * cos18, coordinates[0].Y - R * sin18) });
                 newPentagon.pathElements.Add(new PathClose());
                 newPentagon.IsClosed = true;
+                newPentagon._graphicProperties = figureGraphicProperties;
                 newPentagon.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newPentagon;
             }

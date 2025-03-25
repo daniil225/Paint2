@@ -23,7 +23,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Figure")]
         private class FigureCreator : IFigureCreator
         {
-            public virtual IFigure Create(Group parentGroup, Point[] coordinates)
+            public virtual IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
                 => throw new NotSupportedException();
 
             public IFigure Create(Group parentGroup, Point coordinates, IList<IPathElement> pathElements, string name)

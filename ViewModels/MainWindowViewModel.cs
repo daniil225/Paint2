@@ -128,12 +128,11 @@ public class MainWindowViewModel : ViewModelBase
                     return;
                 }
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();
-                IFigure? figure = FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates);
+                IFigure? figure = FigureFabric.CreateFigure(figureClassName, group, pointerCoordinates, defaultProperties);
                 if (figure is null)
                 {
                     return;
                 }
-                figure.GraphicProperties = defaultProperties;
                 await lastCreateNode.AddCommand.Execute(figure);
             });
         });
@@ -160,12 +159,11 @@ public class MainWindowViewModel : ViewModelBase
                 }
                 Point center = new(Canvas.Bounds.Width / 2d, Canvas.Bounds.Height / 2d);
                 string figureClassName = HeaderPanel.SelectedFigureMenuItem.FigureType.ToString();
-                IFigure? figure = FigureFabric.CreateFigure(figureClassName, group, [center]);
+                IFigure? figure = FigureFabric.CreateFigure(figureClassName, group, [center], defaultProperties);
                 if (figure is null)
                 {
                     return null;
                 }
-                figure.GraphicProperties = defaultProperties;
                 return figure;
             });
         });

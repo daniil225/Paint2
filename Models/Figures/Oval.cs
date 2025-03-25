@@ -14,7 +14,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Oval")]
         class OvalCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newOval = new(parentGroup, coordinates[0]);
                 newOval.Name = "Oval";
@@ -44,6 +44,8 @@ namespace Paint2.Models.Figures
                 newOval.pathElements.Add(new PathClose());
                 newOval.IsClosed = true;
                 newOval.OnGeometryChanged();
+                newOval._graphicProperties = figureGraphicProperties;
+                Scene.Current.OnHierarchyChanged();
 
                 return newOval;
             }

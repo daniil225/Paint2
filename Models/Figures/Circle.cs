@@ -14,7 +14,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Circle")]
         class CircleCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newCircle = new(parentGroup, coordinates[0]);
                 newCircle.Name = "Circle";
@@ -42,6 +42,8 @@ namespace Paint2.Models.Figures
                 });
                 newCircle.pathElements.Add(new PathClose());
                 newCircle.IsClosed = true;
+                newCircle._graphicProperties = figureGraphicProperties;
+
                 newCircle.OnGeometryChanged();
                 Scene.Current.OnHierarchyChanged();
                 return newCircle;
