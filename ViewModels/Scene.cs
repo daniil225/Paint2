@@ -54,6 +54,7 @@ namespace Paint2.ViewModels
                         }
                         else if (child is PathFigure pathFigure) // Фигура
                         {
+
                             var solidColor = pathFigure.GraphicProperties?.SolidColor ?? new(0, 0, 0, 0);
                             var borderColor = pathFigure.GraphicProperties?.BorderColor ?? new(0, 0, 0, 0);
                             var borderThickness = pathFigure.GraphicProperties?.BorderThickness ?? 0;
@@ -61,8 +62,10 @@ namespace Paint2.ViewModels
                             snapshot.Brush = new(borderColor, solidColor, borderThickness, dash);
 
                             PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
+                            DocPath figurePath = pathBuilder.Build();
+                            figurePath.Name = child.Name;
 
-                            snapshot.AppendPath(pathBuilder.Build(), child.Coordinates);
+                            snapshot.AppendPath(figurePath, child.Coordinates);
                         }
                     }
                     else
