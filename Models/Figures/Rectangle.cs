@@ -15,7 +15,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Rectangle")]
         class RectangleCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newRect = new(parentGroup, coordinates[0]);
                 newRect.Name = "Rectangle";
@@ -31,7 +31,9 @@ namespace Paint2.Models.Figures
                 newRect.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - halfSide, coordinates[0].Y + halfSide) });
                 newRect.pathElements.Add(new PathClose());
                 newRect.IsClosed = true;
+                newRect._graphicProperties = figureGraphicProperties;
                 newRect.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newRect;
             }

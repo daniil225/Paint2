@@ -14,7 +14,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Parallelogram")]
         class ParallelogramCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newParallelogram = new(parentGroup, coordinates[0]);
                 newParallelogram.Name = "Parallelogram";
@@ -30,7 +30,9 @@ namespace Paint2.Models.Figures
                 newParallelogram.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - offsetY / 2.0 - lengthSide / 2.0 + offsetX, coordinates[0].Y + offsetY / 2.0) });
                 newParallelogram.pathElements.Add(new PathClose());
                 newParallelogram.IsClosed = true;
+                newParallelogram._graphicProperties = figureGraphicProperties;
                 newParallelogram.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newParallelogram;
             }

@@ -14,7 +14,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Trapezoid")]
         private class TrapezoidCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newTrap = new(parentGroup, coordinates[0]);
                 newTrap.Name = "Trapezoid";
@@ -29,7 +29,9 @@ namespace Paint2.Models.Figures
                 newTrap.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - upperBase / 2.0, coordinates[0].Y - height / 2.0) });
                 newTrap.pathElements.Add(new PathClose());
                 newTrap.IsClosed = true;
+                newTrap._graphicProperties = figureGraphicProperties;
                 newTrap.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newTrap;
             }

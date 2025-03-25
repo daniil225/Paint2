@@ -15,7 +15,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Triangle")]
         private class TriangleCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newTri = new(parentGroup, coordinates[0]);
                 newTri.Name = "Triangle";
@@ -28,7 +28,9 @@ namespace Paint2.Models.Figures
                 newTri.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - lengthSide / 2.0, coordinates[0].Y + lengthSide / (2 * sqrt3)) });
                 newTri.pathElements.Add(new PathClose());
                 newTri.IsClosed = true;
+                newTri._graphicProperties = figureGraphicProperties;
                 newTri.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newTri;
             }

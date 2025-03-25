@@ -13,7 +13,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Line")]
         class LineCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newLine = new(parentGroup, coordinates[0]);
                 newLine.Name = "Line";
@@ -23,7 +23,9 @@ namespace Paint2.Models.Figures
                 newLine.pathElements.Add(new PathMoveTo() { dest = new Point(coordinates[0].X - lengthLine / 2.0, coordinates[0].Y) });
                 newLine.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X + lengthLine / 2.0, coordinates[0].Y) });
                 newLine.IsClosed = false;
+                newLine.GraphicProperties = figureGraphicProperties;
                 newLine.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
                 return newLine;
             }
         }

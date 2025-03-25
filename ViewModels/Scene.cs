@@ -19,9 +19,8 @@ namespace Paint2.ViewModels
         
         public static Scene Current { get; private set; }
         // Тут хранятся все группы сцены. Корневой группы явно нет, по сути сама сцена ей является
-        public IImportFormat ImportStrategy { get; set; }
-        public IExportFormat ExportStrategy { get; set; }
         public IReadOnlyList<Group> Groups { get => _groups.AsReadOnly(); }
+        public bool IsInTransaction { get; set; }
 
         private List<Group> _groups { get; set; }
 
@@ -54,6 +53,7 @@ namespace Paint2.ViewModels
                         }
                         else if (child is PathFigure pathFigure) // Фигура
                         {
+
                             var solidColor = pathFigure.GraphicProperties?.SolidColor ?? new(0, 0, 0, 0);
                             var borderColor = pathFigure.GraphicProperties?.BorderColor ?? new(0, 0, 0, 0);
                             var borderThickness = pathFigure.GraphicProperties?.BorderThickness ?? 0;
@@ -61,8 +61,10 @@ namespace Paint2.ViewModels
                             snapshot.Brush = new(borderColor, solidColor, borderThickness, dash);
 
                             PathBuilder pathBuilder = new PathBuilder(pathFigure.PathElements.ToList());
+                            DocPath figurePath = pathBuilder.Build();
+                            figurePath.Name = child.Name;
 
-                            snapshot.AppendPath(pathBuilder.Build(), child.Coordinates);
+                            snapshot.AppendPath(figurePath, child.Coordinates);
                         }
                     }
                     else
@@ -84,12 +86,14 @@ namespace Paint2.ViewModels
         }
         public void LoadScene(string path)
         {
-            JsonImporter importStrategy = new();
-            importStrategy.LoadFrom(path);
+            JsonImporter importer = new();
+            importer.LoadFrom(path);
+            OnHierarchyChanged();
         }
         public static void CreateScene()
         {
             Current = new Scene();
+            HistoryManager.MakeSceneSnapshot();
         }
         public Group CreateGroup(string name, IFigureGraphicProperties graphicProperties, Group? parentGroup = null)
         {
@@ -102,15 +106,18 @@ namespace Paint2.ViewModels
             {
                 newGroup.Parent = parentGroup;
             }
+            OnHierarchyChanged();
             return newGroup;
         }
         public void AddGroupToRoot(Group group)
         {
             Current._groups.Add(group);
+            OnHierarchyChanged();
         }
         public void RemoveGroupFromRoot(Group group)
         {
             Current._groups.Remove(group);
+            OnHierarchyChanged();
         }
         public void MoveGroupInsideRoot(int newId, Group group)
         {
@@ -126,6 +133,8 @@ namespace Paint2.ViewModels
                 else
                     _groups.Add(group);
                 _groups.RemoveAll((item) => item is null);
+
+                OnHierarchyChanged();
             }
         }
         public void RemoveObject(ISceneObject sceneObject)
@@ -143,6 +152,7 @@ namespace Paint2.ViewModels
         }
         public void OnHierarchyChanged([CallerMemberName] string prop = "")
         {
+            HistoryManager.MakeSceneSnapshot();
             HierarchyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }

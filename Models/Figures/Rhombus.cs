@@ -15,7 +15,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "Rhombus")]
         class RhombusCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 PathFigure newPhombus = new(parentGroup, coordinates[0]);
                 newPhombus.Name = "Rhombus";
@@ -28,7 +28,9 @@ namespace Paint2.Models.Figures
                 newPhombus.pathElements.Add(new PathLineTo() { dest = new Point(coordinates[0].X - halfDiagonal, coordinates[0].Y) });
                 newPhombus.pathElements.Add(new PathClose());
                 newPhombus.IsClosed = true;
+                newPhombus._graphicProperties = figureGraphicProperties;
                 newPhombus.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
 
                 return newPhombus;
             }

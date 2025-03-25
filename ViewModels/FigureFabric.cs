@@ -17,8 +17,8 @@ class FigureMetadata
 }
 public interface IFigureCreator
 {
-    IFigure Create(Group parentGroup, Point[] coordinates);
-    IFigure Create(Group parentGroup, Point[] coordinates, IList<IPathElement> pathElements, string name);
+    IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties = null);
+    IFigure Create(Group parentGroup, Point coordinates, IList<IPathElement> pathElements, string name);
 }
 
 public static class FigureFabric
@@ -48,17 +48,22 @@ public static class FigureFabric
     }
 
     public static IEnumerable<string> AvailableFigures => info.AvailableFigures.Select(f => f.Metadata.Name);
-    public static IFigure? CreateFigure(string FigureName, Group parentGroup, Point[] coordinates)
+    public static IFigure? CreateFigure(string FigureType, Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties = null)
     {
         try
         {
-            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureName).Value.Create(parentGroup, coordinates);
+            IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == FigureType).Value.Create(parentGroup, coordinates, figureGraphicProperties);
             return newFigure;
         }
         catch
         {
-            Log.Error($"Фигуры {FigureName} не существует");
+            Log.Error($"Фигуры {FigureType} не существует");
             return null;
         }
+    }
+    public static IFigure LoadFigure(string FigureName, Group parentGroup, Point coordinates, IList<IPathElement> elements)
+    {
+        IFigure newFigure = info.AvailableFigures.First(f => f.Metadata.Name == "Figure").Value.Create(parentGroup, coordinates, elements, FigureName);
+        return newFigure;
     }
 }

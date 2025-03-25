@@ -17,7 +17,7 @@ namespace Paint2.Models.Figures
         [ExportMetadata(nameof(FigureMetadata.Name), "CubicBezierCurve")]
         private class CubicBezierCurveCreator : FigureCreator
         {
-            public override IFigure Create(Group parentGroup, Point[] coordinates)
+            public override IFigure Create(Group parentGroup, Point[] coordinates, IFigureGraphicProperties? figureGraphicProperties)
             {
                 Point center = 1.0 / 8.0 * coordinates[0] + 3.0 / 8.0 * coordinates[1] + 3.0 / 8.0 * coordinates[2] + 1.0 / 8.0 * coordinates[3];
 
@@ -32,7 +32,9 @@ namespace Paint2.Models.Figures
                     dest = coordinates[3]
                 });
                 newCubicBezierCurve.IsClosed = false;
+                newCubicBezierCurve._graphicProperties = figureGraphicProperties;
                 newCubicBezierCurve.OnGeometryChanged();
+                Scene.Current.OnHierarchyChanged();
                 return newCubicBezierCurve;
             }
         }
